@@ -1,7 +1,15 @@
+"""This module contains the function to_markdown that converts a dictionary, list or pydantic model to a markdown string."""
+
 from pydantic import BaseModel
 
 
 def to_markdown(data, indent=0):
+    """Convert a dictionary, list or pydantic model to a markdown string. The function is recursive.
+
+    :param data: The data to convert to markdown.
+    :param indent: The indentation level.
+    :return: The markdown string.
+    """
     markdown = ""
     if isinstance(data, BaseModel):
         data = data.model_dump()
