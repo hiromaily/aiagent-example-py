@@ -1,0 +1,11 @@
+Nvidia and Google DeepMind will help power Disney’s cute robots
+
+Nvidia is collaborating with Disney Research and Google DeepMind to develop Newton, a physics engine to simulate robotic movements in real-world settings, Nvidia CEO Jensen Huang announced at GTC 2025 on Tuesday.
+Disney will be among the first to use Newton to power its next-generation entertainment robots, like the Star Wars-inspired BDX droids — one of which waddled onstage next to Huang during his Tuesday keynote.
+Nvidia plans to release an early, open-source version of Newton later in 2025.
+For years, Disney has pitched the idea of bringing these Star Wars-inspired robots to its parks around the world. There have been several controlled demos of the droids, most recently at SXSW 2025. Now — thanks in part to Newton, presumably — Disney feels the tech is ready, and plans to showcase the robots at several theme park locations starting next year.
+In a press release, Disney Imagineering SVP Kyle Laughlin said the collaboration with Nvidia and Google DeepMind will play a key role in powering future Disney entertainment robots, as well.
+Newton is supposed to help robots be more “expressive” and “learn how to handle complex tasks with greater precision,” Nvidia said. The physics engine is designed to help developers simulate how robots interact with the natural world, which can sometimes present a challenge for robotics developers.
+Nvidia claims that Newton is highly customizable. For example, developers can use it to program robotic interactions with food items, cloth, sand, and other deformable objects.
+Newton will be compatible with Google DeepMind’s ecosystem of robotic development tools, including its physics engine, MuJoCo, which simulates multi-joint robot movements, Nvidia added.
+Newton was one of many announcements Nvidia made this week to kick off GTC 2025. The company also unveiled an AI foundation model for humanoid robots, Groot N1, which the company says lets robots better perceive and reason about their environments. In addition, the company shared a timeline for its next-gen AI chips, including Blackwell Ultra and Rubin, and unveiled a new line of “personal AI computers”.
