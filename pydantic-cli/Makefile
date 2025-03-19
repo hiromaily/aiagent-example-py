@@ -25,6 +25,10 @@ re-install:
 activate-env:
 	source .venv/bin/activate
 
+.PHONY: deactivate
+deactivate:
+	deactivate
+
 .PHONY: lint
 lint:
 	uvx ruff format src
@@ -40,8 +44,8 @@ lint2:
 
 .PHONY: run
 run:
-	python -m src.cli.main simple-agent
-	python -m src.cli.main agent-structured-response
-	python -m src.cli.main agent-structured-dependencies
-	python -m src.cli.main agent-with-tools
-	python -m src.cli.main agent-with-self-correction
+	PYTHONPATH=src python -m src.cli.main simple-agent
+	PYTHONPATH=src python -m src.cli.main agent-structured-response
+	PYTHONPATH=src python -m src.cli.main agent-structured-dependencies
+	PYTHONPATH=src python -m src.cli.main agent-with-tools
+	PYTHONPATH=src python -m src.cli.main agent-with-self-correction

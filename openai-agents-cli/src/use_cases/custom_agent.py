@@ -1,6 +1,6 @@
 """Custom Agent Use Case."""
 
-from src.openai.client import OpenAIClient
+from openai_custom.client import OpenAIClient
 
 
 class CustomTechnicalAgent:

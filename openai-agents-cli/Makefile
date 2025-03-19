@@ -3,7 +3,7 @@ PYTHONPATH=src
 .PHONY: setup
 setup:
 	@# Setup Project
-	uv init llamaindex-cli
+	uv init openai-agents-cli
 
 	@# Install Python
 	uv python install
@@ -44,6 +44,4 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src python -m src.cli.main docs-agent
-	PYTHONPATH=src python -m src.cli.main docs-openai-agent
-	PYTHONPATH=src python -m src.cli.main docs-openai-embedded-agent
+	PYTHONPATH=src python -m src.cli.main custom-tech-agent
