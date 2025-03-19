@@ -7,7 +7,8 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.openai import OpenAI
 
 
-def check_up_docs():
+def check_up_docs() -> None:
+    """Check up documents."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()
 
@@ -25,13 +26,15 @@ def check_up_docs():
     print(response, "\n")
 
 
-def check_up_openai_docs():
+def check_up_openai_docs() -> None:
+    """Check up documents with OpenAI LLM."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()
 
     openai_model = os.getenv("OPENAI_MODEL")
     if not openai_model:
-        raise ValueError("env 'OPENAI_MODEL' must be set")
+        msg = "env 'OPENAI_MODEL' must be set"
+        raise ValueError(msg)
 
     # Create an LLM (Language Model)
     llm = OpenAI(model=openai_model, temperature=0.5)
@@ -48,7 +51,8 @@ def check_up_openai_docs():
     print(response)
 
 
-def check_up_openai_embedded_docs():
+def check_up_openai_embedded_docs() -> None:
+    """Check up documents with OpenAI LLM and embedding model."""
     # Create some sample documents. This works as kind of data source.
     documents = [
         Document(text="LlamaIndex is a data framework for LLM applications."),
@@ -59,7 +63,8 @@ def check_up_openai_embedded_docs():
     # Initialize OpenAI LLM and embedding model
     openai_model = os.getenv("OPENAI_MODEL")
     if not openai_model:
-        raise ValueError("env 'OPENAI_MODEL' must be set")
+        msg = "env 'OPENAI_MODEL' must be set"
+        raise ValueError(msg)
 
     llm = OpenAI(model=openai_model, temperature=0)
     embed_model = OpenAIEmbedding()

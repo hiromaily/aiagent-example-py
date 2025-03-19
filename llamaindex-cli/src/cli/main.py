@@ -1,12 +1,13 @@
 """main function for the CLI app."""
 
 import os
+
 import typer
 from dotenv import load_dotenv
 
 from src.openai.client import OpenAIClient
-from src.use_cases.custom_agent import CustomTechnicalAgent
 from src.use_cases.check_docs_agent import check_up_docs, check_up_openai_docs, check_up_openai_embedded_docs
+from src.use_cases.custom_agent import CustomTechnicalAgent
 
 # load .env file
 load_dotenv()
@@ -41,7 +42,7 @@ def custom_tech_agent() -> None:
     openai_client = OpenAIClient(api_key, openai_model)
     agent = CustomTechnicalAgent(openai_client)
 
-    #execute
+    # execute
     question = "OpenAI"
     response = agent.query(question)
     print(response)
