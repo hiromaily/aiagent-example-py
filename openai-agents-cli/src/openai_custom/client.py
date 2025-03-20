@@ -4,7 +4,7 @@ from openai import OpenAI
 
 
 class OpenAIClient:
-    """OpenAI Client class."""
+    """OpenAI API Client class."""
 
     def __init__(self, api_key: str, model: str) -> None:
         """Initialize OpenAI client."""
@@ -18,11 +18,25 @@ class OpenAIClient:
         self.client = OpenAI(api_key=api_key)
         self.model = model
 
-    def call_openai_api(self, instructions: str, prompt: str) -> str:
-        """Method to interact with OpenAI API directly."""
+    def call_response(self, instructions: str, prompt: str) -> str:
+        """Call Response API."""
         response = self.client.responses.create(
             model=self.model,
             instructions=instructions,
             input=prompt,
         )
         return response.output_text
+
+    def call_web_search(self, prompt: str) -> str:
+        """Call Web Search API."""
+        completion = self.client.chat.completions.create(
+            model="gpt-4o-search-preview",
+            web_search_options={},
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+        )
+        return completion.choices[0].message.content

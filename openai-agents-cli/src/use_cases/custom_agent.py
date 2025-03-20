@@ -25,5 +25,11 @@ class CustomTechnicalAgent:
         User's question about the technology: {user_query}
         """
 
-        # Step 1: Initial thought generation using OpenAI API
-        return self.openai_client.call_openai_api(instructions, prompt)
+        return self.openai_client.call_response(instructions, prompt)
+
+    def query_news(self) -> str:
+        """Query about news."""
+        # Initial prompt
+        prompt = "What was a positive news story from today?"
+
+        return self.openai_client.call_web_search(prompt)

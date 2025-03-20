@@ -60,6 +60,7 @@ lint2:
 run:
 	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent
 	# PYTHONPATH=src python -m src.cli.main custom-tech-agent
+	PYTHONPATH=src uv run -m src.cli.main news-agent
 
 ###############################################################################
 # Utilities

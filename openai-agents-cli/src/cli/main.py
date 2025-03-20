@@ -28,10 +28,18 @@ def custom_tech_agent() -> None:
     response = agent.query(question)
     print(response)
 
+
 @app.command()
-def docs_agent() -> None:
-    """Checking up documents agent."""
-    print("Checking up documents agent")
+def news_agent() -> None:
+    """News agent."""
+    api_key = os.getenv("OPENAI_API_KEY")
+    openai_model = os.getenv("OPENAI_MODEL")
+    openai_client = OpenAIClient(api_key, openai_model)
+    agent = CustomTechnicalAgent(openai_client)
+
+    # execute
+    response = agent.query_news()
+    print(response)
 
 
 if __name__ == "__main__":
