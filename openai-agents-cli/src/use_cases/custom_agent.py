@@ -1,6 +1,6 @@
 """Custom Agent Use Case."""
 
-from openai_custom.client import OpenAIClient
+from openai_custom.interface import OpenAIClientInterface
 
 
 class CustomTechnicalAgent:
@@ -10,7 +10,7 @@ class CustomTechnicalAgent:
     on how to learn a specific technology.
     """
 
-    def __init__(self, openai_client: OpenAIClient) -> None:
+    def __init__(self, openai_client: OpenAIClientInterface) -> None:
         """Initialize the CustomTechnicalAgent with an OpenAI client."""
         self.openai_client = openai_client
 

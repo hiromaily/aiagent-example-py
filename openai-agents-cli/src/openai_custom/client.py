@@ -2,8 +2,10 @@
 
 from openai import OpenAI
 
+from openai_custom.interface import OpenAIClientInterface
 
-class OpenAIClient:
+
+class OpenAIClient(OpenAIClientInterface):
     """OpenAI API Client class."""
 
     def __init__(self, api_key: str, model: str) -> None:
