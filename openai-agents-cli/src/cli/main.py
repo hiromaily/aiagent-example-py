@@ -5,8 +5,7 @@ import os
 import typer
 from dotenv import load_dotenv
 
-from openai_custom.client import OpenAIClient
-from openai_custom.dymmy import OpenAIDummyClient
+from registry.registry import DependencyRegistry
 from use_cases.custom_agent import CustomTechnicalAgent
 
 # load .env file
@@ -21,19 +20,11 @@ app = typer.Typer()
 @app.command()
 def custom_tech_agent() -> None:
     """Custom technology agent."""
-    if environment == "production":
-        api_key = os.getenv("OPENAI_API_KEY")
-        openai_model = os.getenv("OPENAI_MODEL")
-        openai_client = OpenAIClient(api_key, openai_model)
-    elif environment == "development":
-        openai_client = OpenAIDummyClient()
-    else:
-        msg = "Unknown environment"
-        raise ValueError(msg)
-
-    # execute
+    registry = DependencyRegistry(environment)
+    openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
+    # execute
     question = "OpenAI"
     response = agent.query(question)
     print(response)
@@ -42,9 +33,8 @@ def custom_tech_agent() -> None:
 @app.command()
 def news_agent() -> None:
     """News agent."""
-    api_key = os.getenv("OPENAI_API_KEY")
-    openai_model = os.getenv("OPENAI_MODEL")
-    openai_client = OpenAIClient(api_key, openai_model)
+    registry = DependencyRegistry(environment)
+    openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
     # execute
