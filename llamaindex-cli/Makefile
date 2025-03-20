@@ -1,5 +1,8 @@
 PYTHONPATH=src
 
+###############################################################################
+# Setup
+###############################################################################
 .PHONY: setup
 setup:
 	@# Setup Project
@@ -21,8 +24,15 @@ re-install:
 	uv venv .venv
 	uv pip install -e .
 
-.PHONY: activate-env
-activate-env:
+###############################################################################
+# Development
+###############################################################################
+
+# sourceコマンドはなぜかMakefileで動かない
+# make: source: No such file or directory
+# またvenvをactivate後すぐにpythonコマンドを実行してもmoduleの解決ができないことがある
+.PHONY: activate
+activate:
 	source .venv/bin/activate
 
 .PHONY: deactivate
@@ -41,9 +51,22 @@ lint:
 lint2:
 	uv run task flake8
 
+###############################################################################
+# Execution
+###############################################################################
 
 .PHONY: run
 run:
 	PYTHONPATH=src python -m src.cli.main docs-agent
 	PYTHONPATH=src python -m src.cli.main docs-openai-agent
 	PYTHONPATH=src python -m src.cli.main docs-openai-embedded-agent
+
+###############################################################################
+# Utilities
+###############################################################################
+
+# `.venv`を除いたディレクトリ内の`__pycache__`を削除する
+.PHONY: clean-cache
+clean-cache:
+	find . -type d -name '.venv' -prune -o -type d -name '__pycache__' -exec rm -r {} + -print
+	rm -rf ./src/llamaindex-cli.egg-info

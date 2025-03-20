@@ -17,12 +17,12 @@ class CustomTechnicalAgent:
     def query(self, user_query: str) -> str:
         """Query the agent with a user question."""
         # Initial prompt
-        instructions = "あなたは経験豊富なソフトウェアエンジニアです。"
+        instructions = "You are an experienced software engineer."
         prompt = f"""
-        ユーザーの知りたい技術に答えるために、以下の情報を提供してください。
-        1. その技術の概要
-        2. その技術を習得するために、Step by stepのガイダンス
-        ユーザーの知りたい技術: {user_query}
+        Please provide the following information to answer the user's question about the technology:
+        1. Overview of the technology
+        2. Step-by-step guidance to learn the technology
+        User's question about the technology: {user_query}
         """
 
         # Step 1: Initial thought generation using OpenAI API
