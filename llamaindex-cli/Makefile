@@ -20,6 +20,7 @@ setup:
 .PHONY: re-install
 re-install:
 	#uv sync
+	rm -rf uv.lock
 	rm -rf .venv
 	uv venv .venv
 	uv pip install -e .
@@ -57,9 +58,12 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src python -m src.cli.main docs-agent
-	PYTHONPATH=src python -m src.cli.main docs-openai-agent
-	PYTHONPATH=src python -m src.cli.main docs-openai-embedded-agent
+	PYTHONPATH=src uv run -m src.cli.main docs-agent
+	PYTHONPATH=src uv run -m src.cli.main docs-openai-agent
+	PYTHONPATH=src uv run -m src.cli.main docs-openai-embedded-agent
+	# PYTHONPATH=src python -m src.cli.main docs-agent
+	# PYTHONPATH=src python -m src.cli.main docs-openai-agent
+	# PYTHONPATH=src python -m src.cli.main docs-openai-embedded-agent
 
 ###############################################################################
 # Utilities

@@ -20,6 +20,7 @@ setup:
 .PHONY: re-install
 re-install:
 	#uv sync
+	rm -rf uv.lock
 	rm -rf .venv
 	uv venv .venv
 	uv pip install -e .
@@ -57,11 +58,16 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src python -m src.cli.main simple-agent
-	PYTHONPATH=src python -m src.cli.main agent-structured-response
-	PYTHONPATH=src python -m src.cli.main agent-structured-dependencies
-	PYTHONPATH=src python -m src.cli.main agent-with-tools
-	PYTHONPATH=src python -m src.cli.main agent-with-self-correction
+	PYTHONPATH=src uv run -m src.cli.main simple-agent
+	PYTHONPATH=src uv run -m src.cli.main agent-structured-response
+	PYTHONPATH=src uv run -m src.cli.main agent-structured-dependencies
+	PYTHONPATH=src uv run -m src.cli.main agent-with-tools
+	PYTHONPATH=src uv run -m src.cli.main agent-with-self-correction
+	# PYTHONPATH=src python -m src.cli.main simple-agent
+	# PYTHONPATH=src python -m src.cli.main agent-structured-response
+	# PYTHONPATH=src python -m src.cli.main agent-structured-dependencies
+	# PYTHONPATH=src python -m src.cli.main agent-with-tools
+	# PYTHONPATH=src python -m src.cli.main agent-with-self-correction
 
 ###############################################################################
 # Utilities

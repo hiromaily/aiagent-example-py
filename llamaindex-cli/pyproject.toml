@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "dotenv>=0.9.9",
     "llama-index>=0.12.24",
     "llama-index-core>=0.12.24.post1",
     "llama-index-llms-openai>=0.3.25",

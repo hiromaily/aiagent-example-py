@@ -20,6 +20,7 @@ setup:
 .PHONY: re-install
 re-install:
 	#uv sync
+	rm -rf uv.lock
 	rm -rf .venv
 	uv venv .venv
 	uv pip install -e .
@@ -57,7 +58,8 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src python -m src.cli.main custom-tech-agent
+	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent
+	# PYTHONPATH=src python -m src.cli.main custom-tech-agent
 
 ###############################################################################
 # Utilities
