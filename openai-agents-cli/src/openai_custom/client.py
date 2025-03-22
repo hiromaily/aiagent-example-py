@@ -8,16 +8,20 @@ from openai_custom.interface import OpenAIClientInterface
 class OpenAIClient(OpenAIClientInterface):
     """OpenAI API Client class."""
 
-    def __init__(self, api_key: str, model: str) -> None:
+    def __init__(self, model: str, api_key: str | None = None, base_url: str | None = None) -> None:
         """Initialize OpenAI client."""
-        if not api_key:
-            msg = "API key must be provided"
-            raise ValueError(msg)
         if not model:
             msg = "Model must be provided"
             raise ValueError(msg)
 
-        self.client = OpenAI(api_key=api_key)
+        if not base_url:
+            self.client = OpenAI(api_key=api_key)
+        else:
+            if not api_key:
+                msg = "API key must be provided"
+                raise ValueError(msg)
+
+            self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
 
     def call_response(self, instructions: str, prompt: str) -> str:
@@ -33,7 +37,17 @@ class OpenAIClient(OpenAIClientInterface):
         """Call Web Search API."""
         completion = self.client.chat.completions.create(
             model="gpt-4o-search-preview",
-            web_search_options={},
+            web_search_options={
+                "search_context_size": "low",
+                "user_location": {
+                    "type": "approximate",
+                    "approximate": {
+                        "country": "JP",
+                        "city": "Tokyo",
+                        "region": "Tokyo",
+                    },
+                },
+            },
             messages=[
                 {
                     "role": "user",

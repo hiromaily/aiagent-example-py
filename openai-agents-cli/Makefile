@@ -58,9 +58,10 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent
+	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
 	# PYTHONPATH=src python -m src.cli.main custom-tech-agent
 	PYTHONPATH=src uv run -m src.cli.main news-agent
+	PYTHONPATH=src uv run -m src.cli.main debug
 
 ###############################################################################
 # Utilities

@@ -17,11 +17,21 @@ class DependencyRegistry:
 
     def _build_openai_client(self) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
-        if self.environment == "production":
+        if self.environment == "prod":
+            # use OpenAI API
             api_key = os.getenv("OPENAI_API_KEY")
             openai_model = os.getenv("OPENAI_MODEL")
-            openai_client = OpenAIClient(api_key, openai_model)
-        elif self.environment == "development":
+            openai_client = OpenAIClient(openai_model, api_key)
+        elif self.environment == "dev":
+            # use local LLM
+            openai_model = os.getenv("OPENAI_MODEL")
+            server_url = os.getenv("OPENAI_SERVER_URL")
+            if server_url is None:
+                msg = "`OPENAI_SERVER_URL` must be provided"
+                raise ValueError(msg)
+
+            openai_client = OpenAIClient(openai_model, None, server_url)
+        elif self.environment == "test":
             openai_client = OpenAIDummyClient()
         else:
             msg = "Unknown environment"
