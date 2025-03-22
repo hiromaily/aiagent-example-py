@@ -64,7 +64,7 @@ run:
 # Note: run local llm first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main custom-tech-chat-agent --question "What is an advantage of using Rust?"
+	PYTHONPATH=src uv run -m src.cli.main --local custom-tech-chat-agent --question "What is an advantage of using Rust?"
 
 
 ###############################################################################
