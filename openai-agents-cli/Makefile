@@ -28,7 +28,6 @@ re-install:
 ###############################################################################
 # Development
 ###############################################################################
-
 # sourceコマンドはなぜかMakefileで動かない
 # make: source: No such file or directory
 # またvenvをactivate後すぐにpythonコマンドを実行してもmoduleの解決ができないことがある
@@ -55,7 +54,6 @@ lint2:
 ###############################################################################
 # Execution
 ###############################################################################
-
 .PHONY: run
 run:
 	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
@@ -63,12 +61,27 @@ run:
 	PYTHONPATH=src uv run -m src.cli.main news-agent
 	PYTHONPATH=src uv run -m src.cli.main debug
 
+# Note: run local llm first
+.PHONY: run-with-local-llm
+run-with-local-llm:
+	PYTHONPATH=src uv run -m src.cli.main custom-tech-chat-agent --question "What is an advantage of using Rust?"
+
+
 ###############################################################################
 # Utilities
 ###############################################################################
-
 # `.venv`を除いたディレクトリ内の`__pycache__`を削除する
 .PHONY: clean-cache
 clean-cache:
 	find . -type d -name '.venv' -prune -o -type d -name '__pycache__' -exec rm -r {} + -print
 	rm -rf ./src/openai_agents_cli.egg-info
+
+
+###############################################################################
+# Local LLM API Server
+# - use LM Studio
+###############################################################################
+# After running LM Studio
+.PHONY: load-lms
+load-lms:
+	lms load llama-3.2-3b-instruct --identifier "llama3"

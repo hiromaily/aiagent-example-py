@@ -27,6 +27,19 @@ class CustomTechnicalAgent:
 
         return self.openai_client.call_response(instructions, prompt)
 
+    def query_with_chat(self, user_query: str) -> str:
+        """Query the agent with a user question."""
+        # Initial prompt
+        instructions = "You are an experienced software engineer."
+        prompt = f"""
+        Please provide the following information to answer the user's question about the technology:
+        1. Overview of the technology
+        2. Step-by-step guidance to learn the technology
+        User's question about the technology: {user_query}
+        """
+
+        return self.openai_client.call_chat_completion(instructions, prompt)
+
     def query_news(self) -> str:
         """Query about news."""
         # Initial prompt
