@@ -8,6 +8,7 @@ from loguru import logger
 
 from registry.registry import DependencyRegistry
 from use_cases.custom_agent import CustomTechnicalAgent
+from use_cases.load_embedding import load_embedding
 
 # Create a Typer app
 app = typer.Typer()
@@ -54,8 +55,9 @@ def custom_tech_chat_agent(
     response = agent.query_with_chat(question)
     print(response)
     # call embeddings
-    data = agent.embedding(question)
-    print(data)
+    if environment == "prod":
+        data = agent.embedding(question)
+        print(data)
 
 
 @app.command()
@@ -71,6 +73,15 @@ def news_agent() -> None:
     # execute
     response = agent.query_news()
     print(response)
+
+
+@app.command()
+def embedding() -> None:
+    """Embedding command."""
+    logger.debug("embedding()")
+
+    # load embedding JSON file
+    load_embedding()
 
 
 @app.command()

@@ -57,9 +57,11 @@ lint2:
 .PHONY: run
 run:
 	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
-	# PYTHONPATH=src python -m src.cli.main custom-tech-agent
+	# PYTHONPATH=src python -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main custom-tech-chat-agent --question "What is an advantage of using Rust?"
 	PYTHONPATH=src uv run -m src.cli.main news-agent
 	PYTHONPATH=src uv run -m src.cli.main debug
+	PYTHONPATH=src uv run -m src.cli.main embedding
 
 # Note: run local llm first
 .PHONY: run-with-local-llm
