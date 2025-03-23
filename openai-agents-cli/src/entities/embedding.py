@@ -22,3 +22,7 @@ class Embedding:
             index=dict_obj.get("index", 0),
             object_type=dict_obj.get("object", "embedding"),
         )
+
+    def __repr__(self) -> str:
+        """Representation of the Embedding object."""
+        return f"Embedding(index={self.index}, embedding={self.embedding}, object='{self.object}')"

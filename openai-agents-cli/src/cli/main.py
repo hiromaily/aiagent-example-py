@@ -81,13 +81,8 @@ def embedding() -> None:
     logger.debug("embedding()")
 
     # load embedding JSON file
-    load_embedding()
-
-
-@app.command()
-def debug() -> None:
-    """Debug command."""
-    logger.debug("debug()")
+    embedding_list = load_embedding()
+    print(embedding_list)
 
 
 @app.callback()
