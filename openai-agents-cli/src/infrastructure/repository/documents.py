@@ -1,7 +1,7 @@
 """Documents VectorDB repository class."""
 
-from pgvector.psycopg2 import register_vector
 from loguru import logger
+from pgvector.psycopg2 import register_vector
 
 from entities.embedding import Embedding
 from infrastructure.pgvector.client import PgVectorClient
@@ -28,7 +28,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
 
         query = "INSERT INTO embeddings (embedding) VALUES (%s)"
         for embedding in data:
-            #logger.debug(f"embedding.embedding: {embedding.embedding}")    
+            # logger.debug(f"embedding.embedding: {embedding.embedding}")
             cur.execute(query, (embedding.embedding,))
             self._pg_vector_client.get_conn().commit()
 

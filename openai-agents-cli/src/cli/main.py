@@ -7,15 +7,41 @@ from dotenv import load_dotenv
 from loguru import logger
 
 from registry.registry import DependencyRegistry
-from use_cases.custom_agent import CustomTechnicalAgent
+from use_cases.custom_agent import APIMode, CustomTechnicalAgent
 from use_cases.load_embedding import load_embedding
 
 # Create a Typer app
 app = typer.Typer()
 
 
+def query(question: str, mode: APIMode) -> None:
+    """Query function."""
+    logger.debug("query()")
+
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment)
+    openai_client = registry.get_openai_client()
+    agent = CustomTechnicalAgent(openai_client)
+
+    # execute
+    response = agent.query_tech_guide(question, mode)
+    print(response)
+    # call embeddings
+    if environment != "prod":
+        return
+
+    # call embeddings API
+    embedding_list = agent.embedding(question)
+    print(embedding_list)
+    # Insert into DB
+    logger.debug("insert into db")
+    docs_repo = registry.get_docs_repository()
+    docs_repo.insert_embeddings(embedding_list)
+    docs_repo.close()
+
+
 @app.command()
-def custom_tech_agent(
+def query_tech_guide(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
     """Custom technology agent."""
@@ -25,18 +51,11 @@ def custom_tech_agent(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
-    openai_client = registry.get_openai_client()
-    agent = CustomTechnicalAgent(openai_client)
-
-    # execute
-    response = agent.query(question)
-    print(response)
+    query(question, APIMode.RESPONSE_API)
 
 
 @app.command()
-def custom_tech_chat_agent(
+def query_tech_guide_chat(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
     """Custom technology agent."""
@@ -46,23 +65,12 @@ def custom_tech_chat_agent(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
-    openai_client = registry.get_openai_client()
-    agent = CustomTechnicalAgent(openai_client)
-
-    # execute
-    response = agent.query_with_chat(question)
-    print(response)
-    # call embeddings
-    if environment == "prod":
-        data = agent.embedding(question)
-        print(data)
+    query(question, APIMode.CHAT_COMPLETION_API)
 
 
 @app.command()
 def news_agent() -> None:
-    """News agent."""
+    """News agent by web search."""
     logger.debug("news_agent()")
 
     environment = os.getenv("APP_ENV", "dev")
@@ -83,7 +91,6 @@ def embedding() -> None:
 
     # load embedding JSON file
     embedding_list = load_embedding()
-    #print(embedding_list)
 
     # Insert into DB
     logger.debug("insert into db")

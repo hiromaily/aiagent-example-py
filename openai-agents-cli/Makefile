@@ -56,16 +56,15 @@ lint2:
 ###############################################################################
 .PHONY: run
 run:
-	PYTHONPATH=src uv run -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
-	# PYTHONPATH=src python -m src.cli.main custom-tech-agent --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main custom-tech-chat-agent --question "What is an advantage of using Rust?"
+	PYTHONPATH=src uv run -m src.cli.main query_tech_guide --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query_tech_guide_chat --question "What is an advantage of using Rust?"
 	PYTHONPATH=src uv run -m src.cli.main news-agent
 	PYTHONPATH=src uv run -m src.cli.main embedding
 
 # Note: run local llm first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --local custom-tech-chat-agent --question "What is an advantage of using Rust?"
+	PYTHONPATH=src uv run -m src.cli.main --local query_tech_guide_chat --question "What is an advantage of using Rust?"
 
 
 ###############################################################################
@@ -86,3 +85,5 @@ clean-cache:
 .PHONY: load-lms
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
+	lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
+	
