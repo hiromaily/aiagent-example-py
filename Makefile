@@ -1,3 +1,14 @@
+PG_MAJOR = 17
+EXTVERSION = 0.8.0
+
+###############################################################################
+# Vector Database
+# - pgvector
+###############################################################################
+# .PHONY: docker-build
+# docker-build:
+# 	PG_MAJOR=$(PG_MAJOR) EXTVERSION=$(EXTVERSION) docker compose build db
+
 
 ###############################################################################
 # Utilities

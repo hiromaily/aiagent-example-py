@@ -9,6 +9,7 @@ from loguru import logger
 from registry.registry import DependencyRegistry
 from use_cases.custom_agent import CustomTechnicalAgent
 
+
 # Create a Typer app
 app = typer.Typer()
 
