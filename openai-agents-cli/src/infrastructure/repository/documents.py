@@ -34,6 +34,14 @@ class DocumentsRepository(DocumentsRepositoryInterface):
 
         cur.close()
 
+    # WIP: Implement similarity search
+    def similarity_search(self, embedding: Embedding, top_k: int = 5) -> list[str]:
+        """Execute similarity search."""
+        cur = self._pg_vector_client.get_cursor()
+        query = "SELECT content FROM documents ORDER BY embedding <=> %s LIMIT %s"
+        cur.execute(query, (embedding, top_k))
+        return cur.fetchall()
+
     def close(self) -> None:
         """Close connection."""
         self._pg_vector_client.close()

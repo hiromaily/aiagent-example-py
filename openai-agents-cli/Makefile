@@ -66,6 +66,15 @@ run:
 run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local query_tech_guide_chat --question "What is an advantage of using Rust?"
 
+# WIP
+.PHONY: run-vector
+run-vector:
+	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	
 
 ###############################################################################
 # Utilities

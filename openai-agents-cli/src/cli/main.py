@@ -14,9 +14,9 @@ from use_cases.load_embedding import load_embedding
 app = typer.Typer()
 
 
-def query(question: str, mode: APIMode) -> None:
+def _query(question: str, mode: APIMode) -> None:
     """Query function."""
-    logger.debug("query()")
+    logger.debug("_query()")
 
     environment = os.getenv("APP_ENV", "dev")
     registry = DependencyRegistry(environment)
@@ -51,7 +51,7 @@ def query_tech_guide(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    query(question, APIMode.RESPONSE_API)
+    _query(question, APIMode.RESPONSE_API)
 
 
 @app.command()
@@ -65,7 +65,39 @@ def query_tech_guide_chat(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    query(question, APIMode.CHAT_COMPLETION_API)
+    _query(question, APIMode.CHAT_COMPLETION_API)
+
+
+def query(
+    question: str = typer.Option("", "--question", "-q", help="Question to ask the agent."),
+) -> None:
+    """Chat agent."""
+    logger.debug("query()")
+
+    if question == "":
+        msg = "parameter `--question` must be provided"
+        raise ValueError(msg)
+
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment)
+    openai_client = registry.get_openai_client()
+    agent = CustomTechnicalAgent(openai_client)
+
+    # execute
+    response = agent.query(question, APIMode.CHAT_COMPLETION_API)
+    print(response)
+    # call embeddings
+    if environment != "prod":
+        return
+
+    # call embeddings API
+    embedding_list = agent.embedding(question)
+    print(embedding_list)
+    # Insert into DB
+    logger.debug("insert into db")
+    docs_repo = registry.get_docs_repository()
+    docs_repo.insert_embeddings(embedding_list)
+    docs_repo.close()
 
 
 @app.command()

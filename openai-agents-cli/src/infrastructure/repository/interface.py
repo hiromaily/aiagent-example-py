@@ -13,5 +13,9 @@ class DocumentsRepositoryInterface(ABC):
         """Execute insert."""
 
     @abstractmethod
+    def similarity_search(self, embedding: Embedding, top_k: int) -> list[str]:
+        """Execute similarity search."""
+
+    @abstractmethod
     def close(self) -> None:
         """Close connection."""
