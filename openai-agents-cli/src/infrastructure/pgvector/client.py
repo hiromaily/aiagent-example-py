@@ -37,3 +37,7 @@ class PgVectorClient:
     def get_cursor(self) -> psycopg2.extensions.cursor:
         """Get cursor."""
         return self._conn.cursor()
+
+    def close(self) -> None:
+        """Close connection."""
+        return self._conn.close()

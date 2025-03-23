@@ -1,11 +1,11 @@
 CREATE EXTENSION vector;
 
-CREATE TABLE items (
+CREATE TABLE embeddings (
     id bigserial PRIMARY KEY, 
-    embedding vector(3)
+    embedding vector(1536)
 );
 
-CREATE TABLE documents (
+CREATE TABLE item_contents (
     id SERIAL PRIMARY KEY,
     content TEXT,
     embedding VECTOR(1536)

@@ -1,8 +1,10 @@
 """Documents VectorDB repository class."""
 
 from pgvector.psycopg2 import register_vector
+from loguru import logger
 
-from infrastructure.pgvector.conn import PgVectorClient
+from entities.embedding import Embedding
+from infrastructure.pgvector.client import PgVectorClient
 from infrastructure.repository.interface import DocumentsRepositoryInterface
 
 
@@ -17,11 +19,21 @@ class DocumentsRepository(DocumentsRepositoryInterface):
 
         self._pg_vector_client = pg_vector_client
 
-    def insert_embeddings(self, data: str) -> None:
+    def insert_embeddings(self, data: list[Embedding]) -> None:
         """Insert data into Vector DB."""
+        logger.debug("DocumentsRepository.insert_embeddings()")
+
         register_vector(self._pg_vector_client.get_conn())
         cur = self._pg_vector_client.get_cursor()
-        cur.execute(
-            "INSERT INTO documents (content, embedding) VALUES %s", [(d["content"], d["embedding"]) for d in data]
-        )
+
+        query = "INSERT INTO embeddings (embedding) VALUES (%s)"
+        for embedding in data:
+            #logger.debug(f"embedding.embedding: {embedding.embedding}")    
+            cur.execute(query, (embedding.embedding,))
+            self._pg_vector_client.get_conn().commit()
+
         cur.close()
+
+    def close(self) -> None:
+        """Close connection."""
+        self._pg_vector_client.close()

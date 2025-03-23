@@ -79,10 +79,19 @@ def news_agent() -> None:
 def embedding() -> None:
     """Embedding command."""
     logger.debug("embedding()")
+    environment = os.getenv("APP_ENV", "dev")
 
     # load embedding JSON file
     embedding_list = load_embedding()
-    print(embedding_list)
+    #print(embedding_list)
+
+    # Insert into DB
+    logger.debug("insert into db")
+    registry = DependencyRegistry(environment)
+    docs_repo = registry.get_docs_repository()
+    docs_repo.insert_embeddings(embedding_list)
+
+    docs_repo.close()
 
 
 @app.callback()

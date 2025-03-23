@@ -2,6 +2,9 @@
 
 import os
 
+from infrastructure.pgvector.client import PgVectorClient
+from infrastructure.repository.documents import DocumentsRepository
+from infrastructure.repository.interface import DocumentsRepositoryInterface
 from openai_custom.client import OpenAIClient
 from openai_custom.dymmy import OpenAIDummyClient
 from openai_custom.interface import OpenAIClientInterface
@@ -14,6 +17,8 @@ class DependencyRegistry:
         """Initialize the DependencyRegistry with the environment."""
         self._environment = environment
         self._openai_client = self._build_openai_client()
+        self._pg_client = self._build_pg_client()
+        self._documents_repository = self._build_documents_repository()
 
     def _build_openai_client(self) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
@@ -44,6 +49,24 @@ class DependencyRegistry:
 
         return openai_client
 
+    def _build_pg_client(self) -> PgVectorClient:
+        """Build the PostgreSQL client."""
+        host = os.getenv("PG_HOST")
+        port = os.getenv("PG_PORT")
+        db_name = os.getenv("PG_DB_NAME")
+        user = os.getenv("PG_USER")
+        password = os.getenv("PG_PASSWORD")
+
+        return PgVectorClient(host=host, port=port, db_name=db_name, user=user, password=password)
+
+    def _build_documents_repository(self) -> DocumentsRepositoryInterface:
+        """Build the DocumentsRepository."""
+        return DocumentsRepository(self._pg_client)
+
     def get_openai_client(self) -> OpenAIClientInterface:
         """Get the OpenAI client."""
         return self._openai_client
+
+    def get_docs_repository(self) -> DocumentsRepositoryInterface:
+        """Get the Documents Repository."""
+        return self._documents_repository
