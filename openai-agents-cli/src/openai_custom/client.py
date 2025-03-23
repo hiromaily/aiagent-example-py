@@ -1,6 +1,6 @@
 """OpenAI module class."""
 
-from openai import OpenAI
+from openai import Embedding, OpenAI
 
 from openai_custom.interface import OpenAIClientInterface
 
@@ -49,6 +49,12 @@ class OpenAIClient(OpenAIClientInterface):
             ],
         )
         return completion.choices[0].message.content
+
+    def call_embeddings(self, prompt: str | list[str]) -> list[Embedding]:
+        """Call Embeddings API."""
+        response = self._client.embeddings.create(model="text-embedding-ada-002", input=prompt, encoding_format="float")
+        # return response.data[0].embedding
+        return response.data
 
     def call_web_search(self, prompt: str) -> str:
         """Call Web Search API."""

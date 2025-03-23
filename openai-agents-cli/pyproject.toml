@@ -8,6 +8,8 @@ dependencies = [
     "loguru>=0.7.3",
     "openai>=1.66.3",
     "openai-agents>=0.0.4",
+    "pgvector>=0.4.0",
+    "psycopg2-binary>=2.9.10",
     "python-dotenv>=1.0.1",
     "typer>=0.15.2",
 ]

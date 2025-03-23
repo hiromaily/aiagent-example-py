@@ -1,7 +1,7 @@
 # Refer to: https://docs.influxdata.com/influxdb/v2/install/use-docker-compose/
 services:
-  db:
-    # https://hub.docker.com/r/pgvector/pgvector
+  # https://hub.docker.com/r/pgvector/pgvector
+  pgvector-db:
     image: pgvector/pgvector:0.8.0-pg17
     # build:
     #   context: ./docker/postgres
@@ -17,8 +17,34 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgvector-data:/var/lib/postgresql/data
       - ./docker/postgres/sqls/:/docker-entrypoint-initdb.d/
 
+  # https://docs.pinecone.io/guides/operations/local-development
+  dense-index:
+    image: ghcr.io/pinecone-io/pinecone-index:latest
+    container_name: dense-index
+    environment:
+      PORT: 5081
+      INDEX_TYPE: serverless
+      VECTOR_TYPE: dense
+      DIMENSION: 2
+      METRIC: cosine
+    ports:
+      - "5081:5081"
+    platform: linux/amd64
+  sparse-index:
+    image: ghcr.io/pinecone-io/pinecone-index:latest
+    container_name: sparse-index
+    environment:
+      PORT: 5082
+      INDEX_TYPE: serverless
+      VECTOR_TYPE: sparse
+      DIMENSION: 0
+      METRIC: dotproduct
+    ports:
+      - "5082:5082"
+    platform: linux/amd64
+
 volumes:
-  pgdata:
+  pgvector-data:

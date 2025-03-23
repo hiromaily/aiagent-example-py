@@ -1,5 +1,7 @@
 """Custom Agent Use Case."""
 
+from openai import Embedding
+
 from openai_custom.interface import OpenAIClientInterface
 
 
@@ -39,6 +41,10 @@ class CustomTechnicalAgent:
         """
 
         return self.openai_client.call_chat_completion(instructions, prompt)
+
+    def embedding(self, user_query: str) -> list[Embedding]:
+        """Call embedding API with a user question."""
+        return self.openai_client.call_embeddings(user_query)
 
     def query_news(self) -> str:
         """Query about news."""

@@ -9,7 +9,6 @@ from loguru import logger
 from registry.registry import DependencyRegistry
 from use_cases.custom_agent import CustomTechnicalAgent
 
-
 # Create a Typer app
 app = typer.Typer()
 
@@ -54,6 +53,9 @@ def custom_tech_chat_agent(
     # execute
     response = agent.query_with_chat(question)
     print(response)
+    # call embeddings
+    data = agent.embedding(question)
+    print(data)
 
 
 @app.command()
