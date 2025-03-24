@@ -2,6 +2,8 @@
 
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 from entities.embedding import Embedding
 
 
@@ -13,7 +15,15 @@ class DocumentsRepositoryInterface(ABC):
         """Execute insert."""
 
     @abstractmethod
-    def similarity_search(self, embedding: Embedding, top_k: int) -> list[str]:
+    def insert_item_contents(self, contents: list[str], embeddings: list[Embedding]) -> None:
+        """Execute insert."""
+
+    @abstractmethod
+    def get_item_by_id(self, item_id: int) -> tuple[int, str, np.ndarray] | None:
+        """Get content and embedding by id."""
+
+    @abstractmethod
+    def similarity_search(self, embedding: Embedding, top_k: int) -> list[tuple[str]] | None:
         """Execute similarity search."""
 
     @abstractmethod

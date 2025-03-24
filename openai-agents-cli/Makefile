@@ -54,26 +54,28 @@ lint2:
 ###############################################################################
 # Execution
 ###############################################################################
-.PHONY: run
-run:
-	PYTHONPATH=src uv run -m src.cli.main query_tech_guide --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query_tech_guide_chat --question "What is an advantage of using Rust?"
+.PHONY: run-example
+run-example:
+	PYTHONPATH=src uv run -m src.cli.main query-tech-guide --question "What is an advantage of using Python?"
+	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --question "What is an advantage of using Rust?"
 	PYTHONPATH=src uv run -m src.cli.main news-agent
 	PYTHONPATH=src uv run -m src.cli.main embedding
+	PYTHONPATH=src uv run -m src.cli.main search-similarity --id 1
+	
 
 # Note: run local llm first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --local query_tech_guide_chat --question "What is an advantage of using Rust?"
+	PYTHONPATH=src uv run -m src.cli.main --local query-tech-guide-chat --question "What is an advantage of using Rust?"
 
 # WIP
 .PHONY: run-vector
 run-vector:
-	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	# PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
+	# PYTHONPATH=src uv run -m src.cli.main query --question "What types of curry are there?"
+	# PYTHONPATH=src uv run -m src.cli.main query --question "Give me the recipe for chicken curry"
+	# PYTHONPATH=src uv run -m src.cli.main query --question "What is the largest river in Japan?"
+	# PYTHONPATH=src uv run -m src.cli.main query --question "How far is it between Tokyo and Osaka?"
 	
 
 ###############################################################################

@@ -34,7 +34,7 @@ def _query(question: str, mode: APIMode) -> None:
     embedding_list = agent.embedding(question)
     print(embedding_list)
     # Insert into DB
-    logger.debug("insert into db")
+    logger.debug("insert into db `embeddings`")
     docs_repo = registry.get_docs_repository()
     docs_repo.insert_embeddings(embedding_list)
     docs_repo.close()
@@ -68,6 +68,7 @@ def query_tech_guide_chat(
     _query(question, APIMode.CHAT_COMPLETION_API)
 
 
+@app.command()
 def query(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the agent."),
 ) -> None:
@@ -91,12 +92,13 @@ def query(
         return
 
     # call embeddings API
+    logger.debug("call agent.embedding()")
     embedding_list = agent.embedding(question)
     print(embedding_list)
     # Insert into DB
-    logger.debug("insert into db")
+    logger.debug("insert into db `item_contents`")
     docs_repo = registry.get_docs_repository()
-    docs_repo.insert_embeddings(embedding_list)
+    docs_repo.insert_item_contents([question], embedding_list)
     docs_repo.close()
 
 
@@ -131,6 +133,31 @@ def embedding() -> None:
     docs_repo.insert_embeddings(embedding_list)
 
     docs_repo.close()
+
+
+@app.command()
+def search_similarity(
+    content_id: int = typer.Option(0, "--id", "-q", help="item_contents.id."),
+) -> None:
+    """Search similarity."""
+    logger.debug("search_similarity()")
+
+    if content_id == 0:
+        msg = "parameter `--id` must be provided"
+        raise ValueError(msg)
+
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment)
+    docs_repo = registry.get_docs_repository()
+    # Search target item_content from DB `item_contents`
+    result = docs_repo.get_item_by_id(content_id)
+    if result is None:
+        return
+
+    # Search similarity
+    logger.debug("search similarity")
+    similarities = docs_repo.similarity_search(result[1], 3)
+    print(similarities)
 
 
 @app.callback()
