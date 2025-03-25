@@ -5,7 +5,12 @@ from dotenv import load_dotenv
 
 # from openai.client import OpenAIClient
 # from use_cases.custom_agent import CustomTechnicalAgent
-from use_cases.check_docs_agent import check_up_docs, check_up_openai_docs, check_up_openai_embedded_docs
+from use_cases.check_docs_agent import (
+    check_up_docs,
+    check_up_lmstudio_docs,
+    check_up_openai_docs,
+    check_up_openai_embedded_docs,
+)
 
 # load .env file
 load_dotenv()
@@ -30,6 +35,12 @@ def docs_openai_agent() -> None:
 def docs_openai_embedded_agent() -> None:
     """Checking up documents with OpenAI agent."""
     check_up_openai_embedded_docs()
+
+
+@app.command()
+def docs_lmstudio_agent() -> None:
+    """Checking up documents with LMStudio agent."""
+    check_up_lmstudio_docs()
 
 
 if __name__ == "__main__":
