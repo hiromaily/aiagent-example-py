@@ -27,7 +27,7 @@ def check_up_docs() -> None:
 
 
 def check_up_openai_docs() -> None:
-    """Check up documents with OpenAI LLM."""
+    """Check up documents with OpenAI specific model."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()
 

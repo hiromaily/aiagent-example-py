@@ -63,7 +63,6 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         cur.close()
         return item
 
-    # WIP: Implement similarity search
     def similarity_search(self, embedding: np.ndarray, top_k: int = 5) -> list[tuple[str]] | None:
         """Execute similarity search."""
         cur = self._pg_vector_client.get_cursor()
