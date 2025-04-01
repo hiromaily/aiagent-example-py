@@ -162,7 +162,7 @@ def search_similarity(
 
 @app.callback()
 def main(local: bool = False) -> None:
-    """Frist endpoint after app()."""
+    """First endpoint after app()."""
     logger.debug("main()")
 
     # load .env file

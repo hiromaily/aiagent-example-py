@@ -9,6 +9,7 @@ dependencies = [
     "llama-index-core>=0.12.24.post1",
     "llama-index-llms-lmstudio>=0.3.0",
     "llama-index-llms-openai>=0.3.25",
+    "loguru>=0.7.3",
     "openai>=1.66.3",
     "python-dotenv>=1.0.1",
     "typer>=0.15.2",
@@ -36,7 +37,7 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["COM812", "D104", "ERA001", "ISC001", "T201"]
+ignore = ["COM812", "D104", "ERA001", "FBT001", "FBT002", "ISC001", "T201"]
 unfixable = ["F401", "F841"]
 pydocstyle.convention = "google"
 per-file-ignores = { "tests/**/*.py" = ["D", "S101", "N802", "ARG"] }

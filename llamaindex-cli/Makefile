@@ -60,6 +60,12 @@ run-example:
 	PYTHONPATH=src uv run -m src.cli.main docs-openai-embedded-agent
 	PYTHONPATH=src uv run -m src.cli.main docs-lmstudio-agent
 
+# Use local LLM API server
+# Note: run `lms load` first
+.PHONY: run-with-local-llm
+run-with-local-llm:
+	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
+
 ###############################################################################
 # Utilities
 ###############################################################################

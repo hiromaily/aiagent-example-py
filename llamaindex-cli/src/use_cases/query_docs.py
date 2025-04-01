@@ -5,10 +5,10 @@ import os
 from llama_index.core import Document, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.embeddings.openai import OpenAIEmbedding
 
-from llm.models import create_lmstudio_llm, create_openai_llm
+from infrastructure.llm.models import create_lmstudio_llm, create_openai_llm
 
 
-def check_up_docs() -> None:
+def check_up_docs_default() -> None:
     """Check up documents."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()

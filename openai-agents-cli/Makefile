@@ -61,8 +61,8 @@ run-example:
 	PYTHONPATH=src uv run -m src.cli.main embedding
 	PYTHONPATH=src uv run -m src.cli.main search-similarity --id 1
 	
-
-# Note: run local llm first
+# Use local LLM API server
+# Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local query-tech-guide-chat --question "What is an advantage of using Rust?"
