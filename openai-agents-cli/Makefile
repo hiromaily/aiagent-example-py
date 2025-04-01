@@ -43,12 +43,11 @@ deactivate:
 lint:
 	uvx ruff format src
 	uvx ruff check --fix src
-	# uvx isort src
-	# uvx black src
-	# uvx flake8 src
 
 .PHONY: lint2
 lint2:
+	uvx isort src
+	uvx black src
 	uv run task flake8
 
 ###############################################################################
