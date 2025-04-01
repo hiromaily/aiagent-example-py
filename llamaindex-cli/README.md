@@ -7,3 +7,14 @@
   - [LlamaIndex: LM Studio](https://docs.llamaindex.ai/en/stable/examples/llm/lmstudio/)
   - Ollama: `baseUrl: "http://localhost:11434/v1"`
 - [ ] Integrate Vector Database
+
+## WIP
+
+When using LM Studio with environment variable `OPENAI_API_KEY=lm-studio`, the following error occurs.
+Why OpenAPI Key is required?
+
+```txt
+AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: lm-studio. You can find
+your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None,
+'code': 'invalid_api_key'}}
+```

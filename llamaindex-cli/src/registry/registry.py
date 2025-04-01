@@ -1,6 +1,7 @@
 """Registry Class."""
 
 import os
+from loguru import logger
 
 from llama_index.core import Document, VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
@@ -24,14 +25,15 @@ class DependencyRegistry:
         """Build the LLM based on the environment."""
         if self._environment == "prod":
             # use OpenAI API
+            logger.debug("use OpenAI API")
             # Create an LLM (Language Model)
             model = os.getenv("OPENAI_MODEL")
             llm = create_openai_llm(model, 0.5)
         elif self._environment == "dev":
             # use local LLM
+            logger.debug("use local LLM")
             model = os.getenv("LMSTUDIO_MODEL")
             llm = create_lmstudio_llm(model, 0.5)
-        # elif self.environment == "test":
         else:
             msg = "Unknown environment"
             raise ValueError(msg)
@@ -40,6 +42,7 @@ class DependencyRegistry:
 
     def _build_document(self, storage_mode: str) -> Document:
         """Build the document."""
+        logger.debug(f"storage_mode: {storage_mode}")
         mode = StorageMode.from_str(storage_mode)
         return DocumentList(mode).get_document()
 

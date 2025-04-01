@@ -13,9 +13,6 @@ from use_cases.query_docs import (  # check_up_docs_default,
     check_up_openai_embedded_docs,
 )
 
-# load .env file
-load_dotenv()
-
 # Create a Typer app
 app = typer.Typer()
 
