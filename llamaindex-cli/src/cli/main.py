@@ -7,11 +7,6 @@ from dotenv import load_dotenv
 from loguru import logger
 
 from registry.registry import DependencyRegistry
-from use_cases.query_docs import (  # check_up_docs_default,
-    check_up_lmstudio_docs,
-    check_up_openai_docs,
-    check_up_openai_embedded_docs,
-)
 
 # Create a Typer app
 app = typer.Typer()
@@ -28,38 +23,16 @@ def docs_agent(
         msg = "parameter `--storage` must be provided"
         raise ValueError(msg)
 
+    # Initialization
     environment = os.getenv("APP_ENV", "dev")
     registry = DependencyRegistry(environment, storage_mode)
-    query_engine = registry.get_query()
+    docs_agent = registry.get_usecase()
 
     # Execute
-    response = query_engine.query("What is this document about?")
-    print(response, "\n")
-
-    response = query_engine.query("Summarize the content of these documents.")
-    print(response, "\n")
-    # check_up_docs_default()
-
-
-@app.command()
-def docs_openai_agent() -> None:
-    """Checking up documents with OpenAI agent."""
-    logger.debug("docs_openai_agent()")
-    check_up_openai_docs()
-
-
-@app.command()
-def docs_openai_embedded_agent() -> None:
-    """Checking up documents with OpenAI agent."""
-    logger.debug("docs_openai_embedded_agent()")
-    check_up_openai_embedded_docs()
-
-
-@app.command()
-def docs_lmstudio_agent() -> None:
-    """Checking up documents with LMStudio agent."""
-    logger.debug("docs_lmstudio_agent()")
-    check_up_lmstudio_docs()
+    if storage_mode == "dir":
+        docs_agent.check_up_docs()
+    else:
+        docs_agent.check_up_llamaindex_docs()
 
 
 @app.callback()

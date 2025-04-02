@@ -56,15 +56,15 @@ lint2:
 .PHONY: run-example
 run-example:
 	PYTHONPATH=src uv run -m src.cli.main docs-agent
-	PYTHONPATH=src uv run -m src.cli.main docs-openai-agent
-	PYTHONPATH=src uv run -m src.cli.main docs-openai-embedded-agent
-	PYTHONPATH=src uv run -m src.cli.main docs-lmstudio-agent
+	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
 
 # Use local LLM API server
 # Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
+	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --storage text
+
 
 ###############################################################################
 # Utilities
@@ -84,5 +84,7 @@ clean-cache:
 .PHONY: load-lms
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
-	lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
+	#lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
+	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
+	@#lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
 	

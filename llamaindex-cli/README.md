@@ -11,7 +11,8 @@
 ## WIP
 
 When using LM Studio with environment variable `OPENAI_API_KEY=lm-studio`, the following error occurs.
-Why OpenAPI Key is required?
+Why OpenAPI Key is required? `https://api.openai.com/v1/embeddings` seems to be called internally.
+
 
 ```txt
 AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: lm-studio. You can find

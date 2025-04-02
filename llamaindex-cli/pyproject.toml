@@ -37,7 +37,20 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["COM812", "D104", "ERA001", "FBT001", "FBT002", "ISC001", "T201"]
+ignore = [
+    "COM812",
+    "D104",
+    "ERA001",
+    "FBT001",
+    "FBT002",
+    "FIX001",
+    "FIX002",
+    "ISC001",
+    "T201",
+    "TD001",
+    "TD002",
+    "TD003",
+]
 unfixable = ["F401", "F841"]
 pydocstyle.convention = "google"
 per-file-ignores = { "tests/**/*.py" = ["D", "S101", "N802", "ARG"] }
