@@ -4,6 +4,9 @@ import os
 
 import typer
 from dotenv import load_dotenv
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.lmstudio import LMStudio
 from loguru import logger
 
 from registry.registry import DependencyRegistry
@@ -33,6 +36,34 @@ def docs_agent(
         docs_agent.check_up_docs()
     else:
         docs_agent.check_up_llamaindex_docs()
+
+
+@app.command()
+def local_llm() -> None:
+    """Use Local LLM."""
+    # Load documents from a directory
+    documents = SimpleDirectoryReader("storage").load_data()
+    # Create an LLM (Language Model)
+    llm = LMStudio(
+        model_name="llama3",
+        base_url="http://localhost:1234/v1",
+        temperature=0.5,
+    )
+    embed_model = OpenAIEmbedding(
+        model="text-embedding-ada-002",
+        api_key="lm-studio",
+        api_base="http://localhost:1234/v1",
+    )
+
+    # Create an index from the documents
+    # Note: `llm`` does not need to be set into VectorStoreIndex
+    index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
+    # Create a query engine
+    # Note: `llm`` must be set into as_query_engine() as well.
+    query_engine = index.as_query_engine(llm=llm)
+    # Run a query
+    response = query_engine.query("What is the main topic of these documents?")
+    print(response)
 
 
 @app.callback()

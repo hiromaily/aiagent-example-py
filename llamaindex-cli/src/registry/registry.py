@@ -27,14 +27,14 @@ class DependencyRegistry:
         """Build the LLM based on the environment."""
         if self._environment == "prod":
             # use OpenAI API
-            logger.debug("use OpenAI API")
-            # Create an LLM (Language Model)
             model = os.getenv("OPENAI_MODEL")
+            logger.debug(f"use OpenAI API: {model}")
+            # Create an LLM (Language Model)
             llm = create_openai_llm(model, 0.5)
         elif self._environment == "dev":
             # use local LLM
-            logger.debug("use local LLM")
             model = os.getenv("LMSTUDIO_MODEL")
+            logger.debug(f"use local LLM {model}")
             llm = create_lmstudio_llm(model, 0.5)
         else:
             msg = "Unknown environment"

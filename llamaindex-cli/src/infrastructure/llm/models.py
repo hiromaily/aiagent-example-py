@@ -15,7 +15,7 @@ def create_openai_llm(model: str | None, temperature: float = 0.5) -> OpenAI:
     return OpenAI(model=model, temperature=temperature)
 
 
-def create_lmstudio_llm(model: str | None, temperature: float = 0.5) -> LMStudio:
+def create_lmstudio_llm(model: str = "llama3", temperature: float = 0.5) -> LMStudio:
     """Create an LLM (Language Model) using LMStudio's API."""
     # FIXME: somehow `https://api.openai.com/v1/chat/completions` is called
     if not model:

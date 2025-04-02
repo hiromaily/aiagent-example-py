@@ -65,6 +65,9 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --storage text
 
+bug-pattern:
+	PYTHONPATH=src uv run -m src.cli.main --local local-llm
+
 
 ###############################################################################
 # Utilities
