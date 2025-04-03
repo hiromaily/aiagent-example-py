@@ -22,3 +22,16 @@ class TechQuestionAgent:
 
         response = self._llm.complete(prompt)
         print(response)
+
+    def ask_stream(self, question: str) -> None:
+        """Ask the question."""
+        prompt = f"""
+        Please provide the following information to answer the user's question about the technology:
+        1. Overview of the technology
+        2. Step-by-step guidance to learn the technology
+        User's question about the technology: {question}
+        """
+
+        handle = self._llm.stream_complete(prompt)
+        for token in handle:
+            print(token.delta, end="", flush=True)

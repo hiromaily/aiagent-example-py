@@ -65,6 +65,7 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --storage text
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --question "Rust"
+	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --local local-llm
 
 

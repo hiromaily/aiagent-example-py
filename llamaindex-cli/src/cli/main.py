@@ -41,6 +41,7 @@ def docs_agent(
 @app.command()
 def tech_question_agent(
     question: str = typer.Option("", "--question", "-q", help="question to ask"),
+    stream: bool = False,
 ) -> None:
     """Answer the question."""
     logger.debug("tech_question_agent()")
@@ -55,7 +56,10 @@ def tech_question_agent(
     tech_question_agent = registry.get_tech_question_docs_usecase()
 
     # Execute
-    tech_question_agent.ask(question)
+    if stream:
+        tech_question_agent.ask_stream(question)
+    else:
+        tech_question_agent.ask(question)
 
 
 @app.command()
