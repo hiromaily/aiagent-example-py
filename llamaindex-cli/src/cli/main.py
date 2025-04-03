@@ -28,8 +28,8 @@ def docs_agent(
 
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, storage_mode)
-    docs_agent = registry.get_usecase()
+    registry = DependencyRegistry(environment)
+    docs_agent = registry.get_query_docs_usecase(storage_mode)
 
     # Execute
     if storage_mode == "dir":
@@ -39,8 +39,28 @@ def docs_agent(
 
 
 @app.command()
+def tech_question_agent(
+    question: str = typer.Option("", "--question", "-q", help="question to ask"),
+) -> None:
+    """Answer the question."""
+    logger.debug("tech_question_agent()")
+
+    if question == "":
+        msg = "parameter `--question` must be provided"
+        raise ValueError(msg)
+
+    # Initialization
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment)
+    tech_question_agent = registry.get_tech_question_docs_usecase()
+
+    # Execute
+    tech_question_agent.ask(question)
+
+
+@app.command()
 def local_llm() -> None:
-    """Use Local LLM."""
+    """Use Local LLM. For just example."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()
     # Create an LLM (Language Model)

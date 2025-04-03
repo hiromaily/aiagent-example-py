@@ -53,10 +53,10 @@ lint2:
 ###############################################################################
 # Execution
 ###############################################################################
-.PHONY: run-example
-run-example:
-	PYTHONPATH=src uv run -m src.cli.main docs-agent
-	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
+# .PHONY: run-example
+# run-example:
+# 	PYTHONPATH=src uv run -m src.cli.main docs-agent
+# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
 
 # Use local LLM API server
 # Note: run `lms load` first
@@ -64,8 +64,7 @@ run-example:
 run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --storage text
-
-bug-pattern:
+	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --question "Rust"
 	PYTHONPATH=src uv run -m src.cli.main --local local-llm
 
 
@@ -87,7 +86,6 @@ clean-cache:
 .PHONY: load-lms
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
-	#lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
 	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
 	@#lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
 	

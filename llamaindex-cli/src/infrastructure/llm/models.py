@@ -1,5 +1,7 @@
 """Create an LLM (Language Model) using OpenAI's API."""
 
+from llama_index.core import Settings
+from llama_index.core.llms import LLM
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
 from llama_index.llms.openai import OpenAI
@@ -42,3 +44,9 @@ def create_lmstudio_embedding_llm(model: str = "text-embedding-ada-002") -> Open
         api_key="lm-studio",
         api_base="http://localhost:1234/v1",
     )
+
+
+def set_global_default_llm(llm: LLM, embed_model: OpenAIEmbedding) -> None:
+    """Set global default LLM and embedding model."""
+    Settings.llm = llm
+    Settings.embed_model = embed_model
