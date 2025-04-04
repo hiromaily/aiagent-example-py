@@ -1,5 +1,6 @@
 """main function for the CLI app."""
 
+import asyncio
 import os
 
 import typer
@@ -10,13 +11,18 @@ from llama_index.llms.lmstudio import LMStudio
 from loguru import logger
 
 from registry.registry import DependencyRegistry
+from use_cases.tool import ToolAgent
 
 # Create a Typer app
 app = typer.Typer()
 
+# OPENAI_MODEL=gpt-4o
+# LMSTUDIO_MODEL=llama3
+
 
 @app.command()
 def docs_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     storage_mode: str = typer.Option("dir", "--storage", "-s", help="storage mode. text or dir"),
 ) -> None:
     """Checking up documents agent."""
@@ -28,7 +34,7 @@ def docs_agent(
 
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    registry = DependencyRegistry(environment, model)
     docs_agent = registry.get_query_docs_usecase(storage_mode)
 
     # Execute
@@ -40,8 +46,10 @@ def docs_agent(
 
 @app.command()
 def tech_question_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="question to ask"),
     stream: bool = False,
+    chat: bool = False,
 ) -> None:
     """Answer the question."""
     logger.debug("tech_question_agent()")
@@ -52,14 +60,58 @@ def tech_question_agent(
 
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    registry = DependencyRegistry(environment, model)
     tech_question_agent = registry.get_tech_question_docs_usecase()
 
     # Execute
     if stream:
         tech_question_agent.ask_stream(question)
+    elif chat:
+        tech_question_agent.ask_by_chat(question)
     else:
         tech_question_agent.ask(question)
+
+
+@app.command()
+def query_image_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    image_path: str = typer.Option("", "--image", "-i", help="image path to query"),
+) -> None:
+    """Query about image."""
+    logger.debug("query_image_agent()")
+
+    if image_path == "":
+        msg = "parameter `--image` must be provided"
+        raise ValueError(msg)
+
+    # Initialization
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment, model)
+    query_image_agent = registry.get_query_image_usecase()
+
+    # Execute
+    query_image_agent.ask(image_path)
+
+
+@app.command()
+def calc_tool_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+) -> None:
+    """Calc Tool Agent."""
+    logger.debug("calc_tool_agent()")
+
+    # Initialization
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment, model)
+    calc_tool_agent = registry.get_tool_usecase()
+
+    # Execute
+    asyncio.run(_async_calc_tool_agent(calc_tool_agent))
+
+
+async def _async_calc_tool_agent(calc_tool_agent: ToolAgent) -> None:
+    """Calc Tool Agent for Async."""
+    await calc_tool_agent.ask_calc()
 
 
 @app.command()

@@ -57,15 +57,23 @@ lint2:
 # run-example:
 # 	PYTHONPATH=src uv run -m src.cli.main docs-agent
 # 	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
+#	PYTHONPATH=src uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
+#	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent
+
 
 # Use local LLM API server
 # Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --local docs-agent
-	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --storage text
-	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --question "Rust"
-	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --question "Rust" --stream
+	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3
+	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3 --storage text
+	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust"
+	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --stream
+	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --chat
+	# WIP
+	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3
+	# `llama3` model can't handle images
+	#PYTHONPATH=src uv run -m src.cli.main --local query-image-agent --model llama3 --image "./images/dog.jpg"
 	PYTHONPATH=src uv run -m src.cli.main --local local-llm
 
 
@@ -87,6 +95,8 @@ clean-cache:
 .PHONY: load-lms
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
+	# For embedding
 	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
-	@#lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
-	
+	# For FunctionCallingLLM
+	lms load hermes-2-pro-llama-3-8b --identifier "hermes-3"
+	#lms load mistral-7b-instruct-v0.3 --identifier "mistral"
