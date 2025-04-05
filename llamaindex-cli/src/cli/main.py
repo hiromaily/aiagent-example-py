@@ -96,6 +96,7 @@ def query_image_agent(
 @app.command()
 def calc_tool_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    question: str = typer.Option("What is 1 + 1?", "--question", "-q", help="question to ask"),
 ) -> None:
     """Calc Tool Agent."""
     logger.debug("calc_tool_agent()")
@@ -106,12 +107,12 @@ def calc_tool_agent(
     calc_tool_agent = registry.get_tool_usecase()
 
     # Execute
-    asyncio.run(_async_calc_tool_agent(calc_tool_agent))
+    asyncio.run(_async_calc_tool_agent(calc_tool_agent, question))
 
 
-async def _async_calc_tool_agent(calc_tool_agent: ToolAgent) -> None:
+async def _async_calc_tool_agent(calc_tool_agent: ToolAgent, question: str) -> None:
     """Calc Tool Agent for Async."""
-    await calc_tool_agent.ask_calc()
+    await calc_tool_agent.ask_calc(question)
 
 
 @app.command()

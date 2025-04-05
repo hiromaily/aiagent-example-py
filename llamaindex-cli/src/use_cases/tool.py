@@ -12,7 +12,7 @@ class ToolAgent:
         self._llm = llm
         self._workflow = workflow
 
-    async def ask_calc(self) -> None:
+    async def ask_calc(self, question: str) -> None:
         """Ask the calculation()."""
-        response = await self._workflow.run(user_msg="What is 20+(2*4)?")
+        response = await self._workflow.run(user_msg=question)
         print(response)

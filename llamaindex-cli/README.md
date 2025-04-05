@@ -8,6 +8,8 @@
   - Ollama: `baseUrl: "http://localhost:11434/v1"`
 - [ ] Integrate Vector Database
 
+## [LlamaIndex: Agent Tools](https://llamahub.ai/?tab=tools)
+
 ## Issues
 
 When using LM Studio with environment variable `OPENAI_API_KEY=lm-studio`, the following error occurs.

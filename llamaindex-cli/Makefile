@@ -58,7 +58,7 @@ lint2:
 # 	PYTHONPATH=src uv run -m src.cli.main docs-agent
 # 	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
 #	PYTHONPATH=src uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
-#	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent
+#	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
 
 
 # Use local LLM API server
@@ -71,7 +71,7 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --chat
 	# WIP
-	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3
+	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
 	# `llama3` model can't handle images
 	#PYTHONPATH=src uv run -m src.cli.main --local query-image-agent --model llama3 --image "./images/dog.jpg"
 	PYTHONPATH=src uv run -m src.cli.main --local local-llm
