@@ -1,12 +1,11 @@
 """Registry Class."""
 
 from llama_index.core import Document, VectorStoreIndex
-from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms import LLM
 from loguru import logger
 
-from entities.ai_tools import add, multiply
+from agents.workflow import build_financial_tool_workflow, build_mathematical_tool_workflow
 from infrastructure.llm.models import create_lmstudio_embedding_llm, create_lmstudio_llm, create_openai_llm
 from infrastructure.storages.document import DocumentList, StorageMode
 from use_cases.query_docs import DocsAgent
@@ -23,17 +22,17 @@ class DependencyRegistry:
         self._environment = environment
         self._llm = self._build_llm(model)
 
-    def _build_llm(self, model: str) -> LLM:
+    def _build_llm(self, model: str, temperature: float = 0.5) -> LLM:
         """Build the LLM based on the environment."""
         if self._environment == "prod":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {model}")
             # Create an LLM (Language Model)
-            llm = create_openai_llm(model, 0.5)
+            llm = create_openai_llm(model, temperature)
         elif self._environment == "dev":
             # use local LLM
             logger.debug(f"use local LLM {model}")
-            llm = create_lmstudio_llm(model, 0.5)
+            llm = create_lmstudio_llm(model, temperature)
         else:
             msg = "Unknown environment"
             raise ValueError(msg)
@@ -66,16 +65,6 @@ class DependencyRegistry:
         # Create a query engine
         return index.as_query_engine(self._llm)
 
-    def _build_mathematical_tool_workflow(self) -> FunctionAgent:
-        """Build the mathematical tool workflow."""
-        return FunctionAgent(
-            name="mathematical tools",
-            description="Agent that can perform basic mathematical operations.",
-            tools=[multiply, add],
-            llm=self._llm,
-            system_prompt="You are an agent that can perform basic mathematical operations using tools.",
-        )
-
     def _build_docs_usecase(self) -> DocsAgent:
         """Build the docs usecase."""
         return DocsAgent(self._query_engine)
@@ -90,7 +79,7 @@ class DependencyRegistry:
 
     def _build_tool_usecase(self) -> ToolAgent:
         """Build the query image usecase."""
-        return ToolAgent(self._llm, self._tool_workflow)
+        return ToolAgent(self._llm, self._mathematical_tool_workflow, self._financial_tool_workflow)
 
     # def get_llm(self) -> LLM:
     #     """Get the LLM."""
@@ -126,7 +115,8 @@ class DependencyRegistry:
 
     def get_tool_usecase(self) -> ToolAgent:
         """Get the tool usecase."""
-        self._tool_workflow = self._build_mathematical_tool_workflow()
+        self._mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
+        self._financial_tool_workflow = build_financial_tool_workflow(self._llm)
         self._tool_usecase = self._build_tool_usecase()
 
         return self._tool_usecase
