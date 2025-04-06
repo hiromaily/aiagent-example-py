@@ -59,6 +59,7 @@ lint2:
 # 	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
 #	PYTHONPATH=src uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
 #	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
+#	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
 
 
 # Use local LLM API server

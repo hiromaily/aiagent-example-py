@@ -20,6 +20,6 @@ class ToolAgent:
 
     async def ask_finance(self, company: str) -> None:
         """Ask the calculation()."""
-        question = f"Get the stock price of {company}"
+        question = f"What's the current stock price of {company}"
         response = await self._calc_workflow.run(user_msg=question)
         print(response)
