@@ -5,7 +5,11 @@ from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms import LLM
 from loguru import logger
 
-from agents.workflow import build_financial_tool_workflow, build_mathematical_tool_workflow
+from agents.workflow import (
+    build_financial_tavily_tool_workflow,
+    build_financial_yahoo_financial_tool_workflow,
+    build_mathematical_tool_workflow,
+)
 from infrastructure.llm.models import create_lmstudio_embedding_llm, create_lmstudio_llm, create_openai_llm
 from infrastructure.storages.document import DocumentList, StorageMode
 from use_cases.query_docs import DocsAgent
@@ -79,7 +83,16 @@ class DependencyRegistry:
 
     def _build_tool_usecase(self) -> ToolAgent:
         """Build the query image usecase."""
-        return ToolAgent(self._llm, self._mathematical_tool_workflow, self._financial_tool_workflow)
+        self._mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
+        self._yahoo_financial_tool_workflow = build_financial_yahoo_financial_tool_workflow(self._llm)
+        self._tavily_tools_workflow = build_financial_tavily_tool_workflow(self._llm)
+
+        return ToolAgent(
+            self._llm,
+            self._mathematical_tool_workflow,
+            self._yahoo_financial_tool_workflow,
+            self._tavily_tools_workflow,
+        )
 
     # def get_llm(self) -> LLM:
     #     """Get the LLM."""
@@ -115,8 +128,6 @@ class DependencyRegistry:
 
     def get_tool_usecase(self) -> ToolAgent:
         """Get the tool usecase."""
-        self._mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
-        self._financial_tool_workflow = build_financial_tool_workflow(self._llm)
         self._tool_usecase = self._build_tool_usecase()
 
         return self._tool_usecase

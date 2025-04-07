@@ -708,6 +708,19 @@ wheels = [
 ]
 
 [[package]]
+name = "llama-index-tools-tavily-research"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "llama-index-core" },
+    { name = "tavily-python" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4f/3b/fb5cf7d5fed4902829200af9b4b7cfce6676d9f8442cd542e2066944a59d/llama_index_tools_tavily_research-0.3.0.tar.gz", hash = "sha256:2b6fb6823684a63696f70fef01f13a6096068a48088f5fb95eba4919d7ca6b7f", size = 3085 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/07/9aa94120bf066ecbd5819ad5fac340968d4352c324a4f0d37587f9d1bdae/llama_index_tools_tavily_research-0.3.0-py3-none-any.whl", hash = "sha256:0fb973d56e98b3d7289e7dbedf28e687b7ada8949e67dfca7bfb468bd4ea5dbd", size = 3338 },
+]
+
+[[package]]
 name = "llama-index-tools-yahoo-finance"
 version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -742,10 +755,12 @@ dependencies = [
     { name = "llama-index-core" },
     { name = "llama-index-llms-lmstudio" },
     { name = "llama-index-llms-openai" },
+    { name = "llama-index-tools-tavily-research" },
     { name = "llama-index-tools-yahoo-finance" },
     { name = "loguru" },
     { name = "openai" },
     { name = "python-dotenv" },
+    { name = "tavily-python" },
     { name = "typer" },
 ]
 
@@ -766,10 +781,12 @@ requires-dist = [
     { name = "llama-index-core", specifier = ">=0.12.24.post1" },
     { name = "llama-index-llms-lmstudio", specifier = ">=0.3.0" },
     { name = "llama-index-llms-openai", specifier = ">=0.3.25" },
+    { name = "llama-index-tools-tavily-research", specifier = ">=0.3.0" },
     { name = "llama-index-tools-yahoo-finance", specifier = ">=0.3.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "openai", specifier = ">=1.66.3" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "tavily-python", specifier = ">=0.5.4" },
     { name = "typer", specifier = ">=0.15.2" },
 ]
 
@@ -1564,6 +1581,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c7/44/572261df3db9c6c3332f8618fafeb07a578fd18b06673c73f000f3586749/taskipy-1.14.1.tar.gz", hash = "sha256:410fbcf89692dfd4b9f39c2b49e1750b0a7b81affd0e2d7ea8c35f9d6a4774ed", size = 14475 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/55/97/4e4cfb1391c81e926bebe3d68d5231b5dbc3bb41c6ba48349e68a881462d/taskipy-1.14.1-py3-none-any.whl", hash = "sha256:6e361520f29a0fd2159848e953599f9c75b1d0b047461e4965069caeb94908f1", size = 13052 },
+]
+
+[[package]]
+name = "tavily-python"
+version = "0.5.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "requests" },
+    { name = "tiktoken" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2c/72/f36a49c2fd344b45e6f1ddab59a7f809bff4f46dcc78af7ac9758461a5bf/tavily_python-0.5.4.tar.gz", hash = "sha256:fdad5303f9f6603a06fddcc7e21b128bebc1adf7694e553a664caf87eb2d2d9d", size = 109050 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/dd/63d1d2fddcaaee040745ea58d13b54c0b1483260ddae52eb59abf691f757/tavily_python-0.5.4-py3-none-any.whl", hash = "sha256:47f8c0b41283d44849fe9531596cd26d3de42a59618ef66f9e1244d8fedba404", size = 44419 },
 ]
 
 [[package]]

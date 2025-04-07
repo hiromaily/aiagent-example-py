@@ -2,11 +2,13 @@
 
 ## TODO
 
-- [ ] Local LLM mode
+- [x] Local LLM mode
   - LM Studio: `baseUrl: "http://localhost:1234/v1"`
   - [LlamaIndex: LM Studio](https://docs.llamaindex.ai/en/stable/examples/llm/lmstudio/)
   - Ollama: `baseUrl: "http://localhost:11434/v1"`
 - [ ] Integrate Vector Database
+- [ ] Integrate [Tavily](https://tavily.com/) to retrieve the ticker symbol.
+  - [LlamaIndex: Adding other tools](https://docs.llamaindex.ai/en/stable/understanding/agent/tools/)
 
 ## [LlamaIndex: Agent Tools](https://llamahub.ai/?tab=tools)
 

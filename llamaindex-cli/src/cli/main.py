@@ -119,6 +119,7 @@ async def _async_calc_tool_agent(calc_tool_agent: ToolAgent, question: str) -> N
 def finance_tool_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     company: str = typer.Option("NVIDIA", "--company", "-q", help="company name to get stock price"),
+    tavily: bool = False,
 ) -> None:
     """Finance Tool Agent."""
     logger.debug("finance_tool_agent()")
@@ -126,16 +127,18 @@ def finance_tool_agent(
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
     registry = DependencyRegistry(environment, model)
-    calc_tool_agent = registry.get_tool_usecase()
+    tool_agent = registry.get_tool_usecase()
 
     # Execute
-    asyncio.run(_async_finance_tool_agent(calc_tool_agent, company))
+    asyncio.run(_async_finance_tool_agent(tool_agent, company, tavily))
 
 
-async def _async_finance_tool_agent(calc_tool_agent: ToolAgent, company: str) -> None:
+async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily: bool) -> None:
     """Calc Tool Agent for Async."""
-    await calc_tool_agent.ask_finance(company)
-
+    if tavily:
+        await tool_agent.ask_finance_by_tavily(company)
+    else:
+        await tool_agent.ask_finance(company)
 
 @app.command()
 def local_llm() -> None:

@@ -9,10 +9,12 @@ dependencies = [
     "llama-index-core>=0.12.24.post1",
     "llama-index-llms-lmstudio>=0.3.0",
     "llama-index-llms-openai>=0.3.25",
+    "llama-index-tools-tavily-research>=0.3.0",
     "llama-index-tools-yahoo-finance>=0.3.0",
     "loguru>=0.7.3",
     "openai>=1.66.3",
     "python-dotenv>=1.0.1",
+    "tavily-python>=0.5.4",
     "typer>=0.15.2",
 ]
 
