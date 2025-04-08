@@ -61,23 +61,26 @@ lint2:
 #	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA" --tavily
+#   # WIP:
+#	PYTHONPATH=src uv run -m src.cli.main conversation-agent --question "Hello, how are you?"
 
 
 # Use local LLM API server
 # Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
+	PYTHONPATH=src uv run -m src.cli.main --local local-llm
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3
 	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3 --storage text
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust"
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --chat
-	# WIP
+	# WIP: find proper local LLM model
 	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
-	# `llama3` model can't handle images
+	# WIP: find proper local LLM model
 	#PYTHONPATH=src uv run -m src.cli.main --local query-image-agent --model llama3 --image "./images/dog.jpg"
-	PYTHONPATH=src uv run -m src.cli.main --local local-llm
-
+	# WIP:
+	#PYTHONPATH=src uv run -m src.cli.main --local conversation-agent --model llama3 --question "Hello, how are you?"
 
 ###############################################################################
 # Utilities

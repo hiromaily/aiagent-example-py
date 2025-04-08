@@ -9,9 +9,11 @@ from agents.workflow import (
     build_financial_tavily_tool_workflow,
     build_financial_yahoo_financial_tool_workflow,
     build_mathematical_tool_workflow,
+    build_standard_workflow,
 )
 from infrastructure.llm.models import create_lmstudio_embedding_llm, create_lmstudio_llm, create_openai_llm
 from infrastructure.storages.document import DocumentList, StorageMode
+from use_cases.any_question import AnyQuestionAgent
 from use_cases.query_docs import DocsAgent
 from use_cases.query_image import QueryImageAgent
 from use_cases.tech_question import TechQuestionAgent
@@ -74,8 +76,13 @@ class DependencyRegistry:
         return DocsAgent(self._query_engine)
 
     def _build_tech_question_usecase(self) -> TechQuestionAgent:
-        """Build the docs usecase."""
+        """Build the tech question usecase."""
         return TechQuestionAgent(self._llm)
+
+    def _build_any_question_usecase(self) -> AnyQuestionAgent:
+        """Build the any question usecase."""
+        agent = build_standard_workflow(self._llm)
+        return AnyQuestionAgent(agent)
 
     def _build_query_image_usecase(self) -> QueryImageAgent:
         """Build the query image usecase."""
@@ -114,11 +121,17 @@ class DependencyRegistry:
 
         return self._docs_usecase
 
-    def get_tech_question_docs_usecase(self) -> TechQuestionAgent:
+    def get_tech_question_usecase(self) -> TechQuestionAgent:
         """Get the tech question usecase."""
         self._tech_question_usecase = self._build_tech_question_usecase()
 
         return self._tech_question_usecase
+
+    def get_any_question_usecase(self) -> AnyQuestionAgent:
+        """Get the any question usecase."""
+        self._any_question_usecase = self._build_any_question_usecase()
+
+        return self._any_question_usecase
 
     def get_query_image_usecase(self) -> QueryImageAgent:
         """Get the query image usecase."""

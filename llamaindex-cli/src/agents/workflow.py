@@ -3,7 +3,7 @@
 import os
 from collections.abc import Callable
 
-from llama_index.core.agent.workflow import FunctionAgent
+from llama_index.core.agent.workflow import AgentWorkflow, FunctionAgent
 from llama_index.core.llms import LLM
 from llama_index.core.tools import BaseTool
 
@@ -44,4 +44,14 @@ def _build_financial_tool_workflow(llm: LLM, tools: list[BaseTool | Callable] | 
         llm=llm,
         tools=tools,
         system_prompt="You are a helpful assistant.",
+    )
+
+
+def build_standard_workflow(llm: LLM) -> AgentWorkflow:
+    """Build the standard workflow."""
+    return AgentWorkflow.from_tools_or_functions(
+        llm=llm,
+        tools_or_functions=[],
+        system_prompt="You are a helpful assistant.",
+        initial_state={"name": "undefined"},
     )

@@ -24,3 +24,7 @@ your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid
 ```
 
 [Fixed: Issued](https://github.com/run-llama/llama_index/issues/18349)
+
+## Example
+
+- [python-ai-agents-demos](https://github.com/pamelafox/python-ai-agents-demos)

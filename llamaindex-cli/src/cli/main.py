@@ -11,6 +11,7 @@ from llama_index.llms.lmstudio import LMStudio
 from loguru import logger
 
 from registry.registry import DependencyRegistry
+from use_cases.any_question import AnyQuestionAgent
 from use_cases.tool import ToolAgent
 
 # Create a Typer app
@@ -61,7 +62,7 @@ def tech_question_agent(
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
     registry = DependencyRegistry(environment, model)
-    tech_question_agent = registry.get_tech_question_docs_usecase()
+    tech_question_agent = registry.get_tech_question_usecase()
 
     # Execute
     if stream:
@@ -139,6 +140,33 @@ async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily:
         await tool_agent.ask_finance_by_tavily(company)
     else:
         await tool_agent.ask_finance(company)
+
+
+@app.command()
+def conversation_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    question: str = typer.Option("", "--question", "-q", help="question to ask"),
+) -> None:
+    """Conversation."""
+    logger.debug("conversation_agent()")
+
+    if question == "":
+        msg = "parameter `--question` must be provided"
+        raise ValueError(msg)
+
+    # Initialization
+    environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry(environment, model)
+    any_question_agent = registry.get_any_question_usecase()
+
+    # Execute
+    asyncio.run(_async_conversation_agent(any_question_agent, question))
+
+
+async def _async_conversation_agent(any_question_agent: AnyQuestionAgent, question: str) -> None:
+    """Run  for Async."""
+    await any_question_agent.ask(question)
+
 
 @app.command()
 def local_llm() -> None:
