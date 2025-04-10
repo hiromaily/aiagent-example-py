@@ -1,7 +1,6 @@
 """Builds the workflow for the agent."""
 
 import os
-from collections.abc import Callable
 
 from llama_index.core.agent.workflow import AgentWorkflow, FunctionAgent
 from llama_index.core.llms import LLM
@@ -36,7 +35,7 @@ def build_financial_tavily_tool_workflow(llm: LLM) -> FunctionAgent:
     return _build_financial_tool_workflow(llm, build_tavily_tools(api_key))
 
 
-def _build_financial_tool_workflow(llm: LLM, tools: list[BaseTool | Callable] | None) -> FunctionAgent:
+def _build_financial_tool_workflow(llm: LLM, tools: list[BaseTool] | None) -> FunctionAgent:
     """Build the financial tool workflow."""
     return FunctionAgent(
         name="FinancialAgent",
@@ -53,5 +52,5 @@ def build_standard_workflow(llm: LLM) -> AgentWorkflow:
         llm=llm,
         tools_or_functions=[],
         system_prompt="You are a helpful assistant.",
-        initial_state={"name": "undefined"},
+        initial_state={},
     )

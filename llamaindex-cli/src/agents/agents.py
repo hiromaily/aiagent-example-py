@@ -1,7 +1,5 @@
 """Tech Question Agent Use Case."""
 
-from collections.abc import Callable
-
 from llama_index.core.agent.workflow import AgentStream, ReActAgent
 from llama_index.core.llms import LLM
 from llama_index.core.tools import BaseTool
@@ -12,7 +10,7 @@ class ReActAgentWrapper:
     """ReActAgent wrapper."""
 
     # tools is required for ReActAgent
-    def __init__(self, llm: LLM, tools: list[BaseTool | Callable]) -> None:
+    def __init__(self, llm: LLM, tools: list[BaseTool]) -> None:
         """Initialize the ReActAgentWrapper with a LLM."""
         self._agent = ReActAgent(
             name="ReActAgent",

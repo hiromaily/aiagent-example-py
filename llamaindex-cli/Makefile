@@ -43,11 +43,17 @@ deactivate:
 lint:
 	uvx ruff format src
 	uvx ruff check --fix src
+	# Type Checking
+	uvx mypy src
 
 .PHONY: lint2
 lint2:
+	# Formatting
 	uvx isort src
 	uvx black src
+	# Type Checking
+	uvx mypy src
+	# Linting
 	uv run task flake8
 
 ###############################################################################
@@ -61,8 +67,7 @@ lint2:
 #	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA" --tavily
-#   # WIP:
-#	PYTHONPATH=src uv run -m src.cli.main conversation-agent --question "Hello, how are you?"
+#	PYTHONPATH=src uv run -m src.cli.main conversation-agent
 
 
 # Use local LLM API server
@@ -75,12 +80,11 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust"
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --chat
+	PYTHONPATH=src uv run -m src.cli.main --local conversation-agent --model llama3
 	# WIP: find proper local LLM model
 	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
 	# WIP: find proper local LLM model
 	#PYTHONPATH=src uv run -m src.cli.main --local query-image-agent --model llama3 --image "./images/dog.jpg"
-	# WIP:
-	#PYTHONPATH=src uv run -m src.cli.main --local conversation-agent --model llama3 --question "Hello, how are you?"
 
 ###############################################################################
 # Utilities

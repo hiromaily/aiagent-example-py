@@ -21,7 +21,7 @@ app = typer.Typer()
 # LMSTUDIO_MODEL=llama3
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def docs_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     storage_mode: str = typer.Option("dir", "--storage", "-s", help="storage mode. text or dir"),
@@ -45,7 +45,7 @@ def docs_agent(
         docs_agent.check_up_llamaindex_docs()
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def tech_question_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="question to ask"),
@@ -73,7 +73,7 @@ def tech_question_agent(
         tech_question_agent.ask(question)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def query_image_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     image_path: str = typer.Option("", "--image", "-i", help="image path to query"),
@@ -94,7 +94,7 @@ def query_image_agent(
     query_image_agent.ask(image_path)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def calc_tool_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("What is 1 + 1?", "--question", "-q", help="question to ask"),
@@ -116,7 +116,7 @@ async def _async_calc_tool_agent(calc_tool_agent: ToolAgent, question: str) -> N
     await calc_tool_agent.ask_calc(question)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def finance_tool_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     company: str = typer.Option("NVIDIA", "--company", "-q", help="company name to get stock price"),
@@ -142,17 +142,17 @@ async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily:
         await tool_agent.ask_finance(company)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def conversation_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
-    question: str = typer.Option("", "--question", "-q", help="question to ask"),
+    # question: str = typer.Option("", "--question", "-q", help="question to ask"),
 ) -> None:
     """Conversation."""
     logger.debug("conversation_agent()")
 
-    if question == "":
-        msg = "parameter `--question` must be provided"
-        raise ValueError(msg)
+    # if question == "":
+    #     msg = "parameter `--question` must be provided"
+    #     raise ValueError(msg)
 
     # Initialization
     environment = os.getenv("APP_ENV", "dev")
@@ -160,15 +160,20 @@ def conversation_agent(
     any_question_agent = registry.get_any_question_usecase()
 
     # Execute
-    asyncio.run(_async_conversation_agent(any_question_agent, question))
+    asyncio.run(_async_conversation_agent(any_question_agent))
 
 
-async def _async_conversation_agent(any_question_agent: AnyQuestionAgent, question: str) -> None:
+async def _async_conversation_agent(any_question_agent: AnyQuestionAgent) -> None:
     """Run  for Async."""
-    await any_question_agent.ask(question)
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["exit", "quit", "bye"]:
+            print("GPT: bye!")
+            break
+        await any_question_agent.ask(user_input)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def local_llm() -> None:
     """Use Local LLM. For just example."""
     # Load documents from a directory
@@ -196,7 +201,7 @@ def local_llm() -> None:
     print(response)
 
 
-@app.callback()
+@app.callback()  # type: ignore[misc]
 def main(local: bool = False) -> None:
     """First endpoint after app()."""
     logger.debug("main()")
