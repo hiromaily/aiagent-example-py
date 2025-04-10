@@ -2,7 +2,7 @@
 
 from openai import Embedding, OpenAI
 
-from openai_custom.interface import OpenAIClientInterface
+from .interface import OpenAIClientInterface
 
 
 class OpenAIClient(OpenAIClientInterface):

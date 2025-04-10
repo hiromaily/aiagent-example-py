@@ -1,6 +1,6 @@
 """OpenAI dummy module class."""
 
-from openai_custom.interface import OpenAIClientInterface
+from .interface import OpenAIClientInterface
 
 
 class OpenAIDummyClient(OpenAIClientInterface):
