@@ -43,11 +43,17 @@ deactivate:
 lint:
 	uvx ruff format src
 	uvx ruff check --fix src
+	# Type Checking
+	uvx mypy src
 
 .PHONY: lint2
 lint2:
+	# Formatting
 	uvx isort src
 	uvx black src
+	# Type Checking
+	uvx mypy src
+	# Linting
 	uv run task flake8
 
 ###############################################################################

@@ -41,7 +41,7 @@ class DependencyRegistry:
             openai_client = OpenAIClient(
                 model=openai_model, api_key=api_key, base_url=server_url, is_local_llm=is_local_llm
             )
-        elif self.environment == "test":
+        elif self._environment == "test":
             openai_client = OpenAIDummyClient()
         else:
             msg = "Unknown environment"

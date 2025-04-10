@@ -40,7 +40,7 @@ def _query(question: str, mode: APIMode) -> None:
     docs_repo.close()
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def query_tech_guide(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
@@ -54,7 +54,7 @@ def query_tech_guide(
     _query(question, APIMode.RESPONSE_API)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def query_tech_guide_chat(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
@@ -68,7 +68,7 @@ def query_tech_guide_chat(
     _query(question, APIMode.CHAT_COMPLETION_API)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def query(
     question: str = typer.Option("", "--question", "-q", help="Question to ask the agent."),
 ) -> None:
@@ -102,7 +102,7 @@ def query(
     docs_repo.close()
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def news_agent() -> None:
     """News agent by web search."""
     logger.debug("news_agent()")
@@ -117,7 +117,7 @@ def news_agent() -> None:
     print(response)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def embedding() -> None:
     """Embedding command."""
     logger.debug("embedding()")
@@ -135,7 +135,7 @@ def embedding() -> None:
     docs_repo.close()
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def search_similarity(
     content_id: int = typer.Option(0, "--id", "-q", help="item_contents.id."),
 ) -> None:
@@ -160,7 +160,7 @@ def search_similarity(
     print(similarities)
 
 
-@app.callback()
+@app.callback()  # type: ignore[misc]
 def main(local: bool = False) -> None:
     """First endpoint after app()."""
     logger.debug("main()")
