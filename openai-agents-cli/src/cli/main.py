@@ -175,7 +175,8 @@ def main(env: str = ".env") -> None:
     #     load_dotenv()
 
     # environment = os.getenv("APP_ENV", "dev")
-    logger.debug(f"environment: {env}")
+    EnvSettings.set_env(env)
+    logger.debug(f"env file: {env}, APP_ENV: {EnvSettings().APP_ENV}")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 """OpenAI module class."""
 
-from openai import Embedding, OpenAI
+from openai import OpenAI
+from openai.types.embedding import Embedding
 
 from .interface import OpenAIClientInterface
 

@@ -6,8 +6,6 @@ from pgvector.psycopg2 import register_vector
 
 from entities.embedding import Embedding
 from infrastructure.pgvector.client import PgVectorClient
-
-# from .interface import DocumentsRepositoryInterface
 from infrastructure.repository.interface import DocumentsRepositoryInterface
 
 

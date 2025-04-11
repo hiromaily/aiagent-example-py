@@ -42,4 +42,4 @@ class PgVectorClient:
 
     def close(self) -> None:
         """Close connection."""
-        return self._conn.close()
+        self._conn.close()
