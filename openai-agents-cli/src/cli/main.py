@@ -158,7 +158,7 @@ def search_similarity(
 
     # Search similarity
     logger.debug("search similarity")
-    similarities = docs_repo.similarity_search(result[1], 3)
+    similarities = docs_repo.similarity_search(result[2], 3)
     print(similarities)
 
 

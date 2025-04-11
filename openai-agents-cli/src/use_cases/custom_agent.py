@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from openai import Embedding
+from openai.types.embedding import Embedding
 
 from openai_custom.interface import OpenAIClientInterface
 
