@@ -1,7 +1,6 @@
 """Registry Class."""
 
-import os
-
+from env.env import EnvSettings
 from infrastructure.pgvector.client import PgVectorClient
 from infrastructure.repository.documents import DocumentsRepository
 from infrastructure.repository.interface import DocumentsRepositoryInterface
@@ -13,35 +12,44 @@ from openai_custom.interface import OpenAIClientInterface
 class DependencyRegistry:
     """Dependency Registry."""
 
-    def __init__(self, environment: str) -> None:
+    def __init__(self) -> None:
         """Initialize the DependencyRegistry with the environment."""
-        self._environment = environment
+        # self._environment = environment
+        self._settings = EnvSettings()
         self._openai_client = self._build_openai_client()
         self._pg_client = self._build_pg_client()
         self._documents_repository = self._build_documents_repository()
 
     def _build_openai_client(self) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
-        if self._environment == "prod":
-            # use OpenAI API
-            openai_model = os.getenv("OPENAI_MODEL")
-            api_key = os.getenv("OPENAI_API_KEY")
-            is_local_llm = False
-            openai_client = OpenAIClient(model=openai_model, api_key=api_key, is_local_llm=is_local_llm)
-        elif self._environment == "dev":
-            # use local LLM
-            openai_model = os.getenv("OPENAI_MODEL")
-            api_key = os.getenv("OPENAI_API_KEY")
-            server_url = os.getenv("OPENAI_SERVER_URL")
-            if server_url is None:
-                msg = "`OPENAI_SERVER_URL` must be provided"
-                raise ValueError(msg)
+        # openai_model = os.getenv("OPENAI_MODEL")
+        # if openai_model is None:
+        #     msg = "`OPENAI_MODEL` must be provided"
+        #     raise ValueError(msg)
 
-            is_local_llm = True
+        # api_key = os.getenv("OPENAI_API_KEY")
+        # if api_key is None:
+        #     msg = "`OPENAI_API_KEY` must be provided"
+        #     raise ValueError(msg)
+
+        if self._settings.APP_ENV == "prod":
+            # use OpenAI API
             openai_client = OpenAIClient(
-                model=openai_model, api_key=api_key, base_url=server_url, is_local_llm=is_local_llm
+                model=self._settings.OPENAI_MODEL, api_key=self._settings.OPENAI_API_KEY, is_local_llm=False
             )
-        elif self._environment == "test":
+        elif self._settings.APP_ENV:
+            # use local LLM
+            # server_url = os.getenv("OPENAI_SERVER_URL")
+            # if server_url is None:
+            #     msg = "`OPENAI_SERVER_URL` must be provided"
+            #     raise ValueError(msg)
+            openai_client = OpenAIClient(
+                model=self._settings.OPENAI_MODEL,
+                api_key=self._settings.OPENAI_API_KEY,
+                base_url=self._settings.OPENAI_SERVER_URL,
+                is_local_llm=True,
+            )
+        elif self._settings.APP_ENV == "test":
             openai_client = OpenAIDummyClient()
         else:
             msg = "Unknown environment"
@@ -51,13 +59,47 @@ class DependencyRegistry:
 
     def _build_pg_client(self) -> PgVectorClient:
         """Build the PostgreSQL client."""
-        host = os.getenv("PG_HOST")
-        port = os.getenv("PG_PORT")
-        db_name = os.getenv("PG_DB_NAME")
-        user = os.getenv("PG_USER")
-        password = os.getenv("PG_PASSWORD")
+        # host = os.getenv("PG_HOST")
+        # if host is None:
+        #     msg = "`PG_HOST` must be provided"
+        #     raise ValueError(msg)
 
-        return PgVectorClient(host=host, port=port, db_name=db_name, user=user, password=password)
+        # port = os.getenv("PG_PORT")
+        # if port is None:
+        #     msg = "`PG_PORT` must be provided"
+        #     raise ValueError(msg)
+        # try:
+        #     port = int(port)
+        # except ValueError as err:
+        #     msg = "`PG_PORT` must be an integer"
+        #     raise ValueError(msg) from err
+
+        # if port is None:
+        #     msg = "`PG_PORT` must be provided"
+        #     raise ValueError(msg)
+
+        # db_name = os.getenv("PG_DB_NAME")
+        # if db_name is None:
+        #     msg = "`PG_DB_NAME` must be provided"
+        #     raise ValueError(msg)
+
+        # user = os.getenv("PG_USER")
+        # if user is None:
+        #     msg = "`PG_USER` must be provided"
+        #     raise ValueError(msg)
+
+        # password = os.getenv("PG_PASSWORD")
+        # if password is None:
+        #     msg = "`PG_PASSWORD` must be provided"
+        #     raise ValueError(msg)
+
+        return PgVectorClient(
+            host=self._settings.PG_HOST,
+            port=self._settings.PG_PORT,
+            db_name=self._settings.PG_DB_NAME,
+            user=self._settings.PG_USER,
+            password=self._settings.PG_PASSWORD,
+        )
 
     def _build_documents_repository(self) -> DocumentsRepositoryInterface:
         """Build the DocumentsRepository."""

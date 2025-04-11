@@ -1,11 +1,11 @@
 """main function for the CLI app."""
 
-import os
-
 import typer
-from dotenv import load_dotenv
+
+# from dotenv import load_dotenv
 from loguru import logger
 
+from env.env import EnvSettings
 from registry.registry import DependencyRegistry
 from use_cases.custom_agent import APIMode, CustomTechnicalAgent
 from use_cases.load_embedding import load_embedding
@@ -18,8 +18,8 @@ def _query(question: str, mode: APIMode) -> None:
     """Query function."""
     logger.debug("_query()")
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    # environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry()
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -27,7 +27,8 @@ def _query(question: str, mode: APIMode) -> None:
     response = agent.query_tech_guide(question, mode)
     print(response)
     # call embeddings
-    if environment != "prod":
+    if EnvSettings().APP_ENV != "prod":
+        # not implemented yet
         return
 
     # call embeddings API
@@ -79,8 +80,8 @@ def query(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    # environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry()
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -88,7 +89,8 @@ def query(
     response = agent.query(question, APIMode.CHAT_COMPLETION_API)
     print(response)
     # call embeddings
-    if environment != "prod":
+    if EnvSettings().APP_ENV != "prod":
+        # not implemented yet
         return
 
     # call embeddings API
@@ -107,8 +109,8 @@ def news_agent() -> None:
     """News agent by web search."""
     logger.debug("news_agent()")
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    # environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry()
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -121,14 +123,14 @@ def news_agent() -> None:
 def embedding() -> None:
     """Embedding command."""
     logger.debug("embedding()")
-    environment = os.getenv("APP_ENV", "dev")
+    # environment = os.getenv("APP_ENV", "dev")
 
     # load embedding JSON file
     embedding_list = load_embedding()
 
     # Insert into DB
     logger.debug("insert into db")
-    registry = DependencyRegistry(environment)
+    registry = DependencyRegistry()
     docs_repo = registry.get_docs_repository()
     docs_repo.insert_embeddings(embedding_list)
 
@@ -146,8 +148,8 @@ def search_similarity(
         msg = "parameter `--id` must be provided"
         raise ValueError(msg)
 
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment)
+    # environment = os.getenv("APP_ENV", "dev")
+    registry = DependencyRegistry()
     docs_repo = registry.get_docs_repository()
     # Search target item_content from DB `item_contents`
     result = docs_repo.get_item_by_id(content_id)
@@ -161,19 +163,19 @@ def search_similarity(
 
 
 @app.callback()  # type: ignore[misc]
-def main(local: bool = False) -> None:
+def main(env: str = ".env") -> None:
     """First endpoint after app()."""
     logger.debug("main()")
 
     # load .env file
-    if local:
-        logger.debug("Running in local mode")
-        load_dotenv(dotenv_path=".env.dev")
-    else:
-        load_dotenv()
+    # if local:
+    #     logger.debug("Running in local mode")
+    #     load_dotenv(dotenv_path=".env.dev")
+    # else:
+    #     load_dotenv()
 
-    environment = os.getenv("APP_ENV", "dev")
-    logger.debug(f"environment: {environment}")
+    # environment = os.getenv("APP_ENV", "dev")
+    logger.debug(f"environment: {env}")
 
 
 if __name__ == "__main__":

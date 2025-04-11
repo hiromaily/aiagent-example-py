@@ -71,7 +71,7 @@ run-example:
 # Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --local query-tech-guide-chat --question "What is an advantage of using Rust?"
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-tech-guide-chat --question "What is an advantage of using Rust?"
 
 # WIP
 .PHONY: run-vector
