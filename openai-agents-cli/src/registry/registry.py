@@ -33,6 +33,7 @@ class DependencyRegistry:
         #     msg = "`OPENAI_API_KEY` must be provided"
         #     raise ValueError(msg)
 
+        openai_client: OpenAIClientInterface
         if self._settings.APP_ENV == "prod":
             # use OpenAI API
             logger.debug(f"use OpenAI API: model:{self._settings.OPENAI_MODEL}")

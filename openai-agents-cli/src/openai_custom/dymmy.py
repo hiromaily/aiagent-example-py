@@ -21,7 +21,7 @@ class OpenAIDummyClient(OpenAIClientInterface):
 
     def call_embeddings(self, _prompt: str | list[str]) -> list[Embedding]:
         """Call Embedding API with prompt."""
-        return Embedding(embedding=[0.1, 0.2, 0.3, 0.4, 0.5], index=0, object="embedding")
+        return [Embedding(embedding=[0.1, 0.2, 0.3, 0.4, 0.5], index=0, object="embedding")]
 
     def call_web_search(self, _prompt: str) -> str:
         """Call Web Search API."""
