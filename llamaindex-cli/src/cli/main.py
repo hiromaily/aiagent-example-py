@@ -118,6 +118,7 @@ def finance_tool_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     company: str = typer.Option("NVIDIA", "--company", "-q", help="company name to get stock price"),
     tavily: bool = False,
+    stream: bool = False,
 ) -> None:
     """Finance Tool Agent."""
     logger.debug("finance_tool_agent()")
@@ -127,13 +128,16 @@ def finance_tool_agent(
     tool_agent = registry.get_tool_usecase()
 
     # Execute
-    asyncio.run(_async_finance_tool_agent(tool_agent, company, tavily))
+    asyncio.run(_async_finance_tool_agent(tool_agent, company, tavily, stream))
 
 
-async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily: bool) -> None:
+async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily: bool, stream: bool) -> None:
     """Calc Tool Agent for Async."""
     if tavily:
-        await tool_agent.ask_finance_by_tavily(company)
+        if stream:
+            await tool_agent.ask_finance_by_tavily_streaming(company)
+        else:
+            await tool_agent.ask_finance_by_tavily(company)
     else:
         await tool_agent.ask_finance(company)
 

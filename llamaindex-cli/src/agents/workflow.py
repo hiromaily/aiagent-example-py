@@ -25,10 +25,6 @@ def build_financial_yahoo_financial_tool_workflow(llm: LLM) -> FunctionAgent:
 
 def build_financial_tavily_tool_workflow(llm: LLM, api_key: str) -> FunctionAgent:
     """Build the financial tool workflow using Tavily."""
-    # api_key = os.getenv("TAVILY_API_KEY")
-    # if not api_key:
-    #     msg = "API key is required for Tavily tools."
-    #     raise ValueError(msg)
     return _build_financial_tool_workflow(llm, build_tavily_tools(api_key))
 
 

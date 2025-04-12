@@ -1,6 +1,6 @@
 """Query Image Agent Use Case."""
 
-from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.agent.workflow import AgentStream, AgentWorkflow
 from llama_index.core.llms import LLM
 
 
@@ -22,13 +22,21 @@ class ToolAgent:
         print(response)
 
     async def ask_finance(self, company: str) -> None:
-        """Ask the calculation()."""
+        """Ask the stock price using YahooFinanceToolSpec()."""
         question = f"What's the current stock price of {company}"
         response = await self._financial_workflow.run(user_msg=question)
         print(response)
 
     async def ask_finance_by_tavily(self, company: str) -> None:
-        """Ask the calculation()."""
+        """Ask the stock price using tavily search engine()."""
         question = f"What's the current stock price of {company}"
         response = await self._tavily_workflow.run(user_msg=question)
         print(response)
+
+    async def ask_finance_by_tavily_streaming(self, company: str) -> None:
+        """Ask the stock price using tavily search engine()."""
+        question = f"What's the current stock price of {company}"
+        handler = self._tavily_workflow.run(user_msg=question)
+        async for event in handler.stream_events():
+            if isinstance(event, AgentStream):
+                print(event.delta, end="", flush=True)
