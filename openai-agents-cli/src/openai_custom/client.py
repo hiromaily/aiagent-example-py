@@ -1,5 +1,7 @@
 """OpenAI module class."""
 
+from typing import cast
+
 from openai import OpenAI
 from openai.types.embedding import Embedding
 
@@ -33,7 +35,7 @@ class OpenAIClient(OpenAIClientInterface):
             instructions=instructions,
             input=prompt,
         )
-        return response.output_text
+        return cast("str", response.output_text)
 
     def call_chat_completion(self, instructions: str, prompt: str) -> str:
         """Call Chat Completion API."""
@@ -49,13 +51,14 @@ class OpenAIClient(OpenAIClientInterface):
                 },
             ],
         )
-        return completion.choices[0].message.content
+        # return completion.choices[0].message.content
+        return cast("str", completion.choices[0].message.content)
 
     def call_embeddings(self, prompt: str | list[str]) -> list[Embedding]:
         """Call Embeddings API."""
         response = self._client.embeddings.create(model="text-embedding-ada-002", input=prompt, encoding_format="float")
-        # return response.data[0].embedding
-        return response.data
+        # return response.data
+        return cast("list[Embedding]", response.data)
 
     def call_web_search(self, prompt: str) -> str:
         """Call Web Search API."""
@@ -79,4 +82,5 @@ class OpenAIClient(OpenAIClientInterface):
                 }
             ],
         )
-        return completion.choices[0].message.content
+        # return completion.choices[0].message.content
+        return cast("str", completion.choices[0].message.content)

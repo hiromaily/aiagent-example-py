@@ -33,6 +33,7 @@ class DependencyRegistry:
         #     msg = "`OPENAI_API_KEY` must be provided"
         #     raise ValueError(msg)
 
+        # Note: it's ok tthat only variable declaration with type hint [Pending]
         openai_client: OpenAIClientInterface
         if self._settings.APP_ENV == "prod":
             # use OpenAI API

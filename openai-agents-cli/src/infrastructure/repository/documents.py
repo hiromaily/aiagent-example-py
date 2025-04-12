@@ -1,5 +1,7 @@
 """Documents VectorDB repository class."""
 
+from typing import cast
+
 import numpy as np
 from loguru import logger
 from pgvector.psycopg2 import register_vector
@@ -61,7 +63,10 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         cur.execute(query, (item_id,))
         item = cur.fetchone()
         cur.close()
-        return item
+        if item is None:
+            return None
+        # return item
+        return cast("tuple[int, str, np.ndarray]", item)
 
     def similarity_search(self, embedding: np.ndarray, top_k: int = 5) -> list[tuple[str]] | None:
         """Execute similarity search."""
@@ -71,7 +76,10 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         cur.execute(query, (embedding, top_k))
         items = cur.fetchall()
         cur.close()
-        return items
+        if items is None:
+            return None
+        # return item
+        return cast("list[tuple[str]]", items)
 
     def close(self) -> None:
         """Close connection."""
