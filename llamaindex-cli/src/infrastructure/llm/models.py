@@ -4,6 +4,7 @@ from llama_index.core import Settings
 from llama_index.core.llms import LLM
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
+from llama_index.llms.ollama import Ollama
 from llama_index.llms.openai import OpenAI
 
 
@@ -13,15 +14,15 @@ def create_openai_llm(model: str, api_key: str, temperature: float = 0.5) -> Ope
     return OpenAI(model=model, api_key=api_key, temperature=temperature)
 
 
-def create_lmstudio_openai_manipulation_llm(model: str, temperature: float = 0.5) -> OpenAI:
-    """Create an LLM (Language Model) using OpenAI's API for LM Studio."""
-    # Please provide a valid OpenAI model name
-    return OpenAI(
-        model=model,
-        api_key="lm-studio",
-        api_base="http://localhost:1234/v1",
-        temperature=temperature,
-    )
+# def create_lmstudio_openai_manipulation_llm(model: str, temperature: float = 0.5) -> OpenAI:
+#     """Create an LLM (Language Model) using OpenAI's API for LM Studio."""
+#     # Please provide a valid OpenAI model name
+#     return OpenAI(
+#         model=model,
+#         api_key="lm-studio",
+#         api_base="http://localhost:1234/v1",
+#         temperature=temperature,
+#     )
 
 
 def create_lmstudio_llm(model: str, temperature: float = 0.5) -> LMStudio:
@@ -30,6 +31,16 @@ def create_lmstudio_llm(model: str, temperature: float = 0.5) -> LMStudio:
         model_name=model,
         base_url="http://localhost:1234/v1",
         temperature=temperature,
+    )
+
+
+def create_ollama_llm(model: str, temperature: float = 0.5) -> Ollama:
+    """Create an LLM (Language Model) using LMStudio's API."""
+    return Ollama(
+        model=model,
+        # base_url="http://localhost:11434/v1",
+        temperature=temperature,
+        request_timeout=60.0,
     )
 
 

@@ -13,7 +13,12 @@ from agents.workflow import (
     build_standard_workflow,
 )
 from env.env import EnvSettings
-from infrastructure.llm.models import create_lmstudio_embedding_llm, create_lmstudio_llm, create_openai_llm
+from infrastructure.llm.models import (
+    create_lmstudio_embedding_llm,
+    create_lmstudio_llm,
+    create_ollama_llm,
+    create_openai_llm,
+)
 from infrastructure.storages.document import DocumentList, StorageMode
 from use_cases.any_question import AnyQuestionAgent
 from use_cases.query_docs import DocsAgent
@@ -35,12 +40,18 @@ class DependencyRegistry:
         if self._settings.APP_ENV == "prod":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {model}")
-            # Create an LLM (Language Model)
             llm = create_openai_llm(model, api_key, temperature)
         elif self._settings.APP_ENV == "dev":
             # use local LLM
-            logger.debug(f"use local LLM {model}")
-            llm = create_lmstudio_llm(model, temperature)
+            logger.debug(f"use local LLM {model}, toolkit: {self._settings.LLM_TOOLKIT}")
+            if self._settings.LLM_TOOLKIT == "lmstudio":
+                # Note: `FunctionCallingLLM` doesn't work with `LMStudio`
+                llm = create_lmstudio_llm(model, temperature)
+            elif self._settings.LLM_TOOLKIT == "ollama":
+                llm = create_ollama_llm(model, temperature)
+            else:
+                msg = f"Unknown LLM toolkit: {self._settings.LLM_TOOLKIT}"
+                raise ValueError(msg)
         else:
             msg = "Unknown environment"
             raise ValueError(msg)

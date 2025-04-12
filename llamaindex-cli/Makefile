@@ -72,8 +72,8 @@ lint2:
 
 # Use local LLM API server
 # Note: run `lms load` first
-.PHONY: run-with-local-llm
-run-with-local-llm:
+.PHONY: run-with-lmstudio
+run-with-lmstudio:
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3 --storage text
@@ -83,9 +83,19 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
 
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
-	# FIXME: LLM must be a FunctionCallingLLM. This problems is due to LlamaIndex library.
+	# LMStudio doesn't work: LLM must be a FunctionCallingLLM.
 	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model mistral --question "What is 20+(2*4)?"
 	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model mistral --company "NVIDIA" --tavily
+
+.PHONY: run-with-ollama
+run-with-ollama:
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
+	# It doesn't work with image recognition
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
+	# FunctionCallingLLM
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model llama3.2 --question "What is 20+(2*4)?"
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily
+
 
 ###############################################################################
 # Utilities
@@ -113,8 +123,8 @@ load-lms:
 	lms load functionary-7b-v2.1 --identifier "functionary"
 
 # WIP
-.PHONY: load-lms2
-load-lms2:
+.PHONY: load-lms-experimental
+load-lms-experimental:
 	@# model name needs to be manipulated as OpenAI specific models
 	lms load llama-3.2-3b-instruct --identifier "gpt-3.5-turbo"
 	# PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model gpt-3.5-turbo --question "Rust"
