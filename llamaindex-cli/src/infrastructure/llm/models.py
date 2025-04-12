@@ -13,13 +13,19 @@ def create_openai_llm(model: str, api_key: str, temperature: float = 0.5) -> Ope
     return OpenAI(model=model, api_key=api_key, temperature=temperature)
 
 
+def create_lmstudio_openai_manipulation_llm(model: str, temperature: float = 0.5) -> OpenAI:
+    """Create an LLM (Language Model) using OpenAI's API for LM Studio."""
+    # Please provide a valid OpenAI model name
+    return OpenAI(
+        model=model,
+        api_key="lm-studio",
+        api_base="http://localhost:1234/v1",
+        temperature=temperature,
+    )
+
+
 def create_lmstudio_llm(model: str, temperature: float = 0.5) -> LMStudio:
     """Create an LLM (Language Model) using LMStudio's API."""
-    # FIXME: somehow `https://api.openai.com/v1/chat/completions` is called
-    if not model:
-        msg = "env 'LMSTUDIO_MODEL' must be set"
-        raise ValueError(msg)
-
     return LMStudio(
         model_name=model,
         base_url="http://localhost:1234/v1",

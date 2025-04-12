@@ -81,15 +81,16 @@ run-with-local-llm:
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
-	# WIP: find proper local LLM model
-	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
-	# WIP: find proper local LLM model
-	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3 --image "./images/dog.jpg"
+
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
+	# FIXME: LLM must be a FunctionCallingLLM. This problems is due to LlamaIndex library.
+	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model mistral --question "What is 20+(2*4)?"
+	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model mistral --company "NVIDIA" --tavily
 
 ###############################################################################
 # Utilities
 ###############################################################################
-# `.venv`を除いたディレクトリ内の`__pycache__`を削除する
+# remove `__pycache__` in each directory excluding `.venv`
 .PHONY: clean-cache
 clean-cache:
 	find . -type d -name '.venv' -prune -o -type d -name '__pycache__' -exec rm -r {} + -print
@@ -104,8 +105,18 @@ clean-cache:
 .PHONY: load-lms
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
-	# For embedding
+	@# For embedding, model name needs to be manipulated as OpenAI specific models
 	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
-	# For FunctionCallingLLM
-	lms load hermes-2-pro-llama-3-8b --identifier "hermes-3"
-	#lms load mistral-7b-instruct-v0.3 --identifier "mistral"
+	@# For image recognition
+	lms load mistral-7b-instruct-v0.3 --identifier "mistral"
+	@# For FunctionCallingLLM
+	lms load functionary-7b-v2.1 --identifier "functionary"
+
+# WIP
+.PHONY: load-lms2
+load-lms2:
+	@# model name needs to be manipulated as OpenAI specific models
+	lms load llama-3.2-3b-instruct --identifier "gpt-3.5-turbo"
+	# PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model gpt-3.5-turbo --question "Rust"
+	lms load mistral-7b-instruct-v0.3 --identifier "gpt-4o-mini"
+	# PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model gpt-4o-mini --question "What is 20+(2*4)?"
