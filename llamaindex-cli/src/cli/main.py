@@ -1,15 +1,16 @@
 """main function for the CLI app."""
 
 import asyncio
-import os
 
 import typer
-from dotenv import load_dotenv
+
+# from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
 from loguru import logger
 
+from env.env import EnvSettings
 from registry.registry import DependencyRegistry
 from use_cases.any_question import AnyQuestionAgent
 from use_cases.tool import ToolAgent
@@ -34,8 +35,7 @@ def docs_agent(
         raise ValueError(msg)
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     docs_agent = registry.get_query_docs_usecase(storage_mode)
 
     # Execute
@@ -60,8 +60,7 @@ def tech_question_agent(
         raise ValueError(msg)
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     tech_question_agent = registry.get_tech_question_usecase()
 
     # Execute
@@ -86,8 +85,7 @@ def query_image_agent(
         raise ValueError(msg)
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     query_image_agent = registry.get_query_image_usecase()
 
     # Execute
@@ -103,8 +101,7 @@ def calc_tool_agent(
     logger.debug("calc_tool_agent()")
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     calc_tool_agent = registry.get_tool_usecase()
 
     # Execute
@@ -126,8 +123,7 @@ def finance_tool_agent(
     logger.debug("finance_tool_agent()")
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     tool_agent = registry.get_tool_usecase()
 
     # Execute
@@ -155,8 +151,7 @@ def conversation_agent(
     #     raise ValueError(msg)
 
     # Initialization
-    environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry(environment, model)
+    registry = DependencyRegistry(model)
     any_question_agent = registry.get_any_question_usecase()
 
     # Execute
@@ -202,19 +197,20 @@ def local_llm() -> None:
 
 
 @app.callback()  # type: ignore[misc]
-def main(local: bool = False) -> None:
+def main(env: str = ".env") -> None:
     """First endpoint after app()."""
     logger.debug("main()")
 
     # load .env file
-    if local:
-        logger.debug("Running in local mode")
-        load_dotenv(dotenv_path=".env.dev")
-    else:
-        load_dotenv()
+    # if local:
+    #     logger.debug("Running in local mode")
+    #     load_dotenv(dotenv_path=".env.dev")
+    # else:
+    #     load_dotenv()
 
-    environment = os.getenv("APP_ENV", "dev")
-    logger.debug(f"environment: {environment}")
+    # environment = os.getenv("APP_ENV", "dev")
+    EnvSettings.set_env(env)
+    logger.debug(f"env file: {env}, APP_ENV: {EnvSettings().APP_ENV}")
 
 
 if __name__ == "__main__":

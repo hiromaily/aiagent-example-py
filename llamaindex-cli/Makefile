@@ -74,17 +74,17 @@ lint2:
 # Note: run `lms load` first
 .PHONY: run-with-local-llm
 run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --local local-llm
-	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3
-	PYTHONPATH=src uv run -m src.cli.main --local docs-agent --model llama3 --storage text
-	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust"
-	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --stream
-	PYTHONPATH=src uv run -m src.cli.main --local tech-question-agent --model llama3 --question "Rust" --chat
-	PYTHONPATH=src uv run -m src.cli.main --local conversation-agent --model llama3
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3 --storage text
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust"
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
 	# WIP: find proper local LLM model
-	#PYTHONPATH=src uv run -m src.cli.main --local calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
+	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model hermes-3 --question "What is 20+(2*4)?"
 	# WIP: find proper local LLM model
-	#PYTHONPATH=src uv run -m src.cli.main --local query-image-agent --model llama3 --image "./images/dog.jpg"
+	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3 --image "./images/dog.jpg"
 
 ###############################################################################
 # Utilities

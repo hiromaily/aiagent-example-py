@@ -3,6 +3,7 @@
 from llama_index.core import Document, VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms import LLM
+from llama_index.embeddings.openai import OpenAIEmbedding
 from loguru import logger
 
 from agents.workflow import (
@@ -11,6 +12,7 @@ from agents.workflow import (
     build_mathematical_tool_workflow,
     build_standard_workflow,
 )
+from env.env import EnvSettings
 from infrastructure.llm.models import create_lmstudio_embedding_llm, create_lmstudio_llm, create_openai_llm
 from infrastructure.storages.document import DocumentList, StorageMode
 from use_cases.any_question import AnyQuestionAgent
@@ -23,19 +25,19 @@ from use_cases.tool import ToolAgent
 class DependencyRegistry:
     """Dependency Registry."""
 
-    def __init__(self, environment: str, model: str) -> None:
+    def __init__(self, model: str) -> None:
         """Initialize the DependencyRegistry with the environment."""
-        self._environment = environment
-        self._llm = self._build_llm(model)
+        self._settings = EnvSettings()
+        self._llm = self._build_llm(model, self._settings.OPENAI_API_KEY)
 
-    def _build_llm(self, model: str, temperature: float = 0.5) -> LLM:
+    def _build_llm(self, model: str, api_key: str, temperature: float = 0.5) -> LLM:
         """Build the LLM based on the environment."""
-        if self._environment == "prod":
+        if self._settings.APP_ENV == "prod":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {model}")
             # Create an LLM (Language Model)
-            llm = create_openai_llm(model, temperature)
-        elif self._environment == "dev":
+            llm = create_openai_llm(model, api_key, temperature)
+        elif self._settings.APP_ENV == "dev":
             # use local LLM
             logger.debug(f"use local LLM {model}")
             llm = create_lmstudio_llm(model, temperature)
@@ -54,12 +56,12 @@ class DependencyRegistry:
     def _build_query(self) -> BaseQueryEngine:
         """Build the LlamaIndex query."""
         # Create an index from the documents
-        if self._environment == "prod":
+        if self._settings.APP_ENV == "prod":
             # use OpenAI API
             logger.debug("use OpenAI API")
-            # embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
-            index = VectorStoreIndex.from_documents(self._document)
-        elif self._environment == "dev":
+            embed_model = OpenAIEmbedding(model="text-embedding-ada-002", api_key=self._settings.OPENAI_API_KEY)
+            index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
+        elif self._settings.APP_ENV == "dev":
             # use local LLM
             logger.debug("use local LLM")
             embed_model = create_lmstudio_embedding_llm()
@@ -92,7 +94,7 @@ class DependencyRegistry:
         """Build the query image usecase."""
         self._mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
         self._yahoo_financial_tool_workflow = build_financial_yahoo_financial_tool_workflow(self._llm)
-        self._tavily_tools_workflow = build_financial_tavily_tool_workflow(self._llm)
+        self._tavily_tools_workflow = build_financial_tavily_tool_workflow(self._llm, self._settings.TAVILY_API_KEY)
 
         return ToolAgent(
             self._llm,

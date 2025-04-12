@@ -7,17 +7,13 @@ from llama_index.llms.lmstudio import LMStudio
 from llama_index.llms.openai import OpenAI
 
 
-def create_openai_llm(model: str | None, temperature: float = 0.5) -> OpenAI:
+def create_openai_llm(model: str, api_key: str, temperature: float = 0.5) -> OpenAI:
     """Create an LLM (Language Model) using OpenAI's API."""
-    if not model:
-        msg = "env 'OPENAI_MODEL' must be set"
-        raise ValueError(msg)
-
     # Create an LLM (Language Model)
-    return OpenAI(model=model, temperature=temperature)
+    return OpenAI(model=model, api_key=api_key, temperature=temperature)
 
 
-def create_lmstudio_llm(model: str = "llama3", temperature: float = 0.5) -> LMStudio:
+def create_lmstudio_llm(model: str, temperature: float = 0.5) -> LMStudio:
     """Create an LLM (Language Model) using LMStudio's API."""
     # FIXME: somehow `https://api.openai.com/v1/chat/completions` is called
     if not model:

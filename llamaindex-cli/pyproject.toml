@@ -13,6 +13,7 @@ dependencies = [
     "llama-index-tools-yahoo-finance>=0.3.0",
     "loguru>=0.7.3",
     "openai>=1.66.3",
+    "pydantic-settings>=2.8.1",
     "python-dotenv>=1.0.1",
     "tavily-python>=0.5.4",
     "typer>=0.15.2",
