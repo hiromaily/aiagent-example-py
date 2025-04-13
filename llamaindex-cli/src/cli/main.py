@@ -190,7 +190,7 @@ def multi_agent(
 
 async def _async_multi_agent(multi_agent: MultiAgent) -> None:
     """Multi Agent for Async."""
-    await multi_agent.run()
+    await multi_agent.report_about_web()
 
 
 @app.command()  # type: ignore[misc]

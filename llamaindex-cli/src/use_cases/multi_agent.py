@@ -15,15 +15,18 @@ class MultiAgent:
         """Initialize the MultiAgent with a LLM."""
         self._agent_workflow = agent
 
-    async def run(self) -> None:
-        """Ask the question by agent()."""
-        handler = self._agent_workflow.run(
-            user_msg="""
+    async def report_about_web(self) -> None:
+        """Ask the question about the web by agent()."""
+        msg = """
             Write me a report on the history of the web. Briefly describe the history
             of the world wide web, including the development of the internet and the
             development of the web, including 21st century developments.
         """
-        )
+        await self._run(msg)
+
+    async def _run(self, msg: str) -> None:
+        """Run research, write, review for the question by multiple agents."""
+        handler = self._agent_workflow.run(user_msg=msg)
 
         current_agent = None
         # current_tool_calls = ""
