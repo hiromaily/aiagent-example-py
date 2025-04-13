@@ -13,6 +13,7 @@
 
 - [uv](https://github.com/astral-sh/uv) as Python package manager.
 - OpenAI API Key
+- Tavily API_KEY
 - LocalLLM tools like [LM Studio](https://lmstudio.ai/), [Ollama](https://ollama.com/)
 
 ## Getting Started
@@ -22,13 +23,14 @@ See [Makefile](./Makefile)
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/your-repo/llamaindex-cli.git
+   git clone https://github.com/hiromaily/aiagent-example-py
    cd llamaindex-cli
    ```
 
 2. Install dependencies:
 
    ```sh
+   cp .env.example .env
    uv venv .venv
    uv pip install -e .
    ```

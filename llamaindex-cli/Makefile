@@ -58,52 +58,53 @@ lint2:
 
 ###############################################################################
 # Execution
+# in some cases, you need to set PYTHONPATH=src
 ###############################################################################
-# .PHONY: run-example
-# run-example:
-# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002
-# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002 --storage text
-#	PYTHONPATH=src uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
-#	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
-#	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
-#	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA" --tavily
-#	PYTHONPATH=src uv run -m src.cli.main conversation-agent
-#	PYTHONPATH=src uv run -m src.cli.main multi-agent
+# .PHONY: run-with-openai-api
+# run-with-openai-api
+	uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002
+	uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002 --storage text
+	uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
+	uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
+	uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
+	uv run -m src.cli.main finance-tool-agent --company "NVIDIA" --tavily
+	uv run -m src.cli.main conversation-agent
+	uv run -m src.cli.main multi-agent
 
 
 # Use local LLM API server
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm --tool lmstudio
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3 --storage text
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust"
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev multi-agent --model llama3
+	uv run -m src.cli.main --env=.env.dev local-llm --tool lmstudio
+	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3
+	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3 --storage text
+	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust"
+	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
+	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
+	uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
+	uv run -m src.cli.main --env=.env.dev multi-agent --model llama3
 
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
-	# LMStudio doesn't work: LLM must be a FunctionCallingLLM.
-	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model mistral --question "What is 20+(2*4)?"
-	#PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model mistral --company "NVIDIA" --tavily
+	uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
+	# LMStudio doesn't work FunctionCallingLLM.
+	#uv run -m src.cli.main --env=.env.dev calc-tool-agent --model mistral --question "What is 20+(2*4)?"
+	#uv run -m src.cli.main --env=.env.dev finance-tool-agent --model mistral --company "NVIDIA" --tavily
 
 .PHONY: run-with-ollama
 run-with-ollama:
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm --tool ollama
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2 --storage text
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3.2
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev multi-agent --model llama3.2
+	uv run -m src.cli.main --env=.env.dev local-llm --tool ollama
+	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2
+	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2 --storage text
+	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
+	uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3.2
+	uv run -m src.cli.main --env=.env.dev multi-agent --model llama3.2
 
 	# It doesn't work with image recognition
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
+	uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
 	# FunctionCallingLLM
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model llama3.2 --question "What is 20+(2*4)?"
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily --stream
+	uv run -m src.cli.main --env=.env.dev calc-tool-agent --model llama3.2 --question "What is 20+(2*4)?"
+	uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily
+	uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily --stream
 
 
 ###############################################################################
