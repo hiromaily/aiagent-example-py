@@ -2,6 +2,7 @@
 
 from llama_index.core import Settings
 from llama_index.core.llms import LLM
+from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
 from llama_index.llms.ollama import Ollama
@@ -44,18 +45,27 @@ def create_ollama_llm(model: str, temperature: float = 0.5) -> Ollama:
     )
 
 
-def create_lmstudio_embedding_llm(model: str = "text-embedding-ada-002") -> OpenAIEmbedding:
+def create_lmstudio_embedding_llm(embedding_model: str) -> OpenAIEmbedding:
     """Create an embedding LLM (Language Model) using LMStudio's API."""
     # Note: ValueError: 'text-embedding' is not a valid OpenAIEmbeddingModelType
     # model must be listed in OpenAIEmbeddingModeModel
-    if not model:
-        msg = "env 'LMSTUDIO_MODEL' must be set"
-        raise ValueError(msg)
+    # if not embedding_model:
+    #     msg = "env 'LMSTUDIO_MODEL' must be set"
+    #     raise ValueError(msg)
 
     return OpenAIEmbedding(
-        model=model,
+        model_name=embedding_model,
         api_key="lm-studio",
         api_base="http://localhost:1234/v1",
+    )
+
+
+def create_ollama_embedding_llm(embedding_model: str) -> OllamaEmbedding:
+    """Create an embedding LLM (Language Model) using Ollama's API."""
+    return OllamaEmbedding(
+        model_name=embedding_model,
+        base_url="http://localhost:11434",
+        ollama_additional_kwargs={"mirostat": 0},
     )
 
 

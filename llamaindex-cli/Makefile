@@ -61,8 +61,8 @@ lint2:
 ###############################################################################
 # .PHONY: run-example
 # run-example:
-# 	PYTHONPATH=src uv run -m src.cli.main docs-agent
-# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --storage text
+# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002
+# 	PYTHONPATH=src uv run -m src.cli.main docs-agent --embedding-model text-embedding-ada-002 --storage text
 #	PYTHONPATH=src uv run -m src.cli.main query-image-agent --image "./images/dog.jpg"
 #	PYTHONPATH=src uv run -m src.cli.main calc-tool-agent --question "What is 20+(2*4)?"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
@@ -74,9 +74,9 @@ lint2:
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --model llama3 --storage text
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm --tool lmstudio
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3 --storage text
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust"
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
@@ -89,12 +89,16 @@ run-with-lmstudio:
 
 .PHONY: run-with-ollama
 run-with-ollama:
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev local-llm --tool ollama
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2 --storage text
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
 	# It doesn't work with image recognition
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
 	# FunctionCallingLLM
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev calc-tool-agent --model llama3.2 --question "What is 20+(2*4)?"
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily --stream
 
 
 ###############################################################################
@@ -116,7 +120,8 @@ clean-cache:
 load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3"
 	@# For embedding, model name needs to be manipulated as OpenAI specific models
-	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
+	#lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding-ada-002"
+	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
 	@# For image recognition
 	lms load mistral-7b-instruct-v0.3 --identifier "mistral"
 	@# For FunctionCallingLLM

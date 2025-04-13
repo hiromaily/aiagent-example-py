@@ -6,8 +6,10 @@ import typer
 
 # from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
+from llama_index.llms.ollama import Ollama
 from loguru import logger
 
 from env.env import EnvSettings
@@ -25,6 +27,9 @@ app = typer.Typer()
 @app.command()  # type: ignore[misc]
 def docs_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
     storage_mode: str = typer.Option("dir", "--storage", "-s", help="storage mode. text or dir"),
 ) -> None:
     """Checking up documents agent."""
@@ -36,7 +41,7 @@ def docs_agent(
 
     # Initialization
     registry = DependencyRegistry(model)
-    docs_agent = registry.get_query_docs_usecase(storage_mode)
+    docs_agent = registry.get_query_docs_usecase(storage_mode, embedding_model)
 
     # Execute
     if storage_mode == "dir":
@@ -145,14 +150,9 @@ async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily:
 @app.command()  # type: ignore[misc]
 def conversation_agent(
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
-    # question: str = typer.Option("", "--question", "-q", help="question to ask"),
 ) -> None:
     """Conversation."""
     logger.debug("conversation_agent()")
-
-    # if question == "":
-    #     msg = "parameter `--question` must be provided"
-    #     raise ValueError(msg)
 
     # Initialization
     registry = DependencyRegistry(model)
@@ -173,21 +173,39 @@ async def _async_conversation_agent(any_question_agent: AnyQuestionAgent) -> Non
 
 
 @app.command()  # type: ignore[misc]
-def local_llm() -> None:
+def local_llm(
+    tool: str = typer.Option("ollama", "--tool", "-t", help="LLM tool name"),
+) -> None:
     """Use Local LLM. For just example."""
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage").load_data()
-    # Create an LLM (Language Model)
-    llm = LMStudio(
-        model_name="llama3",
-        base_url="http://localhost:1234/v1",
-        temperature=0.5,
-    )
-    embed_model = OpenAIEmbedding(
-        model="text-embedding-ada-002",
-        api_key="lm-studio",
-        api_base="http://localhost:1234/v1",
-    )
+    logger.debug(f"tool: {tool}")
+    if tool == "lmstudio":
+        llm = LMStudio(
+            model_name="llama3",
+            base_url="http://localhost:1234/v1",
+            temperature=0.5,
+        )
+        embed_model = OpenAIEmbedding(
+            model_name="text-embedding",
+            api_key="lm-studio",
+            api_base="http://localhost:1234/v1",
+        )
+    elif tool == "ollama":
+        llm = Ollama(
+            model="llama3.2",
+            # base_url="http://localhost:11434",
+            temperature=0.5,
+            request_timeout=60.0,
+        )
+        embed_model = OllamaEmbedding(
+            model_name="nomic-embed-text",
+            base_url="http://localhost:11434",
+            ollama_additional_kwargs={"mirostat": 0},
+        )
+    else:
+        msg = f"Unknown LLM toolkit: {tool}"
+        raise ValueError(msg)
 
     # Create an index from the documents
     # Note: `llm`` does not need to be set into VectorStoreIndex

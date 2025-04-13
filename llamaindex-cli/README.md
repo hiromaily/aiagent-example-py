@@ -10,6 +10,14 @@
 - [x] Integrate [Tavily](https://tavily.com/) to retrieve the ticker symbol.
   - [LlamaIndex: Adding other tools](https://docs.llamaindex.ai/en/stable/understanding/agent/tools/)
 
+## Tools/Services used and LLM used for operation check
+
+| Tool/API   | Chat      | embedding API                                  | Image Detection | Function Calling |
+| ---------- | --------- | ---------------------------------------------- | --------------- | ---------------- |
+| OpenAI API | gpt-4o    | text-embedding-ada-002                         | gpt-4o          | gpt-4o           |
+| LM-Studio  | llama-3.2 | text-embedding-nomic-embed-text-v1.5-embedding | TBD             | not supported    |
+| Ollama     | llama3.2  | nomic-embed-text                               | TBD             | llama3.2         |
+
 ## [LlamaIndex: Agent Tools](https://llamahub.ai/?tab=tools)
 
 ## Tips
@@ -109,3 +117,4 @@ class Ollama(FunctionCallingLLM)
 ## Example
 
 - [python-ai-agents-demos](https://github.com/pamelafox/python-ai-agents-demos)
+- [python-agents-tutorial](https://github.com/run-llama/python-agents-tutorial)

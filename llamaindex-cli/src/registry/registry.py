@@ -16,6 +16,7 @@ from env.env import EnvSettings
 from infrastructure.llm.models import (
     create_lmstudio_embedding_llm,
     create_lmstudio_llm,
+    create_ollama_embedding_llm,
     create_ollama_llm,
     create_openai_llm,
 )
@@ -64,18 +65,25 @@ class DependencyRegistry:
         mode = StorageMode.from_str(storage_mode)
         return DocumentList(mode).get_document()
 
-    def _build_query(self) -> BaseQueryEngine:
+    def _build_query(self, embedding_model: str) -> BaseQueryEngine:
         """Build the LlamaIndex query."""
         # Create an index from the documents
         if self._settings.APP_ENV == "prod":
             # use OpenAI API
             logger.debug("use OpenAI API")
-            embed_model = OpenAIEmbedding(model="text-embedding-ada-002", api_key=self._settings.OPENAI_API_KEY)
+            embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
             index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
         elif self._settings.APP_ENV == "dev":
             # use local LLM
             logger.debug("use local LLM")
-            embed_model = create_lmstudio_embedding_llm()
+            if self._settings.LLM_TOOLKIT == "lmstudio":
+                embed_model = create_lmstudio_embedding_llm(embedding_model)
+            elif self._settings.LLM_TOOLKIT == "ollama":
+                embed_model = create_ollama_embedding_llm(embedding_model)
+            else:
+                msg = f"Unknown LLM toolkit: {self._settings.LLM_TOOLKIT}"
+                raise ValueError(msg)
+
             index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
         else:
             msg = "Unknown environment"
@@ -126,10 +134,10 @@ class DependencyRegistry:
     #     """Get the LlamaIndex Query."""
     #     return self._query_engine
 
-    def get_query_docs_usecase(self, storage_mode: str) -> DocsAgent:
+    def get_query_docs_usecase(self, storage_mode: str, embedding_model: str) -> DocsAgent:
         """Get the docs usecase."""
         self._document = self._build_document(storage_mode)
-        self._query_engine = self._build_query()
+        self._query_engine = self._build_query(embedding_model)
         self._docs_usecase = self._build_docs_usecase()
 
         return self._docs_usecase
