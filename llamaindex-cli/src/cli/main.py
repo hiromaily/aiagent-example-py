@@ -15,6 +15,7 @@ from loguru import logger
 from env.env import EnvSettings
 from registry.registry import DependencyRegistry
 from use_cases.any_question import AnyQuestionAgent
+from use_cases.multi_agent import MultiAgent
 from use_cases.tool import ToolAgent
 
 # Create a Typer app
@@ -170,6 +171,26 @@ async def _async_conversation_agent(any_question_agent: AnyQuestionAgent) -> Non
             print("GPT: bye!")
             break
         await any_question_agent.ask(user_input)
+
+
+@app.command()  # type: ignore[misc]
+def multi_agent(
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+) -> None:
+    """Multi Agent."""
+    logger.debug("multi_agent()")
+
+    # Initialization
+    registry = DependencyRegistry(model)
+    multi_agent = registry.get_multi_agent_usecase()
+
+    # Execute
+    asyncio.run(_async_multi_agent(multi_agent))
+
+
+async def _async_multi_agent(multi_agent: MultiAgent) -> None:
+    """Multi Agent for Async."""
+    await multi_agent.run()
 
 
 @app.command()  # type: ignore[misc]

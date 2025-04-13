@@ -68,6 +68,7 @@ lint2:
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA"
 #	PYTHONPATH=src uv run -m src.cli.main finance-tool-agent --company "NVIDIA" --tavily
 #	PYTHONPATH=src uv run -m src.cli.main conversation-agent
+#	PYTHONPATH=src uv run -m src.cli.main multi-agent
 
 
 # Use local LLM API server
@@ -81,6 +82,7 @@ run-with-lmstudio:
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev multi-agent --model llama3
 
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
 	# LMStudio doesn't work: LLM must be a FunctionCallingLLM.
@@ -93,6 +95,9 @@ run-with-ollama:
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2 --storage text
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3.2
+	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev multi-agent --model llama3.2
+
 	# It doesn't work with image recognition
 	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
 	# FunctionCallingLLM

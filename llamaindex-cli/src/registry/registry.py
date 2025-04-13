@@ -6,11 +6,16 @@ from llama_index.core.llms import LLM
 from llama_index.embeddings.openai import OpenAIEmbedding
 from loguru import logger
 
+from agents.ai_tools import get_search_web, record_notes, review_report, write_report
 from agents.workflow import (
     build_financial_tavily_tool_workflow,
     build_financial_yahoo_financial_tool_workflow,
     build_mathematical_tool_workflow,
+    build_multi_workflow,
+    build_research_workflow,
+    build_review_workflow,
     build_standard_workflow,
+    build_write_workflow,
 )
 from env.env import EnvSettings
 from infrastructure.llm.models import (
@@ -22,6 +27,7 @@ from infrastructure.llm.models import (
 )
 from infrastructure.storages.document import DocumentList, StorageMode
 from use_cases.any_question import AnyQuestionAgent
+from use_cases.multi_agent import MultiAgent
 from use_cases.query_docs import DocsAgent
 from use_cases.query_image import QueryImageAgent
 from use_cases.tech_question import TechQuestionAgent
@@ -111,16 +117,26 @@ class DependencyRegistry:
 
     def _build_tool_usecase(self) -> ToolAgent:
         """Build the query image usecase."""
-        self._mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
-        self._yahoo_financial_tool_workflow = build_financial_yahoo_financial_tool_workflow(self._llm)
-        self._tavily_tools_workflow = build_financial_tavily_tool_workflow(self._llm, self._settings.TAVILY_API_KEY)
+        mathematical_tool_workflow = build_mathematical_tool_workflow(self._llm)
+        yahoo_financial_tool_workflow = build_financial_yahoo_financial_tool_workflow(self._llm)
+        tavily_tools_workflow = build_financial_tavily_tool_workflow(self._llm, self._settings.TAVILY_API_KEY)
 
         return ToolAgent(
             self._llm,
-            self._mathematical_tool_workflow,
-            self._yahoo_financial_tool_workflow,
-            self._tavily_tools_workflow,
+            mathematical_tool_workflow,
+            yahoo_financial_tool_workflow,
+            tavily_tools_workflow,
         )
+
+    def _build_multi_agent_usecase(self) -> MultiAgent:
+        """Build the multi agent usecase."""
+        search_web = get_search_web(self._settings.TAVILY_API_KEY)
+        research_workflow = build_research_workflow(self._llm, [search_web, record_notes])
+        write_workflow = build_write_workflow(self._llm, [write_report])
+        review_workflow = build_review_workflow(self._llm, [review_report])
+        multi_workflow = build_multi_workflow([research_workflow, write_workflow, review_workflow])
+
+        return MultiAgent(multi_workflow)
 
     # def get_llm(self) -> LLM:
     #     """Get the LLM."""
@@ -163,5 +179,9 @@ class DependencyRegistry:
     def get_tool_usecase(self) -> ToolAgent:
         """Get the tool usecase."""
         self._tool_usecase = self._build_tool_usecase()
-
         return self._tool_usecase
+
+    def get_multi_agent_usecase(self) -> MultiAgent:
+        """Get the multi agent usecase."""
+        self._multi_agent_usecase = self._build_multi_agent_usecase()
+        return self._multi_agent_usecase
