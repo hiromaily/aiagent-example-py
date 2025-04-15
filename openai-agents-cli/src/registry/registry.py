@@ -28,7 +28,7 @@ class DependencyRegistry:
         openai_client: OpenAIClientInterface
         if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: model:{model}")
+            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{model}")
             openai_client = OpenAIClient(
                 model=model,
                 api_key=self._settings.OPENAI_API_KEY,
@@ -36,7 +36,7 @@ class DependencyRegistry:
             )
         elif self._tool == "lmstudio":
             # use local LLM
-            logger.debug(f"use LocalLLM API: model:{model}")
+            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
             openai_client = OpenAIClient(
                 model=model,
                 api_key="lm-studio",
@@ -44,8 +44,13 @@ class DependencyRegistry:
                 is_local_llm=True,
             )
         elif self._tool == "ollama":
-            msg = "`_tool` is not implemented yet"
-            raise ValueError(msg)
+            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
+            openai_client = OpenAIClient(
+                model=model,
+                api_key="ollama",
+                base_url="http://localhost:11434/v1",
+                is_local_llm=True,
+            )
         elif self._settings.APP_ENV == "test":
             logger.debug("use Dummy API")
             openai_client = OpenAIDummyClient()

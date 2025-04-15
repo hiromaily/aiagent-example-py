@@ -66,7 +66,11 @@ run-example:
 	PYTHONPATH=src uv run -m src.cli.main news-agent
 	PYTHONPATH=src uv run -m src.cli.main embedding
 	PYTHONPATH=src uv run -m src.cli.main search-similarity --id 1
-	
+
+.PHONY: run-with-ollama
+run-with-ollama:
+	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --tool ollama --model llama3.2 --question "What is an advantage of using Rust?"
+
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
