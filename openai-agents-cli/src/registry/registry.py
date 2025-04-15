@@ -14,47 +14,43 @@ from openai_custom.interface import OpenAIClientInterface
 class DependencyRegistry:
     """Dependency Registry."""
 
-    def __init__(self) -> None:
+    def __init__(self, tool: str, model: str) -> None:
         """Initialize the DependencyRegistry with the environment."""
         self._settings = EnvSettings()
-        self._openai_client = self._build_openai_client()
+        self._tool = tool
+        self._openai_client = self._build_openai_client(model)
         self._pg_client = self._build_pg_client()
         self._documents_repository = self._build_documents_repository()
 
-    def _build_openai_client(self) -> OpenAIClientInterface:
+    def _build_openai_client(self, model: str) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
-        # openai_model = os.getenv("OPENAI_MODEL")
-        # if openai_model is None:
-        #     msg = "`OPENAI_MODEL` must be provided"
-        #     raise ValueError(msg)
-
-        # api_key = os.getenv("OPENAI_API_KEY")
-        # if api_key is None:
-        #     msg = "`OPENAI_API_KEY` must be provided"
-        #     raise ValueError(msg)
-
-        # Note: it's ok tthat only variable declaration with type hint [Pending]
+        # Note: it's ok that only variable declaration with type hint [Pending]
         openai_client: OpenAIClientInterface
-        if self._settings.APP_ENV == "prod":
+        if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: model:{self._settings.OPENAI_MODEL}")
+            logger.debug(f"use OpenAI API: model:{model}")
             openai_client = OpenAIClient(
-                model=self._settings.OPENAI_MODEL, api_key=self._settings.OPENAI_API_KEY, is_local_llm=False
-            )
-        elif self._settings.APP_ENV == "dev":
-            # use local LLM
-            logger.debug(f"use LocalLLM API: model:{self._settings.OPENAI_MODEL}")
-            openai_client = OpenAIClient(
-                model=self._settings.OPENAI_MODEL,
+                model=model,
                 api_key=self._settings.OPENAI_API_KEY,
-                base_url=self._settings.OPENAI_SERVER_URL,
+                is_local_llm=False,
+            )
+        elif self._tool == "lmstudio":
+            # use local LLM
+            logger.debug(f"use LocalLLM API: model:{model}")
+            openai_client = OpenAIClient(
+                model=model,
+                api_key="lm-studio",
+                base_url="http://localhost:1234/v1",
                 is_local_llm=True,
             )
+        elif self._tool == "ollama":
+            msg = "`_tool` is not implemented yet"
+            raise ValueError(msg)
         elif self._settings.APP_ENV == "test":
             logger.debug("use Dummy API")
             openai_client = OpenAIDummyClient()
         else:
-            msg = "Unknown environment"
+            msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)
 
         return openai_client

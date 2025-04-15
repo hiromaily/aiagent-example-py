@@ -67,11 +67,10 @@ run-example:
 	PYTHONPATH=src uv run -m src.cli.main embedding
 	PYTHONPATH=src uv run -m src.cli.main search-similarity --id 1
 	
-# Use local LLM API server
 # Note: run `lms load` first
-.PHONY: run-with-local-llm
-run-with-local-llm:
-	PYTHONPATH=src uv run -m src.cli.main --env=.env.dev query-tech-guide-chat --question "What is an advantage of using Rust?"
+.PHONY: run-with-lmstudio
+run-with-lmstudio:
+	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --tool lmstudio --model llama3.2 --question "What is an advantage of using Rust?"
 
 # WIP
 .PHONY: run-vector
@@ -100,6 +99,6 @@ clean-cache:
 # After running LM Studio
 .PHONY: load-lms
 load-lms:
-	lms load llama-3.2-3b-instruct --identifier "llama3"
-	lms load multilingual-e5-large-mlx --identifier "multilingual-e5"
+	lms load llama-3.2-3b-instruct --identifier "llama3.2"
+	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
 	

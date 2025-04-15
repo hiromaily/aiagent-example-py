@@ -14,12 +14,11 @@ from use_cases.load_embedding import load_embedding
 app = typer.Typer()
 
 
-def _query(question: str, mode: APIMode) -> None:
+def _query(tool: str, model: str, question: str, mode: APIMode) -> None:
     """Query function."""
     logger.debug("_query()")
 
-    # environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry()
+    registry = DependencyRegistry(tool, model)
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -27,8 +26,8 @@ def _query(question: str, mode: APIMode) -> None:
     response = agent.query_tech_guide(question, mode)
     print(response)
     # call embeddings
-    if EnvSettings().APP_ENV != "prod":
-        # not implemented yet
+    if tool != "openai":
+        logger.info("not implemented yet")
         return
 
     # call embeddings API
@@ -43,6 +42,8 @@ def _query(question: str, mode: APIMode) -> None:
 
 @app.command()  # type: ignore[misc]
 def query_tech_guide(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
     """Custom technology agent."""
@@ -52,11 +53,13 @@ def query_tech_guide(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    _query(question, APIMode.RESPONSE_API)
+    _query(tool, model, question, APIMode.RESPONSE_API)
 
 
 @app.command()  # type: ignore[misc]
 def query_tech_guide_chat(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
 ) -> None:
     """Custom technology agent."""
@@ -66,11 +69,13 @@ def query_tech_guide_chat(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    _query(question, APIMode.CHAT_COMPLETION_API)
+    _query(tool, model, question, APIMode.CHAT_COMPLETION_API)
 
 
 @app.command()  # type: ignore[misc]
 def query(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="Question to ask the agent."),
 ) -> None:
     """Chat agent."""
@@ -80,8 +85,7 @@ def query(
         msg = "parameter `--question` must be provided"
         raise ValueError(msg)
 
-    # environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry()
+    registry = DependencyRegistry(tool, model)
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -89,8 +93,8 @@ def query(
     response = agent.query(question, APIMode.CHAT_COMPLETION_API)
     print(response)
     # call embeddings
-    if EnvSettings().APP_ENV != "prod":
-        # not implemented yet
+    if tool != "openai":
+        logger.info("not implemented yet")
         return
 
     # call embeddings API
@@ -105,12 +109,14 @@ def query(
 
 
 @app.command()  # type: ignore[misc]
-def news_agent() -> None:
+def news_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+) -> None:
     """News agent by web search."""
     logger.debug("news_agent()")
 
-    # environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry()
+    registry = DependencyRegistry(tool, model)
     openai_client = registry.get_openai_client()
     agent = CustomTechnicalAgent(openai_client)
 
@@ -120,25 +126,29 @@ def news_agent() -> None:
 
 
 @app.command()  # type: ignore[misc]
-def embedding() -> None:
+def embedding(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+) -> None:
     """Embedding command."""
     logger.debug("embedding()")
-    # environment = os.getenv("APP_ENV", "dev")
 
     # load embedding JSON file
     embedding_list = load_embedding()
 
+    registry = DependencyRegistry(tool, model)
+    docs_repo = registry.get_docs_repository()
+
     # Insert into DB
     logger.debug("insert into db")
-    registry = DependencyRegistry()
-    docs_repo = registry.get_docs_repository()
     docs_repo.insert_embeddings(embedding_list)
-
     docs_repo.close()
 
 
 @app.command()  # type: ignore[misc]
 def search_similarity(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     content_id: int = typer.Option(0, "--id", "-q", help="item_contents.id."),
 ) -> None:
     """Search similarity."""
@@ -148,9 +158,9 @@ def search_similarity(
         msg = "parameter `--id` must be provided"
         raise ValueError(msg)
 
-    # environment = os.getenv("APP_ENV", "dev")
-    registry = DependencyRegistry()
+    registry = DependencyRegistry(tool, model)
     docs_repo = registry.get_docs_repository()
+
     # Search target item_content from DB `item_contents`
     result = docs_repo.get_item_by_id(content_id)
     if result is None:
@@ -176,7 +186,6 @@ def main(env: str = ".env") -> None:
 
     # environment = os.getenv("APP_ENV", "dev")
     EnvSettings.set_env(env)
-    logger.debug(f"env file: {env}, APP_ENV: {EnvSettings().APP_ENV}")
 
 
 if __name__ == "__main__":
