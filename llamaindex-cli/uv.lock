@@ -721,6 +721,20 @@ wheels = [
 ]
 
 [[package]]
+name = "llama-index-readers-github"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "llama-index-core" },
+    { name = "llama-index-readers-file" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/34/21/2e068eb7055b1c21b3bc2260dd988ee01d3057f03a7c722363861dbffadf/llama_index_readers_github-0.6.0.tar.gz", hash = "sha256:018c93daa39e689611759ce22bcaed11334509c8f7a2271bf48e712c1aa664f1", size = 16336 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/28/52f73eb7b78d0242d5ef1cce1531366383a98fcb7f43b85e95afd65a96a5/llama_index_readers_github-0.6.0-py3-none-any.whl", hash = "sha256:b456bc603a37d093b9c8c8518aba42f2fce913daf02d91345ca890d27d348628", size = 22907 },
+]
+
+[[package]]
 name = "llama-index-readers-llama-parse"
 version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -783,6 +797,7 @@ dependencies = [
     { name = "llama-index-llms-lmstudio" },
     { name = "llama-index-llms-ollama" },
     { name = "llama-index-llms-openai" },
+    { name = "llama-index-readers-github" },
     { name = "llama-index-tools-tavily-research" },
     { name = "llama-index-tools-yahoo-finance" },
     { name = "loguru" },
@@ -812,6 +827,7 @@ requires-dist = [
     { name = "llama-index-llms-lmstudio", specifier = ">=0.3.0" },
     { name = "llama-index-llms-ollama", specifier = ">=0.5.4" },
     { name = "llama-index-llms-openai", specifier = ">=0.3.25" },
+    { name = "llama-index-readers-github", specifier = ">=0.6.0" },
     { name = "llama-index-tools-tavily-research", specifier = ">=0.3.0" },
     { name = "llama-index-tools-yahoo-finance", specifier = ">=0.3.0" },
     { name = "loguru", specifier = ">=0.7.3" },

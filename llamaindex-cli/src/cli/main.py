@@ -27,6 +27,7 @@ app = typer.Typer()
 
 @app.command()  # type: ignore[misc]
 def docs_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     embedding_model: str = typer.Option(
         "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
@@ -41,7 +42,7 @@ def docs_agent(
         raise ValueError(msg)
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     docs_agent = registry.get_query_docs_usecase(storage_mode, embedding_model)
 
     # Execute
@@ -53,6 +54,7 @@ def docs_agent(
 
 @app.command()  # type: ignore[misc]
 def tech_question_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("", "--question", "-q", help="question to ask"),
     stream: bool = False,
@@ -66,7 +68,7 @@ def tech_question_agent(
         raise ValueError(msg)
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     tech_question_agent = registry.get_tech_question_usecase()
 
     # Execute
@@ -80,6 +82,7 @@ def tech_question_agent(
 
 @app.command()  # type: ignore[misc]
 def query_image_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     image_path: str = typer.Option("", "--image", "-i", help="image path to query"),
 ) -> None:
@@ -91,7 +94,7 @@ def query_image_agent(
         raise ValueError(msg)
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     query_image_agent = registry.get_query_image_usecase()
 
     # Execute
@@ -100,6 +103,7 @@ def query_image_agent(
 
 @app.command()  # type: ignore[misc]
 def calc_tool_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     question: str = typer.Option("What is 1 + 1?", "--question", "-q", help="question to ask"),
 ) -> None:
@@ -107,7 +111,7 @@ def calc_tool_agent(
     logger.debug("calc_tool_agent()")
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     calc_tool_agent = registry.get_tool_usecase()
 
     # Execute
@@ -121,6 +125,7 @@ async def _async_calc_tool_agent(calc_tool_agent: ToolAgent, question: str) -> N
 
 @app.command()  # type: ignore[misc]
 def finance_tool_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     company: str = typer.Option("NVIDIA", "--company", "-q", help="company name to get stock price"),
     tavily: bool = False,
@@ -130,7 +135,7 @@ def finance_tool_agent(
     logger.debug("finance_tool_agent()")
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     tool_agent = registry.get_tool_usecase()
 
     # Execute
@@ -150,13 +155,14 @@ async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily:
 
 @app.command()  # type: ignore[misc]
 def conversation_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
 ) -> None:
     """Conversation."""
     logger.debug("conversation_agent()")
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     any_question_agent = registry.get_any_question_usecase()
 
     # Execute
@@ -175,13 +181,14 @@ async def _async_conversation_agent(any_question_agent: AnyQuestionAgent) -> Non
 
 @app.command()  # type: ignore[misc]
 def multi_agent(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
 ) -> None:
     """Multi Agent."""
     logger.debug("multi_agent()")
 
     # Initialization
-    registry = DependencyRegistry(model)
+    registry = DependencyRegistry(tool, model)
     multi_agent = registry.get_multi_agent_usecase()
 
     # Execute
@@ -195,7 +202,7 @@ async def _async_multi_agent(multi_agent: MultiAgent) -> None:
 
 @app.command()  # type: ignore[misc]
 def local_llm(
-    tool: str = typer.Option("ollama", "--tool", "-t", help="LLM tool name"),
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
 ) -> None:
     """Use Local LLM. For just example."""
     # Load documents from a directory
@@ -250,10 +257,8 @@ def main(env: str = ".env") -> None:
     #     load_dotenv(dotenv_path=".env.dev")
     # else:
     #     load_dotenv()
-
-    # environment = os.getenv("APP_ENV", "dev")
     EnvSettings.set_env(env)
-    logger.debug(f"env file: {env}, APP_ENV: {EnvSettings().APP_ENV}")
+    logger.debug(f"env file: {env}")
 
 
 if __name__ == "__main__":

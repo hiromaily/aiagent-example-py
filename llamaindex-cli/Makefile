@@ -76,35 +76,36 @@ lint2:
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
-	uv run -m src.cli.main --env=.env.dev local-llm --tool lmstudio
-	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3
-	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model text-embedding --model llama3 --storage text
-	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust"
-	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --stream
-	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3 --question "Rust" --chat
-	uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3
-	uv run -m src.cli.main --env=.env.dev multi-agent --model llama3
+	uv run -m src.cli.main local-llm --tool lmstudio
+	uv run -m src.cli.main docs-agent --tool lmstudio --embedding-model text-embedding --model llama3
+	uv run -m src.cli.main docs-agent --tool lmstudio --embedding-model text-embedding --model llama3 --storage text
+	uv run -m src.cli.main tech-question-agent --tool lmstudio --model llama3 --question "Rust"
+	uv run -m src.cli.main tech-question-agent --tool lmstudio --model llama3 --question "Rust" --stream
+	uv run -m src.cli.main tech-question-agent --tool lmstudio --model llama3 --question "Rust" --chat
+	uv run -m src.cli.main conversation-agent --tool lmstudio --model llama3
+	uv run -m src.cli.main multi-agent --tool lmstudio --model llama3
 
-	uv run -m src.cli.main --env=.env.dev query-image-agent --model mistral --image "./images/dog.jpg"
+	uv run -m src.cli.main query-image-agent --tool lmstudio --model mistral --image "./images/dog.jpg"
 	# LMStudio doesn't work FunctionCallingLLM.
-	#uv run -m src.cli.main --env=.env.dev calc-tool-agent --model mistral --question "What is 20+(2*4)?"
-	#uv run -m src.cli.main --env=.env.dev finance-tool-agent --model mistral --company "NVIDIA" --tavily
+	#uv run -m src.cli.main calc-tool-agent --tool lmstudio --model mistral --question "What is 20+(2*4)?"
+	#uv run -m src.cli.main finance-tool-agent --tool lmstudio --model mistral --company "NVIDIA" --tavily
 
 .PHONY: run-with-ollama
 run-with-ollama:
-	uv run -m src.cli.main --env=.env.dev local-llm --tool ollama
-	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2
-	uv run -m src.cli.main --env=.env.dev docs-agent --embedding-model nomic-embed-text --model llama3.2 --storage text
-	uv run -m src.cli.main --env=.env.dev tech-question-agent --model llama3.2 --question "Rust"
-	uv run -m src.cli.main --env=.env.dev conversation-agent --model llama3.2
-	uv run -m src.cli.main --env=.env.dev multi-agent --model llama3.2
+	uv run -m src.cli.main local-llm --tool ollama
+	uv run -m src.cli.main docs-agent --tool ollama --embedding-model nomic-embed-text --model llama3.2
+	uv run -m src.cli.main docs-agent --tool ollama --embedding-model nomic-embed-text --model llama3.2 --storage text
+	uv run -m src.cli.main tech-question-agent --tool ollama --model llama3.2 --question "Rust"
+	uv run -m src.cli.main conversation-agent --tool ollama --model llama3.2
+	uv run -m src.cli.main multi-agent --tool ollama --model llama3.2
 
 	# It doesn't work with image recognition
-	uv run -m src.cli.main --env=.env.dev query-image-agent --model llama3.2 --image "./images/dog.jpg"
+	uv run -m src.cli.main query-image-agent --tool ollama --model llama3.2 --image "./images/dog.jpg"
 	# FunctionCallingLLM
-	uv run -m src.cli.main --env=.env.dev calc-tool-agent --model llama3.2 --question "What is 20+(2*4)?"
-	uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily
-	uv run -m src.cli.main --env=.env.dev finance-tool-agent --model llama3.2 --company "NVIDIA" --tavily --stream
+	# WIP: answer is not correct
+	uv run -m src.cli.main calc-tool-agent --tool ollama --model llama3.2 --question "What is 20+(2*4)?"
+	uv run -m src.cli.main finance-tool-agent --tool ollama --model llama3.2 --company "NVIDIA" --tavily
+	uv run -m src.cli.main finance-tool-agent --tool ollama --model llama3.2 --company "NVIDIA" --tavily --stream
 
 
 ###############################################################################

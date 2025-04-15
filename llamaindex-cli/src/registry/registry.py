@@ -37,30 +37,29 @@ from use_cases.tool import ToolAgent
 class DependencyRegistry:
     """Dependency Registry."""
 
-    def __init__(self, model: str) -> None:
+    def __init__(self, tool: str, model: str) -> None:
         """Initialize the DependencyRegistry with the environment."""
         self._settings = EnvSettings()
+        self._tool = tool
         self._llm = self._build_llm(model, self._settings.OPENAI_API_KEY)
 
     def _build_llm(self, model: str, api_key: str, temperature: float = 0.5) -> LLM:
         """Build the LLM based on the environment."""
-        if self._settings.APP_ENV == "prod":
+        if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: {model}")
+            logger.debug(f"use OpenAI API: {model}, toolkit: {self._tool}")
             llm = create_openai_llm(model, api_key, temperature)
-        elif self._settings.APP_ENV == "dev":
+        elif self._tool == "lmstudio":
             # use local LLM
-            logger.debug(f"use local LLM {model}, toolkit: {self._settings.LLM_TOOLKIT}")
-            if self._settings.LLM_TOOLKIT == "lmstudio":
-                # Note: `FunctionCallingLLM` doesn't work with `LMStudio`
-                llm = create_lmstudio_llm(model, temperature)
-            elif self._settings.LLM_TOOLKIT == "ollama":
-                llm = create_ollama_llm(model, temperature)
-            else:
-                msg = f"Unknown LLM toolkit: {self._settings.LLM_TOOLKIT}"
-                raise ValueError(msg)
+            logger.debug(f"use local LLM {model}, toolkit: {self._tool}")
+            # Note: `FunctionCallingLLM` doesn't work with `LMStudio`
+            llm = create_lmstudio_llm(model, temperature)
+        elif self._tool == "ollama":
+            # use local LLM
+            logger.debug(f"use local LLM {model}, toolkit: {self._tool}")
+            llm = create_ollama_llm(model, temperature)
         else:
-            msg = "Unknown environment"
+            msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)
 
         return llm
@@ -74,26 +73,24 @@ class DependencyRegistry:
     def _build_query(self, embedding_model: str) -> BaseQueryEngine:
         """Build the LlamaIndex query."""
         # Create an index from the documents
-        if self._settings.APP_ENV == "prod":
+        if self._tool == "openai":
             # use OpenAI API
-            logger.debug("use OpenAI API")
+            logger.debug(f"use OpenAI API: {embedding_model}, toolkit: {self._tool}")
             embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
             index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
-        elif self._settings.APP_ENV == "dev":
+        elif self._tool == "lmstudio":
             # use local LLM
-            logger.debug("use local LLM")
-            if self._settings.LLM_TOOLKIT == "lmstudio":
-                embed_model = create_lmstudio_embedding_llm(embedding_model)
-            elif self._settings.LLM_TOOLKIT == "ollama":
-                embed_model = create_ollama_embedding_llm(embedding_model)
-            else:
-                msg = f"Unknown LLM toolkit: {self._settings.LLM_TOOLKIT}"
-                raise ValueError(msg)
-
-            index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
+            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            embed_model = create_lmstudio_embedding_llm(embedding_model)
+        elif self._tool == "ollama":
+            # use local LLM
+            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            embed_model = create_ollama_embedding_llm(embedding_model)
         else:
-            msg = "Unknown environment"
+            msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)
+
+        index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
 
         # Create a query engine
         return index.as_query_engine(self._llm)
