@@ -99,6 +99,9 @@ run-with-ollama:
 	uv run -m src.cli.main conversation-agent --tool ollama --model llama3.2
 	uv run -m src.cli.main multi-agent --tool ollama --model llama3.2
 
+	# git indexer
+	uv run -m src.cli.main git-indexer --tool ollama --embedding-model nomic-embed-text --model llama3.2
+	
 	# It doesn't work with image recognition
 	uv run -m src.cli.main query-image-agent --tool ollama --model llama3.2 --image "./images/dog.jpg"
 	# FunctionCallingLLM

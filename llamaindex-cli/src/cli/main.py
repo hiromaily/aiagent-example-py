@@ -201,12 +201,31 @@ async def _async_multi_agent(multi_agent: MultiAgent) -> None:
 
 
 @app.command()  # type: ignore[misc]
+def git_indexer(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
+) -> None:
+    """Github docs Indexer."""
+    logger.debug("git_indexer()")
+
+    # Initialization
+    registry = DependencyRegistry(tool, model)
+    github_index = registry.get_github_index_usecase(embedding_model)
+
+    # Execute
+    github_index.index("storage/github/docs")
+
+
+@app.command()  # type: ignore[misc]
 def local_llm(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
 ) -> None:
     """Use Local LLM. For just example."""
     # Load documents from a directory
-    documents = SimpleDirectoryReader("storage").load_data()
+    documents = SimpleDirectoryReader("storage/news").load_data()
     logger.debug(f"tool: {tool}")
     if tool == "lmstudio":
         llm = LMStudio(

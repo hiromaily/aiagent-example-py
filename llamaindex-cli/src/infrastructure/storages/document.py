@@ -38,7 +38,8 @@ class DocumentList:
                 Document(text="LlamaIndex supports various data connectors and index types."),
             ]
         if self.mode == StorageMode.DIR:
-            return cast("list[Document]", SimpleDirectoryReader("storage").load_data())
+            return cast("list[Document]", SimpleDirectoryReader("storage/news").load_data())
+
         msg = f"'{self.mode}' is not a valid StorageMode"
         raise ValueError(msg)
 
@@ -51,4 +52,4 @@ class DocumentList:
 #     ]
 
 # def get_dir_docs() -> list[Document]:
-#     return SimpleDirectoryReader("storage").load_data()
+#     return SimpleDirectoryReader("storage/news").load_data()

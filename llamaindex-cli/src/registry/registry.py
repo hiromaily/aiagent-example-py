@@ -26,7 +26,9 @@ from infrastructure.llm.models import (
     create_openai_llm,
 )
 from infrastructure.storages.document import DocumentList, StorageMode
+from infrastructure.storages.github import GithubDocumentList
 from use_cases.any_question import AnyQuestionAgent
+from use_cases.github_index import GithubIndex
 from use_cases.multi_agent import MultiAgent
 from use_cases.query_docs import DocsAgent
 from use_cases.query_image import QueryImageAgent
@@ -135,6 +137,29 @@ class DependencyRegistry:
 
         return MultiAgent(multi_workflow)
 
+    def _build_github_index_usecase(self, embedding_model: str) -> GithubIndex:
+        """Build the github index usecase."""
+        if self._tool == "openai":
+            # use OpenAI API
+            logger.debug(f"use OpenAI API: {embedding_model}, toolkit: {self._tool}")
+            embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
+        elif self._tool == "lmstudio":
+            # use local LLM
+            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            embed_model = create_lmstudio_embedding_llm(embedding_model)
+        elif self._tool == "ollama":
+            # use local LLM
+            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            embed_model = create_ollama_embedding_llm(embedding_model)
+        else:
+            msg = f"Unknown LLM toolkit: {self._tool}"
+            raise ValueError(msg)
+
+        github_docs = GithubDocumentList(
+            self._settings.GITHUB_TOKEN, self._settings.GITHUB_OWNER, self._settings.GITHUB_REPO
+        )
+        return GithubIndex(self._llm, embed_model, github_docs)
+
     # def get_llm(self) -> LLM:
     #     """Get the LLM."""
     #     return self._llm
@@ -182,3 +207,7 @@ class DependencyRegistry:
         """Get the multi agent usecase."""
         self._multi_agent_usecase = self._build_multi_agent_usecase()
         return self._multi_agent_usecase
+
+    def get_github_index_usecase(self, embedding_model: str) -> GithubIndex:
+        """Get the multi agent usecase."""
+        self._github_index_usecase = self._build_github_index_usecase(embedding_model)
