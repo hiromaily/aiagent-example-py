@@ -1,6 +1,6 @@
 """Github Index Use Case."""
 
-from llama_index.core import ServiceContext, StorageContext, VectorStoreIndex
+from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.base.embeddings.base import BaseEmbedding
 
 # from llama_index.core.indices.base import BaseIndex
@@ -9,7 +9,6 @@ from llama_index.core.vector_stores import SimpleVectorStore
 from loguru import logger
 
 from infrastructure.storages.github import GithubDocumentList
-from infrastructure.storages.utils import files_to_node
 
 
 class GithubIndex:
@@ -24,21 +23,19 @@ class GithubIndex:
     def index(self, output_dir: str = "storage") -> None:
         """Ask the question by chat()."""
         documents = self._github_docs.get_document()
-        logger.debug("covert documents to nodes")
-        nodes = files_to_node(documents)
 
         logger.debug("create index")
-        vector_store = SimpleVectorStore()
-        storage_context = StorageContext.from_defaults(vector_store=vector_store, persist_dir=output_dir)
-        service_context = ServiceContext.from_defaults(embed_model=self._embed_model)
+        # Note: `ServiceContext`` is deprecated
+        # service_context = ServiceContext.from_defaults(embed_model=self._embed_model)
 
-        index = VectorStoreIndex(
-            nodes,
-            storage_context=storage_context,
-            service_context=service_context,
-            show_progress=True,
+        # Note: VectorStoreIndex.from_documents() returns an index
+        VectorStoreIndex.from_documents(
+            documents,
+            embed_model=self._embed_model,
         )
 
         logger.debug("store index")
+        vector_store = SimpleVectorStore()
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
         storage_context.persist(persist_dir=output_dir)
         logger.debug(f"index saved in {output_dir}")

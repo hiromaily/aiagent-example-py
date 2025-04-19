@@ -22,9 +22,10 @@ class GithubDocumentList:
             github_client=github_client,
             owner=owner,
             repo=repo,
-            # filter_directories=(["docs"], GithubRepositoryReader.FilterType.INCLUDE),
+            filter_directories=(["ai/llm"], GithubRepositoryReader.FilterType.INCLUDE),  # enabled when testing
             filter_file_extensions=([".md"], GithubRepositoryReader.FilterType.INCLUDE),
             verbose=True,
+            timeout=60,
         ).load_data(branch="main")
         return cast("list[Document]", reader)
 

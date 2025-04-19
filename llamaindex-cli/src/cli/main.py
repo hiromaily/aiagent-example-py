@@ -216,6 +216,7 @@ def git_indexer(
     github_index = registry.get_github_index_usecase(embedding_model)
 
     # Execute
+    # FIXME:  No such file or directory: './llamaindex-cli/storage/github/docs/docstore.json'
     github_index.index("storage/github/docs")
 
 

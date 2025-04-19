@@ -211,3 +211,4 @@ class DependencyRegistry:
     def get_github_index_usecase(self, embedding_model: str) -> GithubIndex:
         """Get the multi agent usecase."""
         self._github_index_usecase = self._build_github_index_usecase(embedding_model)
+        return self._github_index_usecase
