@@ -201,7 +201,7 @@ async def _async_multi_agent(multi_agent: MultiAgent) -> None:
 
 
 @app.command()  # type: ignore[misc]
-def git_indexer(
+def git_docs_indexer(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
     embedding_model: str = typer.Option(
@@ -209,15 +209,34 @@ def git_indexer(
     ),
 ) -> None:
     """Github docs Indexer."""
-    logger.debug("git_indexer()")
+    logger.debug("git_docs_indexer()")
 
     # Initialization
     registry = DependencyRegistry(tool, model)
     github_index = registry.get_github_index_usecase(embedding_model)
 
     # Execute
-    # FIXME:  No such file or directory: './llamaindex-cli/storage/github/docs/docstore.json'
-    github_index.index("storage/github/docs")
+    github_index.store_index("storage/github/docs")
+
+
+@app.command()  # type: ignore[misc]
+def git_docs_search(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
+    question: str = typer.Option("What is AWS Lambda?", "--question", "-q", help="question to ask"),
+) -> None:
+    """Github docs search."""
+    logger.debug("git_docs_search()")
+
+    # Initialization
+    registry = DependencyRegistry(tool, model)
+    github_index = registry.get_github_index_usecase(embedding_model)
+
+    # Execute
+    github_index.search_index(question, "storage/github/docs")
 
 
 @app.command()  # type: ignore[misc]

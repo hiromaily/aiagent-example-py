@@ -141,15 +141,15 @@ class DependencyRegistry:
         """Build the github index usecase."""
         if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: {embedding_model}, toolkit: {self._tool}")
+            logger.debug(f"use OpenAI API embedding_model: {embedding_model}, toolkit: {self._tool}")
             embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
         elif self._tool == "lmstudio":
             # use local LLM
-            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            logger.debug(f"use local embedding_model: {embedding_model}, toolkit: {self._tool}")
             embed_model = create_lmstudio_embedding_llm(embedding_model)
         elif self._tool == "ollama":
             # use local LLM
-            logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
+            logger.debug(f"use local embedding_model: {embedding_model}, toolkit: {self._tool}")
             embed_model = create_ollama_embedding_llm(embedding_model)
         else:
             msg = f"Unknown LLM toolkit: {self._tool}"

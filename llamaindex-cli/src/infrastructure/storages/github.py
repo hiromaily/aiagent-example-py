@@ -14,21 +14,27 @@ class GithubDocumentList:
 
     def __init__(self, token: str, owner: str, repo: str) -> None:
         """Initialize the DocumentList with the mode."""
-        github_client = GithubClient(github_token=token, verbose=True)
-        self._github_reader = self._build_github_reader(github_client, owner, repo)
+        self._github_client = GithubClient(github_token=token, verbose=True)
+        self._owner = owner
+        self._repo = repo
+        self._github_documents: None | list[Document] = None
 
-    def _build_github_reader(self, github_client: BaseGithubClient, owner: str, repo: str) -> list[Document]:
+    # very high cost if repository is large
+    def build_github_documents(self, github_client: BaseGithubClient, owner: str, repo: str) -> list[Document]:
+        """Build the Github documents."""
         reader = GithubRepositoryReader(
             github_client=github_client,
             owner=owner,
             repo=repo,
-            filter_directories=(["ai/llm"], GithubRepositoryReader.FilterType.INCLUDE),  # enabled when testing
+            filter_directories=(["programming/rust"], GithubRepositoryReader.FilterType.INCLUDE),  # enabled when testing
             filter_file_extensions=([".md"], GithubRepositoryReader.FilterType.INCLUDE),
             verbose=True,
-            timeout=60,
+            timeout=180,
         ).load_data(branch="main")
         return cast("list[Document]", reader)
 
     def get_document(self) -> list[Document]:
         """Get the github docs document."""
-        return self._github_reader
+        if self._github_documents is None:
+            self._github_documents = self.build_github_documents(self._github_client, self._owner, self._repo)
+        return self._github_documents
