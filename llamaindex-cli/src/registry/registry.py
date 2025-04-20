@@ -2,10 +2,14 @@
 
 from llama_index.core import Document, VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.llms import LLM
 from llama_index.core.vector_stores import SimpleVectorStore
+from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.vector_stores.qdrant import QdrantVectorStore
 from loguru import logger
+from qdrant_client import AsyncQdrantClient, QdrantClient
 
 from agents.ai_tools import get_search_web, record_notes, review_report, write_report
 from agents.workflow import (
@@ -19,6 +23,8 @@ from agents.workflow import (
     build_write_workflow,
 )
 from env.env import EnvSettings
+from infrastructure.documents.document import DocumentList, StorageMode
+from infrastructure.documents.github import GithubDocumentList
 from infrastructure.llm.models import (
     create_lmstudio_embedding_llm,
     create_lmstudio_llm,
@@ -26,8 +32,6 @@ from infrastructure.llm.models import (
     create_ollama_llm,
     create_openai_llm,
 )
-from infrastructure.storages.document import DocumentList, StorageMode
-from infrastructure.storages.github import GithubDocumentList
 from use_cases.any_question import AnyQuestionAgent
 from use_cases.github_index import GithubIndex
 from use_cases.multi_agent import MultiAgent
@@ -45,6 +49,10 @@ class DependencyRegistry:
         self._settings = EnvSettings()
         self._tool = tool
         self._llm = self._build_llm(model, self._settings.OPENAI_API_KEY)
+
+    # --------------------------------------------------------------------------
+    # LLM, Embedding Model
+    # --------------------------------------------------------------------------
 
     def _build_llm(self, model: str, api_key: str, temperature: float = 0.5) -> LLM:
         """Build the LLM based on the environment."""
@@ -67,20 +75,11 @@ class DependencyRegistry:
 
         return llm
 
-    def _build_document(self, storage_mode: str) -> Document:
-        """Build the document."""
-        logger.debug(f"storage_mode: {storage_mode}")
-        mode = StorageMode.from_str(storage_mode)
-        return DocumentList(mode).get_document()
-
-    def _build_query(self, embedding_model: str) -> BaseQueryEngine:
-        """Build the LlamaIndex query."""
-        # Create an index from the documents
+    def _build_embedding_model(self, embedding_model: str) -> BaseEmbedding:
         if self._tool == "openai":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {embedding_model}, toolkit: {self._tool}")
             embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
-            index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
         elif self._tool == "lmstudio":
             # use local LLM
             logger.debug(f"use local LLM {embedding_model}, toolkit: {self._tool}")
@@ -92,11 +91,56 @@ class DependencyRegistry:
         else:
             msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)
+        return embed_model
 
+    # --------------------------------------------------------------------------
+    # Vector Store
+    # --------------------------------------------------------------------------
+
+    def _build_vector_store(self, db: str) -> BasePydanticVectorStore:
+        if db == "qdrant":
+            client = QdrantClient(host="localhost", port=6333)
+            # aclient = AsyncQdrantClient(location=":memory:")
+            # aclient = AsyncQdrantClient(host="localhost", port=6333)
+            vector_store = QdrantVectorStore(
+                client=client,
+                # aclient=aclient,
+                collection_name="githbu_docs",
+                # enable_hybrid=True,
+                fastembed_sparse_model="Qdrant/bm25",
+            )
+        elif db == "":
+            vector_store = SimpleVectorStore()
+        else:
+            msg = f"Unknown vector store: {db}"
+            raise ValueError(msg)
+        return vector_store
+
+    # --------------------------------------------------------------------------
+    # Document
+    # --------------------------------------------------------------------------
+
+    def _build_document(self, storage_mode: str) -> Document:
+        """Build the document."""
+        logger.debug(f"storage_mode: {storage_mode}")
+        mode = StorageMode.from_str(storage_mode)
+        return DocumentList(mode).get_document()
+
+    # --------------------------------------------------------------------------
+    # Query
+    # --------------------------------------------------------------------------
+
+    def _build_query(self, embedding_model: str) -> BaseQueryEngine:
+        """Build the LlamaIndex query."""
+        # Create an index from the documents
+        embed_model = self._build_embedding_model(embedding_model)
         index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
-
         # Create a query engine
         return index.as_query_engine(self._llm)
+
+    # --------------------------------------------------------------------------
+    # Use cases
+    # --------------------------------------------------------------------------
 
     def _build_docs_usecase(self) -> DocsAgent:
         """Build the docs usecase."""
@@ -138,43 +182,19 @@ class DependencyRegistry:
 
         return MultiAgent(multi_workflow)
 
-    def _build_github_index_usecase(self, embedding_model: str) -> GithubIndex:
+    def _build_github_index_usecase(self, embedding_model: str, db: str) -> GithubIndex:
         """Build the github index usecase."""
-        if self._tool == "openai":
-            # use OpenAI API
-            logger.debug(f"use OpenAI API embedding_model: {embedding_model}, toolkit: {self._tool}")
-            embed_model = OpenAIEmbedding(model=embedding_model, api_key=self._settings.OPENAI_API_KEY)
-        elif self._tool == "lmstudio":
-            # use local LLM
-            logger.debug(f"use local embedding_model: {embedding_model}, toolkit: {self._tool}")
-            embed_model = create_lmstudio_embedding_llm(embedding_model)
-        elif self._tool == "ollama":
-            # use local LLM
-            logger.debug(f"use local embedding_model: {embedding_model}, toolkit: {self._tool}")
-            embed_model = create_ollama_embedding_llm(embedding_model)
-        else:
-            msg = f"Unknown LLM toolkit: {self._tool}"
-            raise ValueError(msg)
-
+        embed_model = self._build_embedding_model(embedding_model)
         github_docs = GithubDocumentList(
             self._settings.GITHUB_TOKEN, self._settings.GITHUB_OWNER, self._settings.GITHUB_REPO
         )
-        # TODO: storage
-        vector_store = SimpleVectorStore()
-
+        # vector store
+        vector_store = self._build_vector_store(db)
         return GithubIndex(self._llm, embed_model, github_docs, vector_store)
 
-    # def get_llm(self) -> LLM:
-    #     """Get the LLM."""
-    #     return self._llm
-
-    # def get_document(self) -> LLM:
-    #     """Get the LLM."""
-    #     return self._document
-
-    # def get_query(self) -> BaseQueryEngine:
-    #     """Get the LlamaIndex Query."""
-    #     return self._query_engine
+    # --------------------------------------------------------------------------
+    # Getter for use cases
+    # --------------------------------------------------------------------------
 
     def get_query_docs_usecase(self, storage_mode: str, embedding_model: str) -> DocsAgent:
         """Get the docs usecase."""
@@ -212,7 +232,7 @@ class DependencyRegistry:
         self._multi_agent_usecase = self._build_multi_agent_usecase()
         return self._multi_agent_usecase
 
-    def get_github_index_usecase(self, embedding_model: str) -> GithubIndex:
+    def get_github_index_usecase(self, embedding_model: str, db: str) -> GithubIndex:
         """Get the multi agent usecase."""
-        self._github_index_usecase = self._build_github_index_usecase(embedding_model)
+        self._github_index_usecase = self._build_github_index_usecase(embedding_model, db)
         return self._github_index_usecase

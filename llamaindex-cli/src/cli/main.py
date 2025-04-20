@@ -207,13 +207,14 @@ def git_docs_indexer(
     embedding_model: str = typer.Option(
         "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
     ),
+    db: str = typer.Option("", "--db", "-d", help="Vector DB: blank or 'qdrant'"),
 ) -> None:
     """Github docs Indexer."""
     logger.debug("git_docs_indexer()")
 
     # Initialization
     registry = DependencyRegistry(tool, model)
-    github_index = registry.get_github_index_usecase(embedding_model)
+    github_index = registry.get_github_index_usecase(embedding_model, db)
 
     # Execute
     github_index.store_index("storage/github/docs")

@@ -13,4 +13,5 @@ wheels/
 .env
 
 # storages
-storage/github/
+storage/*
+!storage/news

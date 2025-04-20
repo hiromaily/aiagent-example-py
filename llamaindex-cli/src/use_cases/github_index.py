@@ -4,10 +4,11 @@ from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_s
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.indices.base import BaseIndex
 from llama_index.core.llms import LLM
+from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from loguru import logger
 
-from infrastructure.storages.github import GithubDocumentList
+from infrastructure.documents.github import GithubDocumentList
 
 
 class GithubIndex:
@@ -28,8 +29,12 @@ class GithubIndex:
         self._embed_model = embed_model
         self._github_docs = github_docs
         self._vector_store = vector_store
+        if isinstance(vector_store, SimpleVectorStore):
+            self._output_dir = "storage/github/docs"
+        else:
+            self._output_dir = None
 
-    def store_index(self, output_dir: str = "storage") -> None:
+    def store_index(self) -> None:
         """Create github document and vector index and store it."""
         logger.debug("start calling GithubDocumentList")
         # 1. get documents
@@ -49,26 +54,23 @@ class GithubIndex:
         )
 
         logger.debug("store index")
-        # persist index
-        # storage_context.persist(persist_dir=output_dir)
-        index.storage_context.persist(persist_dir=output_dir)
-        logger.debug(f"index saved in {output_dir}")
+        if self._output_dir is not None:
+            index.storage_context.persist(persist_dir=self._output_dir)
+        else:
+            index.storage_context.persist()
+        logger.debug("index saved")
 
-    def _load_saved_index(self, storage_dir: str = "storage") -> BaseIndex:
+    def _load_saved_index(self) -> BaseIndex:
         """Load saved index."""
-        # TODO: add flexible dependency
         # https://docs.llamaindex.ai/en/stable/module_guides/storing/save_load/
-        storage_context = StorageContext.from_defaults(persist_dir=storage_dir)
-        return load_index_from_storage(storage_context, embed_model=self._embed_model)
+        if isinstance(self._vector_store, SimpleVectorStore):
+            storage_context = StorageContext.from_defaults(persist_dir=self._output_dir)
+            return load_index_from_storage(storage_context, embed_model=self._embed_model)
+        return VectorStoreIndex.from_vector_store(self._vector_store, embed_model=self._embed_model)
 
     def search_index(self, question: str, storage_dir: str = "storage") -> None:
         """Ask the question from github docs."""
         logger.debug("load index from storage")
-        # documents = SimpleDirectoryReader(storage_dir).load_data()
-        # index = VectorStoreIndex.from_documents(
-        #     documents,
-        #     embed_model=self._embed_model,
-        # )
         index = self._load_saved_index(storage_dir)
         query = index.as_query_engine(self._llm)
 

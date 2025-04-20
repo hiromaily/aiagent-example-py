@@ -59,6 +59,11 @@ For more details, refer to the [LlamaIndex documentation](https://docs.llamainde
 | LM-Studio  | llama-3.2 | text-embedding-nomic-embed-text-v1.5-embedding | TBD             | not supported    |
 | Ollama     | llama3.2  | nomic-embed-text                               | TBD             | llama3.2         |
 
+## Vector Database
+
+- In memory by `SimpleVectorStore()`
+- [Qdrant](https://qdrant.tech/)
+
 ## Issues
 
 ### dependency issues
