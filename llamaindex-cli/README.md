@@ -59,6 +59,15 @@ For more details, refer to the [LlamaIndex documentation](https://docs.llamainde
 | LM-Studio  | llama-3.2 | text-embedding-nomic-embed-text-v1.5-embedding | TBD             | not supported    |
 | Ollama     | llama3.2  | nomic-embed-text                               | TBD             | llama3.2         |
 
+## Issues
+
+### dependency issues
+
+- **[duckdb](https://github.com/duckdb/duckdb)**
+   I use `llama-index>=0.12.24`, but `llama-index-vector-stores-duckdb` depends on `llama-index-core>=0.10.0,<0.11.0`
+- **[faiss](https://github.com/facebookresearch/faiss)**
+  `llama-index-vector-stores-faiss` can be installed but `faiss` has no wheels for `cp312` (Python 3.12). `faiss` must be installed using `Anaconda`.
+  
 ## TODO
 
 - [x] Local LLM mode

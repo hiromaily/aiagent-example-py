@@ -3,6 +3,7 @@
 from llama_index.core import Document, VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms import LLM
+from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.embeddings.openai import OpenAIEmbedding
 from loguru import logger
 
@@ -158,7 +159,10 @@ class DependencyRegistry:
         github_docs = GithubDocumentList(
             self._settings.GITHUB_TOKEN, self._settings.GITHUB_OWNER, self._settings.GITHUB_REPO
         )
-        return GithubIndex(self._llm, embed_model, github_docs)
+        # TODO: storage
+        vector_store = SimpleVectorStore()
+
+        return GithubIndex(self._llm, embed_model, github_docs, vector_store)
 
     # def get_llm(self) -> LLM:
     #     """Get the LLM."""
