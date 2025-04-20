@@ -217,7 +217,7 @@ def git_docs_indexer(
     github_index = registry.get_github_index_usecase(embedding_model, db)
 
     # Execute
-    github_index.store_index("storage/github/docs")
+    github_index.store_index()
 
 
 @app.command()  # type: ignore[misc]
@@ -227,6 +227,7 @@ def git_docs_search(
     embedding_model: str = typer.Option(
         "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
     ),
+    db: str = typer.Option("", "--db", "-d", help="Vector DB: blank or 'qdrant'"),
     question: str = typer.Option("What is AWS Lambda?", "--question", "-q", help="question to ask"),
 ) -> None:
     """Github docs search."""
@@ -234,10 +235,10 @@ def git_docs_search(
 
     # Initialization
     registry = DependencyRegistry(tool, model)
-    github_index = registry.get_github_index_usecase(embedding_model)
+    github_index = registry.get_github_index_usecase(embedding_model, db)
 
     # Execute
-    github_index.search_index(question, "storage/github/docs")
+    github_index.search_index(question)
 
 
 @app.command()  # type: ignore[misc]

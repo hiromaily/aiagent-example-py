@@ -100,8 +100,8 @@ run-with-ollama:
 	uv run -m src.cli.main multi-agent --tool ollama --model llama3.2
 
 	# WIP: git indexer
-	uv run -m src.cli.main git-docs-indexer --tool ollama --embedding-model nomic-embed-text --model llama3.2
-	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --question "What is Rust as programming language?"
+	uv run -m src.cli.main git-docs-indexer --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant
+	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "What is Rust as programming language?"
 	
 	# It doesn't work with image recognition
 	uv run -m src.cli.main query-image-agent --tool ollama --model llama3.2 --image "./images/dog.jpg"

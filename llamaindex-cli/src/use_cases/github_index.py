@@ -43,11 +43,8 @@ class GithubIndex:
 
         logger.debug("create index")
         # Note: `ServiceContext`` is deprecated
-        # service_context = ServiceContext.from_defaults(embed_model=self._embed_model)
-
         # create storage context with specific storage
         storage_context = StorageContext.from_defaults(vector_store=self._vector_store)
-
         # create vector index with `embed_model`
         index = VectorStoreIndex.from_documents(
             documents, embed_model=self._embed_model, storage_context=storage_context
@@ -68,10 +65,10 @@ class GithubIndex:
             return load_index_from_storage(storage_context, embed_model=self._embed_model)
         return VectorStoreIndex.from_vector_store(self._vector_store, embed_model=self._embed_model)
 
-    def search_index(self, question: str, storage_dir: str = "storage") -> None:
+    def search_index(self, question: str) -> None:
         """Ask the question from github docs."""
         logger.debug("load index from storage")
-        index = self._load_saved_index(storage_dir)
+        index = self._load_saved_index()
         query = index.as_query_engine(self._llm)
 
         logger.debug(f"query: {question}")

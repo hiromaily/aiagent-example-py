@@ -26,10 +26,10 @@ class GithubDocumentList:
             github_client=github_client,
             owner=owner,
             repo=repo,
-            filter_directories=(
-                ["programming/rust"],
-                GithubRepositoryReader.FilterType.INCLUDE,
-            ),  # enabled when testing
+            # filter_directories=(
+            #     ["programming/rust"],
+            #     GithubRepositoryReader.FilterType.INCLUDE,
+            # ),  # enabled when testing
             filter_file_extensions=([".md"], GithubRepositoryReader.FilterType.INCLUDE),
             verbose=True,
             timeout=180,
