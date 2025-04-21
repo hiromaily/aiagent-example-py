@@ -99,9 +99,10 @@ run-with-ollama:
 	uv run -m src.cli.main conversation-agent --tool ollama --model llama3.2
 	uv run -m src.cli.main multi-agent --tool ollama --model llama3.2
 
-	# WIP: git indexer
+	# Github docs indexer and search
 	uv run -m src.cli.main git-docs-indexer --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant
 	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "What is Rust as programming language?"
+	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "Can you explain about AWS Lambda?"
 	
 	# It doesn't work with image recognition
 	uv run -m src.cli.main query-image-agent --tool ollama --model llama3.2 --image "./images/dog.jpg"

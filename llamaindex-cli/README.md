@@ -8,6 +8,9 @@
 - **Tool Integration**: Supports adding tools like [Tavily](https://tavily.com/) for enhanced functionality.
 - **Function Calling**: Enables function calling with compatible LLMs.
 - **Customizable Models**: Allows specifying model configurations for OpenAI and other supported LLMs.
+- **Vector Database Integration**: Supports in-memory vector storage and external databases like Qdrant for efficient data retrieval.
+- **Extensible Architecture**: Designed to easily integrate additional tools, APIs, and workflows.
+- **GitHub Repository Search**: Implements a search system using specified GitHub repositories as data sources.
 
 ## Requirements
 
