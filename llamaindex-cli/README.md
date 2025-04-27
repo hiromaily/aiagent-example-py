@@ -14,9 +14,13 @@
 
 ## TODO
 
-- Hugging Face model integration
+- [ ] Hugging Face model integration
   - [Hugging Face LLMs](https://docs.llamaindex.ai/en/stable/examples/llm/huggingface/)
   - [Local Embeddings with HuggingFace](https://docs.llamaindex.ai/en/stable/examples/embeddings/huggingface/)
+- [x] Local LLM mode
+- [x] Integrate [Tavily](https://tavily.com/) to retrieve the ticker symbol.
+  - [LlamaIndex: Adding other tools](https://docs.llamaindex.ai/en/stable/understanding/agent/tools/)
+- [x] Integrate Vector Database
 
 ## Requirements
 
@@ -72,6 +76,7 @@ For more details, refer to the [LlamaIndex documentation](https://docs.llamainde
 
 - In memory by `SimpleVectorStore()`
 - [Qdrant](https://qdrant.tech/)
+- [Faiss](https://github.com/facebookresearch/faiss)
 
 ## Issues
 
@@ -82,13 +87,6 @@ For more details, refer to the [LlamaIndex documentation](https://docs.llamainde
 - **[faiss](https://github.com/facebookresearch/faiss)**
   `llama-index-vector-stores-faiss` can be installed but `faiss` has no wheels for `cp312` (Python 3.12). `faiss` must be installed using `Anaconda`.
   
-## TODO
-
-- [x] Local LLM mode
-- [x] Integrate [Tavily](https://tavily.com/) to retrieve the ticker symbol.
-  - [LlamaIndex: Adding other tools](https://docs.llamaindex.ai/en/stable/understanding/agent/tools/)
-- [ ] Integrate Vector Database
-
 ## References
 
 - [LlamaIndex: Agent Tools](https://llamahub.ai/?tab=tools)

@@ -1,5 +1,6 @@
 """Registry Class."""
 
+import faiss
 from llama_index.core import Document, VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.base.embeddings.base import BaseEmbedding
@@ -7,6 +8,7 @@ from llama_index.core.llms import LLM
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.vector_stores.faiss import FaissVectorStore
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from loguru import logger
 from qdrant_client import QdrantClient
@@ -109,6 +111,10 @@ class DependencyRegistry:
                 # enable_hybrid=True,
                 fastembed_sparse_model="Qdrant/bm25",
             )
+        elif db_name == "faiss":
+            d = 1536
+            faiss_index = faiss.IndexFlatL2(d)
+            vector_store = FaissVectorStore(faiss_index=faiss_index)
         elif db_name == "":
             vector_store = SimpleVectorStore()
         else:

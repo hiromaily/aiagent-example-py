@@ -227,7 +227,7 @@ def git_docs_search(
     embedding_model: str = typer.Option(
         "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
     ),
-    db: str = typer.Option("", "--db", "-d", help="Vector DB: blank or 'qdrant'"),
+    db: str = typer.Option("", "--db", "-d", help="Vector DB: blank or 'qdrant' or 'faiss'"),
     question: str = typer.Option("What is AWS Lambda?", "--question", "-q", help="question to ask"),
 ) -> None:
     """Github docs search."""
