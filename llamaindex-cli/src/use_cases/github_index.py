@@ -29,10 +29,9 @@ class GithubIndex:
         self._embed_model = embed_model
         self._github_docs = github_docs
         self._vector_store = vector_store
+        self._output_dir: str | None = None
         if isinstance(vector_store, SimpleVectorStore):
             self._output_dir = "storage/github/docs"
-        else:
-            self._output_dir = None
 
     def store_index(self) -> None:
         """Create github document and vector index and store it."""
@@ -69,8 +68,8 @@ class GithubIndex:
         """Ask the question from github docs."""
         logger.debug("load index from storage")
         index = self._load_saved_index()
-        query = index.as_query_engine(self._llm)
+        query_engine = index.as_query_engine(self._llm)
 
         logger.debug(f"query: {question}")
-        response = query.query(question)
+        response = query_engine.query(question)
         print(response)

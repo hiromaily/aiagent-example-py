@@ -100,9 +100,13 @@ run-with-ollama:
 	uv run -m src.cli.main multi-agent --tool ollama --model llama3.2
 
 	# Github docs indexer and search
+	## Fetch documents from Github docs repository and store on vector DB
 	uv run -m src.cli.main git-docs-indexer --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant
+	## Search something from vector DB
 	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "What is Rust as programming language?"
 	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "Can you explain about AWS Lambda?"
+	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "Which markdown contains the link to the ranking of global tech industry salaries?"
+	uv run -m src.cli.main git-docs-search --tool ollama --embedding-model nomic-embed-text --model llama3.2 --db qdrant --question "Which AI model should I use with GitHub Copilot?Can you explain with usecases?"
 	
 	# It doesn't work with image recognition
 	uv run -m src.cli.main query-image-agent --tool ollama --model llama3.2 --image "./images/dog.jpg"

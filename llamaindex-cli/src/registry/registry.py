@@ -9,7 +9,7 @@ from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from loguru import logger
-from qdrant_client import AsyncQdrantClient, QdrantClient
+from qdrant_client import QdrantClient
 
 from agents.ai_tools import get_search_web, record_notes, review_report, write_report
 from agents.workflow import (
@@ -97,8 +97,8 @@ class DependencyRegistry:
     # Vector Store
     # --------------------------------------------------------------------------
 
-    def _build_vector_store(self, db: str) -> BasePydanticVectorStore:
-        if db == "qdrant":
+    def _build_vector_store(self, db_name: str) -> BasePydanticVectorStore:
+        if db_name == "qdrant":
             client = QdrantClient(host="localhost", port=6333)
             # aclient = AsyncQdrantClient(location=":memory:")
             # aclient = AsyncQdrantClient(host="localhost", port=6333)
@@ -109,10 +109,10 @@ class DependencyRegistry:
                 # enable_hybrid=True,
                 fastembed_sparse_model="Qdrant/bm25",
             )
-        elif db == "":
+        elif db_name == "":
             vector_store = SimpleVectorStore()
         else:
-            msg = f"Unknown vector store: {db}"
+            msg = f"Unknown vector store: {db_name}"
             raise ValueError(msg)
         return vector_store
 
@@ -182,14 +182,14 @@ class DependencyRegistry:
 
         return MultiAgent(multi_workflow)
 
-    def _build_github_index_usecase(self, embedding_model: str, db: str) -> GithubIndex:
+    def _build_github_index_usecase(self, embedding_model: str, db_name: str) -> GithubIndex:
         """Build the github index usecase."""
         embed_model = self._build_embedding_model(embedding_model)
         github_docs = GithubDocumentList(
             self._settings.GITHUB_TOKEN, self._settings.GITHUB_OWNER, self._settings.GITHUB_REPO
         )
         # vector store
-        vector_store = self._build_vector_store(db)
+        vector_store = self._build_vector_store(db_name)
         return GithubIndex(self._llm, embed_model, github_docs, vector_store)
 
     # --------------------------------------------------------------------------
@@ -232,7 +232,7 @@ class DependencyRegistry:
         self._multi_agent_usecase = self._build_multi_agent_usecase()
         return self._multi_agent_usecase
 
-    def get_github_index_usecase(self, embedding_model: str, db: str) -> GithubIndex:
+    def get_github_index_usecase(self, embedding_model: str, db_name: str) -> GithubIndex:
         """Get the multi agent usecase."""
-        self._github_index_usecase = self._build_github_index_usecase(embedding_model, db)
+        self._github_index_usecase = self._build_github_index_usecase(embedding_model, db_name)
         return self._github_index_usecase

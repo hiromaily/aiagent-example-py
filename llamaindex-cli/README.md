@@ -12,6 +12,12 @@
 - **Extensible Architecture**: Designed to easily integrate additional tools, APIs, and workflows.
 - **GitHub Repository Search**: Implements a search system using specified GitHub repositories as data sources.
 
+## TODO
+
+- Hugging Face model integration
+  - [Hugging Face LLMs](https://docs.llamaindex.ai/en/stable/examples/llm/huggingface/)
+  - [Local Embeddings with HuggingFace](https://docs.llamaindex.ai/en/stable/examples/embeddings/huggingface/)
+
 ## Requirements
 
 - [uv](https://github.com/astral-sh/uv) as Python package manager.
