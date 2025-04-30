@@ -16,6 +16,9 @@ app = typer.Typer()
 def query_tech_guide(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
     question: str = typer.Option("", "--question", "-q", help="Question to ask the tech agent."),
     chat: bool = False,
 ) -> None:
@@ -27,7 +30,7 @@ def query_tech_guide(
         raise ValueError(msg)
 
     # Initialization
-    registry = DependencyRegistry(tool, model)
+    registry = DependencyRegistry(tool, model, embedding_model)
     agent = registry.get_query_agent(chat)
 
     # Execute
@@ -38,6 +41,9 @@ def query_tech_guide(
 def query_common(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
     question: str = typer.Option("", "--question", "-q", help="Question to ask the agent."),
     chat: bool = False,
 ) -> None:
@@ -49,7 +55,7 @@ def query_common(
         raise ValueError(msg)
 
     # Initialization
-    registry = DependencyRegistry(tool, model)
+    registry = DependencyRegistry(tool, model, embedding_model)
     agent = registry.get_query_agent(chat)
 
     # execute

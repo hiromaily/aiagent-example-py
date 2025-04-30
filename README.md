@@ -24,8 +24,8 @@ Various examples of AI Agents.
 
 ## Tools/Services used and LLM used for operation check
 
-| Tool/API   | Chat      | embedding API                                  | Image Detection | Function Calling |
-| ---------- | --------- | ---------------------------------------------- | --------------- | ---------------- |
-| OpenAI API | gpt-4o    | text-embedding-ada-002                         | gpt-4o          | gpt-4o           |
-| LM-Studio  | llama-3.2 | text-embedding-nomic-embed-text-v1.5-embedding | TBD             | not supported    |
-| Ollama     | llama3.2  | nomic-embed-text                               | TBD             | llama3.2         |
+| Tool/API   | Chat               | embedding API                                  | Image Detection | Function Calling |
+| ---------- | ------------------ | ---------------------------------------------- | --------------- | ---------------- |
+| OpenAI API | gpt-4o             | text-embedding-ada-002                         | gpt-4o          | gpt-4o           |
+| LM-Studio  | llama-3.2          | text-embedding-nomic-embed-text-v1.5-embedding | TBD             | not supported    |
+| Ollama     | llama3.2, qwen3:8b | nomic-embed-text                               | TBD             | llama3.2         |

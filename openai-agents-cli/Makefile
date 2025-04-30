@@ -71,12 +71,12 @@ run-example:
 # Ollama
 .PHONY: run-with-ollama
 run-with-ollama:
-	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --chat --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"
 
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
-	uv run -m src.cli.main query-tech-guide --tool lmstudio --model llama3.2 --chat --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main query-tech-guide --tool lmstudio --model llama3.2 --embedding-model text-embedding --chat --question "What is an advantage of using Rust?"
 
 # WIP
 .PHONY: run-vector

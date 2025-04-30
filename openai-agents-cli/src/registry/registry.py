@@ -18,17 +18,17 @@ from use_cases.web_search_agent import WebSearchAgent
 class DependencyRegistry:
     """Dependency Registry."""
 
-    def __init__(self, tool: str, model: str) -> None:
+    def __init__(self, tool: str, model: str, embedding_model: str | None = None) -> None:
         """Initialize the DependencyRegistry with the environment."""
         self._settings = EnvSettings()
         self._tool = tool
-        self._openai_client = self._build_openai_client(model)
+        self._openai_client = self._build_openai_client(model, embedding_model)
 
     # --------------------------------------------------------------------------
     # OpenAI Client
     # --------------------------------------------------------------------------
 
-    def _build_openai_client(self, model: str) -> OpenAIClientInterface:
+    def _build_openai_client(self, model: str, embedding_model: str | None) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
         # Note: it's ok that only variable declaration with type hint [Pending]
         openai_client: OpenAIClientInterface
@@ -41,18 +41,29 @@ class DependencyRegistry:
                 is_local_llm=False,
             )
         elif self._tool == "lmstudio":
-            # use local LLM
+            if not embedding_model:
+                msg = "embedding_model must be provided"
+                raise ValueError(msg)
+
+            # use local LLM: LM Studio API
             logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
             openai_client = OpenAIClient(
                 model=model,
+                embedding_model=embedding_model,
                 api_key="lm-studio",
                 base_url="http://localhost:1234/v1",
                 is_local_llm=True,
             )
         elif self._tool == "ollama":
+            if not embedding_model:
+                msg = "embedding_model must be provided"
+                raise ValueError(msg)
+
+            # use local LLM: Ollama API
             logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
             openai_client = OpenAIClient(
                 model=model,
+                embedding_model=embedding_model,
                 api_key="ollama",
                 base_url="http://localhost:11434/v1",
                 is_local_llm=True,

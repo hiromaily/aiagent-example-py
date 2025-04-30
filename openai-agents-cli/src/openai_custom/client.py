@@ -19,7 +19,14 @@ class APIMode(Enum):
 class OpenAIClient(OpenAIClientInterface):
     """OpenAI API Client class."""
 
-    def __init__(self, model: str, api_key: str, base_url: str | None = None, is_local_llm: bool = False) -> None:
+    def __init__(
+        self,
+        model: str,
+        api_key: str,
+        embedding_model: str = "text-embedding-ada-002",
+        base_url: str | None = None,
+        is_local_llm: bool = False,
+    ) -> None:
         """Initialize OpenAI client."""
         if not model:
             msg = "Model must be provided"
@@ -30,6 +37,7 @@ class OpenAIClient(OpenAIClientInterface):
             raise ValueError(msg)
 
         self._model = model
+        self._embedding_model = embedding_model
         self._is_local_llm = is_local_llm
         if not base_url:
             self._client = OpenAI(api_key=api_key)
@@ -64,7 +72,7 @@ class OpenAIClient(OpenAIClientInterface):
 
     def call_embeddings(self, prompt: str | list[str]) -> list[Embedding]:
         """Call Embeddings API."""
-        response = self._client.embeddings.create(model="text-embedding-ada-002", input=prompt, encoding_format="float")
+        response = self._client.embeddings.create(model=self._embedding_model, input=prompt, encoding_format="float")
         # return response.data
         return cast("list[Embedding]", response.data)
 
