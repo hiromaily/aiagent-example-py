@@ -3,8 +3,8 @@
 from loguru import logger
 
 from env.env import EnvSettings
-from infrastructure.repository.documents import DocumentsRepository
-from infrastructure.repository.interface import DocumentsRepositoryInterface
+from infrastructure.repository.embedding import PgVectorEmbeddingRepository
+from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
 from openai_custom.client import APIMode, OpenAIClient
 from openai_custom.dymmy import OpenAIDummyClient
@@ -34,7 +34,7 @@ class DependencyRegistry:
         openai_client: OpenAIClientInterface
         if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{model}")
+            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{model}, embedding_model:{embedding_model}")
             openai_client = OpenAIClient(
                 model=model,
                 api_key=self._settings.OPENAI_API_KEY,
@@ -46,7 +46,7 @@ class DependencyRegistry:
                 raise ValueError(msg)
 
             # use local LLM: LM Studio API
-            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
+            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}, embedding_model:{embedding_model}")
             openai_client = OpenAIClient(
                 model=model,
                 embedding_model=embedding_model,
@@ -60,7 +60,7 @@ class DependencyRegistry:
                 raise ValueError(msg)
 
             # use local LLM: Ollama API
-            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}")
+            logger.debug(f"use LocalLLM API: tool: {self._tool}, model:{model}, embedding_model:{embedding_model}")
             openai_client = OpenAIClient(
                 model=model,
                 embedding_model=embedding_model,
@@ -91,29 +91,31 @@ class DependencyRegistry:
             password=self._settings.PG_PASSWORD,
         )
 
-    def _build_documents_repository(self) -> DocumentsRepositoryInterface:
-        """Build the DocumentsRepository."""
+    def _build_embedding_repository(self) -> EmbeddingRepositoryInterface:
+        """Build the EmbeddingRepository."""
         pg_client = self._build_pg_client()
-        return DocumentsRepository(pg_client)
+        # is_large_embedding = True if self._tool == "openai" else False
+        is_large_embedding = bool(self._tool == "openai")
+        return PgVectorEmbeddingRepository(pg_client, is_large_embedding)
 
     # --------------------------------------------------------------------------
     # Use cases
     # --------------------------------------------------------------------------
     def _build_query_agent_usecase(self, chat: bool) -> QueryAgent:
-        documents_repository = self._build_documents_repository()
+        embedding_repository = self._build_embedding_repository()
         api_mode = APIMode.CHAT_COMPLETION_API if chat else APIMode.RESPONSE_API
-        return QueryAgent(self._openai_client, documents_repository, self._tool, api_mode)
+        return QueryAgent(self._openai_client, embedding_repository, self._tool, api_mode)
 
     def _build_web_search_agent_usecase(self) -> WebSearchAgent:
         return WebSearchAgent(self._openai_client)
 
     def _build_debug_agent_usecase(self) -> DebugAgent:
-        documents_repository = self._build_documents_repository()
-        return DebugAgent(documents_repository)
+        embedding_repository = self._build_embedding_repository()
+        return DebugAgent(embedding_repository)
 
     def _build_search_vector_db_usecase(self) -> SearchVectorDBAgent:
-        documents_repository = self._build_documents_repository()
-        return SearchVectorDBAgent(documents_repository)
+        embedding_repository = self._build_embedding_repository()
+        return SearchVectorDBAgent(embedding_repository)
 
     # --------------------------------------------------------------------------
     # Getter for use cases

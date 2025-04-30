@@ -3,7 +3,7 @@
 from loguru import logger
 
 from embedding.embedding import load_embedding
-from infrastructure.repository.interface import DocumentsRepositoryInterface
+from infrastructure.repository.interface import EmbeddingRepositoryInterface
 
 
 class DebugAgent:
@@ -11,10 +11,10 @@ class DebugAgent:
 
     def __init__(
         self,
-        docs_repo: DocumentsRepositoryInterface,
+        embedding_repo: EmbeddingRepositoryInterface,
     ) -> None:
-        """Initialize the Debug Agent with an docs repository."""
-        self._docs_repo = docs_repo
+        """Initialize the Debug Agent with an embedding repository."""
+        self._embedding_repo = embedding_repo
 
     def embedding(self, file_path: str) -> None:
         """Embedding static file."""
@@ -23,5 +23,5 @@ class DebugAgent:
 
         # Insert into DB
         logger.debug("insert into db")
-        self._docs_repo.insert_embeddings(embedding_list)
-        self._docs_repo.close()
+        self._embedding_repo.insert_embeddings(embedding_list)
+        self._embedding_repo.close()

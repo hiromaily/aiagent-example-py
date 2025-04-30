@@ -2,7 +2,7 @@
 
 from loguru import logger
 
-from infrastructure.repository.interface import DocumentsRepositoryInterface
+from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from openai_custom.client import APIMode
 from openai_custom.interface import OpenAIClientInterface
 
@@ -13,13 +13,13 @@ class QueryAgent:
     def __init__(
         self,
         openai_client: OpenAIClientInterface,
-        docs_repo: DocumentsRepositoryInterface,
+        embedding_repo: EmbeddingRepositoryInterface,
         tool: str,
         api_mode: APIMode,
     ) -> None:
         """Initialize the QueryAgent with an OpenAI client."""
         self._openai_client = openai_client
-        self._docs_repo = docs_repo
+        self._embedding_repo = embedding_repo
         self._tool = tool
         self._api_mode = api_mode
 
@@ -30,22 +30,24 @@ class QueryAgent:
         on how to learn a specific technology.
         """
         # execute
+        logger.debug(f"query question: question: {user_query}")
         response = self._query_tech_guide(user_query)
         print(response)
 
         # call embeddings if tool is OpenAI
-        if self._tool != "openai":
-            logger.info("not implemented yet")
-            return
+        # if self._tool != "openai":
+        #     logger.info("not implemented yet")
+        #     return
 
         # call embeddings API
+        logger.debug("call embedding()")
         embedding_list = self._openai_client.call_embeddings(user_query)
         print(embedding_list)
 
         # Insert into DB
         logger.debug("insert into db `embeddings` table")
-        self._docs_repo.insert_embeddings(embedding_list)
-        self._docs_repo.close()
+        self._embedding_repo.insert_embeddings(embedding_list)
+        self._embedding_repo.close()
 
     def query_common(self, user_query: str) -> None:
         """Query the agent with a user common question."""
@@ -64,8 +66,8 @@ class QueryAgent:
         print(embedding_list)
         # Insert into DB
         logger.debug("insert into db `item_contents` table")
-        self._docs_repo.insert_item_contents([user_query], embedding_list)
-        self._docs_repo.close()
+        self._embedding_repo.insert_item_contents([user_query], embedding_list)
+        self._embedding_repo.close()
 
     def query_news(self) -> str:
         """Query about news using Web Search."""

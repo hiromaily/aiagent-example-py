@@ -7,7 +7,7 @@ import numpy as np
 from entities.embedding import Embedding
 
 
-class DocumentsRepositoryInterface(ABC):
+class EmbeddingRepositoryInterface(ABC):
     """Interface for DocumentsRepository."""
 
     @abstractmethod

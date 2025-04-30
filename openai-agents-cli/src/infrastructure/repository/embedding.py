@@ -1,4 +1,4 @@
-"""Documents VectorDB repository class."""
+"""Embedding VectorDB repository class."""
 
 from typing import cast
 
@@ -7,20 +7,22 @@ from loguru import logger
 from pgvector.psycopg2 import register_vector
 
 from entities.embedding import Embedding
-from infrastructure.repository.interface import DocumentsRepositoryInterface
+from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
 
 
-class DocumentsRepository(DocumentsRepositoryInterface):
+class PgVectorEmbeddingRepository(EmbeddingRepositoryInterface):
     """Documents VectorDB repository class."""
 
-    def __init__(self, pg_vector_client: PgVectorClient) -> None:
+    def __init__(self, pg_vector_client: PgVectorClient, is_large_embedding: bool) -> None:
         """Initialize Documents VectorDB repository class."""
         if not pg_vector_client:
             msg = "`pg_vector_client` must be provided"
             raise ValueError(msg)
 
         self._pg_vector_client = pg_vector_client
+        self._embeddings_table = "embeddings_large" if is_large_embedding else "embeddings"
+        self._item_contents_table = "item_contents_large" if is_large_embedding else "item_contents"
 
     def insert_embeddings(self, data: list[Embedding]) -> None:
         """Insert embeddings data into `embeddings` table."""
@@ -29,7 +31,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         register_vector(self._pg_vector_client.get_conn())
         cur = self._pg_vector_client.get_cursor()
 
-        query = "INSERT INTO embeddings (embedding) VALUES (%s)"
+        query = f"INSERT INTO {self._embeddings_table} (embedding) VALUES (%s)"  # noqa: S608
         for embedding in data:
             # logger.debug(f"embedding.embedding: {embedding.embedding}")
             # parameters must be tuple
@@ -45,7 +47,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         register_vector(self._pg_vector_client.get_conn())
         cur = self._pg_vector_client.get_cursor()
 
-        query = "INSERT INTO item_contents (content, embedding) VALUES (%s, %s)"
+        query = f"INSERT INTO {self._item_contents_table} (content, embedding) VALUES (%s, %s)"  # noqa: S608
         for content, embedding in zip(contents, embeddings, strict=False):
             # parameters must be tuple
             cur.execute(query, (content, embedding.embedding))
@@ -58,7 +60,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         logger.debug("DocumentsRepository.get_item_by_id()")
 
         cur = self._pg_vector_client.get_cursor()
-        query = "SELECT content, embedding FROM item_contents WHERE id = %s"
+        query = f"SELECT content, embedding FROM {self._item_contents_table} WHERE id = %s"  # noqa: S608
         # parameters must be tuple
         cur.execute(query, (item_id,))
         item = cur.fetchone()
@@ -71,7 +73,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
     def similarity_search(self, embedding: np.ndarray, top_k: int = 5) -> list[tuple[str]] | None:
         """Execute similarity search."""
         cur = self._pg_vector_client.get_cursor()
-        query = "SELECT content FROM item_contents ORDER BY embedding <=> %s LIMIT %s"
+        query = f"SELECT content FROM {self._item_contents_table} ORDER BY embedding <=> %s LIMIT %s"  # noqa: S608
         # parameters must be tuple
         cur.execute(query, (embedding, top_k))
         items = cur.fetchall()
