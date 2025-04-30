@@ -7,8 +7,8 @@ from loguru import logger
 from pgvector.psycopg2 import register_vector
 
 from entities.embedding import Embedding
-from infrastructure.pgvector.client import PgVectorClient
 from infrastructure.repository.interface import DocumentsRepositoryInterface
+from infrastructure.vectordb.pgvector.client import PgVectorClient
 
 
 class DocumentsRepository(DocumentsRepositoryInterface):
@@ -23,7 +23,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         self._pg_vector_client = pg_vector_client
 
     def insert_embeddings(self, data: list[Embedding]) -> None:
-        """Insert data into Vector DB `embeddings`."""
+        """Insert embeddings data into `embeddings` table."""
         logger.debug("DocumentsRepository.insert_embeddings()")
 
         register_vector(self._pg_vector_client.get_conn())
@@ -39,7 +39,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         cur.close()
 
     def insert_item_contents(self, contents: list[str], embeddings: list[Embedding]) -> None:
-        """Insert data into Vector DB `item_contents`."""
+        """Insert content, embedding into `item_contents` table."""
         logger.debug("DocumentsRepository.insert_item_contents()")
 
         register_vector(self._pg_vector_client.get_conn())
@@ -54,7 +54,7 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         cur.close()
 
     def get_item_by_id(self, item_id: int) -> tuple[int, str, np.ndarray] | None:
-        """Get a record by id from item_contents."""
+        """Get a record by id from `item_contents` table."""
         logger.debug("DocumentsRepository.get_item_by_id()")
 
         cur = self._pg_vector_client.get_cursor()

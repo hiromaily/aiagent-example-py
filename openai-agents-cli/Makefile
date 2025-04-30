@@ -58,32 +58,34 @@ lint2:
 
 ###############################################################################
 # Execution
+# `PYTHONPATH=src` may be required to run the script
 ###############################################################################
 .PHONY: run-example
 run-example:
-	PYTHONPATH=src uv run -m src.cli.main query-tech-guide --question "What is an advantage of using Python?"
-	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --question "What is an advantage of using Rust?"
-	PYTHONPATH=src uv run -m src.cli.main news-agent
-	PYTHONPATH=src uv run -m src.cli.main embedding
-	PYTHONPATH=src uv run -m src.cli.main search-similarity --id 1
+	uv run -m src.cli.main query-tech-guide --question "What is an advantage of using Python?"
+	uv run -m src.cli.main query-tech-guide --chat --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main news-agent
+	uv run -m src.cli.main embedding
+	uv run -m src.cli.main search-similarity --id 1
 
+# Ollama
 .PHONY: run-with-ollama
 run-with-ollama:
-	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --tool ollama --model llama3.2 --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --chat --question "What is an advantage of using Rust?"
 
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
 run-with-lmstudio:
-	PYTHONPATH=src uv run -m src.cli.main query-tech-guide-chat --tool lmstudio --model llama3.2 --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main query-tech-guide --tool lmstudio --model llama3.2 --chat --question "What is an advantage of using Rust?"
 
 # WIP
 .PHONY: run-vector
 run-vector:
-	# PYTHONPATH=src uv run -m src.cli.main query --question "What is an advantage of using Python?"
-	# PYTHONPATH=src uv run -m src.cli.main query --question "What types of curry are there?"
-	# PYTHONPATH=src uv run -m src.cli.main query --question "Give me the recipe for chicken curry"
-	# PYTHONPATH=src uv run -m src.cli.main query --question "What is the largest river in Japan?"
-	# PYTHONPATH=src uv run -m src.cli.main query --question "How far is it between Tokyo and Osaka?"
+	# uv run -m src.cli.main query-common --question "What is an advantage of using Python?"
+	# uv run -m src.cli.main query-common --question "What types of curry are there?"
+	# uv run -m src.cli.main query-common --question "Give me the recipe for chicken curry"
+	# uv run -m src.cli.main query-common --question "What is the largest river in Japan?"
+	# uv run -m src.cli.main query-common --question "How far is it between Tokyo and Osaka?"
 	
 
 ###############################################################################
@@ -106,3 +108,8 @@ load-lms:
 	lms load llama-3.2-3b-instruct --identifier "llama3.2"
 	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
 	
+###############################################################################
+# Ollama
+###############################################################################
+
+# ollama pull qwen3:30b-a3b

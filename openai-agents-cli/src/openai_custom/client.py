@@ -1,11 +1,19 @@
 """OpenAI module class."""
 
+from enum import Enum
 from typing import cast
 
 from openai import OpenAI
 from openai.types.embedding import Embedding
 
 from .interface import OpenAIClientInterface
+
+
+class APIMode(Enum):
+    """API Mode."""
+
+    RESPONSE_API = 1
+    CHAT_COMPLETION_API = 2
 
 
 class OpenAIClient(OpenAIClientInterface):

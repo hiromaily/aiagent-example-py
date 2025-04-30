@@ -3,12 +3,16 @@
 from loguru import logger
 
 from env.env import EnvSettings
-from infrastructure.pgvector.client import PgVectorClient
 from infrastructure.repository.documents import DocumentsRepository
 from infrastructure.repository.interface import DocumentsRepositoryInterface
-from openai_custom.client import OpenAIClient
+from infrastructure.vectordb.pgvector.client import PgVectorClient
+from openai_custom.client import APIMode, OpenAIClient
 from openai_custom.dymmy import OpenAIDummyClient
 from openai_custom.interface import OpenAIClientInterface
+from use_cases.debug import DebugAgent
+from use_cases.query_agent import QueryAgent
+from use_cases.search_db_agent import SearchVectorDBAgent
+from use_cases.web_search_agent import WebSearchAgent
 
 
 class DependencyRegistry:
@@ -19,8 +23,10 @@ class DependencyRegistry:
         self._settings = EnvSettings()
         self._tool = tool
         self._openai_client = self._build_openai_client(model)
-        self._pg_client = self._build_pg_client()
-        self._documents_repository = self._build_documents_repository()
+
+    # --------------------------------------------------------------------------
+    # OpenAI Client
+    # --------------------------------------------------------------------------
 
     def _build_openai_client(self, model: str) -> OpenAIClientInterface:
         """Build the OpenAI client based on the environment."""
@@ -60,6 +66,10 @@ class DependencyRegistry:
 
         return openai_client
 
+    # --------------------------------------------------------------------------
+    # VectorDB
+    # --------------------------------------------------------------------------
+
     def _build_pg_client(self) -> PgVectorClient:
         """Build the PostgreSQL client."""
         return PgVectorClient(
@@ -72,12 +82,44 @@ class DependencyRegistry:
 
     def _build_documents_repository(self) -> DocumentsRepositoryInterface:
         """Build the DocumentsRepository."""
-        return DocumentsRepository(self._pg_client)
+        pg_client = self._build_pg_client()
+        return DocumentsRepository(pg_client)
 
-    def get_openai_client(self) -> OpenAIClientInterface:
-        """Get the OpenAI client."""
-        return self._openai_client
+    # --------------------------------------------------------------------------
+    # Use cases
+    # --------------------------------------------------------------------------
+    def _build_query_agent_usecase(self, chat: bool) -> QueryAgent:
+        documents_repository = self._build_documents_repository()
+        api_mode = APIMode.CHAT_COMPLETION_API if chat else APIMode.RESPONSE_API
+        return QueryAgent(self._openai_client, documents_repository, self._tool, api_mode)
 
-    def get_docs_repository(self) -> DocumentsRepositoryInterface:
-        """Get the Documents Repository."""
-        return self._documents_repository
+    def _build_web_search_agent_usecase(self) -> WebSearchAgent:
+        return WebSearchAgent(self._openai_client)
+
+    def _build_debug_agent_usecase(self) -> DebugAgent:
+        documents_repository = self._build_documents_repository()
+        return DebugAgent(documents_repository)
+
+    def _build_search_vector_db_usecase(self) -> SearchVectorDBAgent:
+        documents_repository = self._build_documents_repository()
+        return SearchVectorDBAgent(documents_repository)
+
+    # --------------------------------------------------------------------------
+    # Getter for use cases
+    # --------------------------------------------------------------------------
+
+    def get_query_agent(self, chat: bool) -> QueryAgent:
+        """Get the Query Agent."""
+        return self._build_query_agent_usecase(chat)
+
+    def get_web_search_agent(self) -> WebSearchAgent:
+        """Get the Web Search Agent."""
+        return self._build_web_search_agent_usecase()
+
+    def get_debug_agent(self) -> DebugAgent:
+        """Get the Debug Agent."""
+        return self._build_debug_agent_usecase()
+
+    def get_search_vector_db_usecase(self) -> SearchVectorDBAgent:
+        """Get the Search Vector DB Agent."""
+        return self._build_search_vector_db_usecase()
