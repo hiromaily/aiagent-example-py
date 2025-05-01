@@ -39,6 +39,8 @@ class PromptingPatternAgent:
             self.tree_of_thoughts()
         elif pattern == "generated":
             self.generated_knowledge()
+        elif pattern == "reflection":
+            self.reflection_prompting()
         else:
             msg = f"Unknown pattern: {pattern}"
             raise ValueError(msg)
@@ -178,6 +180,7 @@ class PromptingPatternAgent:
 
     def generated_knowledge(self) -> None:
         """7. Generated Knowledge Prompting."""
+        logger.info("Generated Knowledge Prompting")
         instructions = "You are good at geography."
         # 1. execute question 1 for knowledge
         question = """
@@ -202,6 +205,23 @@ class PromptingPatternAgent:
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
         print(response)
+
+    def reflection_prompting(self) -> None:
+        """7. Reflection."""
+        logger.info("Reflection Prompting")
+        instructions = "あなたはソフトウェアアーキテクトです。"
+        # 1. execute question 1 for knowledge
+        question = """
+        PythonでWebアプリケーションを開発することを考えています。以下の手順で回答してください。
+        1. 要件に基づき3つの候補フレームワークを提案
+        2. 各候補について「パフォーマンス」「学習曲線」「コミュニティ規模」の観点で評価
+        3. 自らの評価を批判的に検証し、潜在的な見落としを指摘
+        4. 最終推奨案を選択し、その理由を説明（反対意見への反論を含むこと）
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+
 
     def _query(self, instructions: str, prompt: str) -> str:
         if self._api_mode == APIMode.RESPONSE_API:

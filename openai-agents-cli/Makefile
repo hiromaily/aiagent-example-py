@@ -85,7 +85,7 @@ run-with-ollama:
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern cot
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern tot
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern generated
-
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern reflection
 
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
