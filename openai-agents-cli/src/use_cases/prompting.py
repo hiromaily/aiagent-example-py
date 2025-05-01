@@ -56,7 +56,6 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-
     def few_shot(self) -> None:
         """2. FewShot Prompting."""
         logger.info("FewShot Prompting")
@@ -89,7 +88,7 @@ class PromptingPatternAgent:
         ショッピングサイトのカスタマーサポートとしてお客様からの問い合わせに対して、適切な回答をしてください。
         以下の問い合わせを頂きました。
 
-        Q: "商品が届かないのですが、どうなっていますか？"        
+        Q: "商品が届かないのですが、どうなっていますか?"
         """
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
@@ -100,7 +99,7 @@ class PromptingPatternAgent:
         logger.info("Emotion Prompting")
         instructions = "あなたは私の良き理解者です。ポジティブに応援しましょう。"
         question = """
-        AIによって社会が大きく変わろうとしています。この状況でもソフトウェアエンジニアとして働き続けることができるのでしょうか？。
+        AIによって社会が大きく変わろうとしています。この状況でもソフトウェアエンジニアとして働き続けることができるのでしょうか?。
         """
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
@@ -127,12 +126,12 @@ class PromptingPatternAgent:
         print(response)
 
         # 3. Self-Consistency
-        logger.info(f"ask again for self-consistency")
+        logger.info("ask again for self-consistency")
         response = self._query(instructions, question)
         print(response)
 
     def tree_of_thoughts(self) -> None:
-        """6. Tree of Thoughts Prompting. + Self-Consistency."""
+        """6. Tree of Thoughts Prompting."""
         logger.info("Tree of Thoughts Prompting")
         instructions = "You are a helpful business consultant."
         # 1. execute main topic
@@ -170,6 +169,33 @@ class PromptingPatternAgent:
         # 5. execute decision making
         question = """
         すべての評価を踏まえ、最も適切と思われるアイデアを1つ選び、その理由を述べてください。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+
+    def generated_knowledge(self) -> None:
+        """7. Generated Knowledge Prompting."""
+        instructions = "You are good at geography."
+        # 1. execute question 1 for knowledge
+        question = """
+        東京都の面積を教えて。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+
+        # 2. execute question 2 for knowledge
+        question = """
+        大阪府の面積を教えて。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+
+        # 3. execute final question from generated knowledge
+        question = """
+        以上のことから、東京都と大阪府ではどちらが広いですか?
         """
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)

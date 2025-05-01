@@ -44,12 +44,14 @@ class OpenAIClient(OpenAIClientInterface):
         else:
             self._client = OpenAI(api_key=api_key, base_url=base_url)
 
-    def call_response(self, instructions: str, prompt: str) -> str:
+    # WIP: implement previous_response_id
+    def call_response(self, instructions: str, prompt: str, previous_response_id: str | None = None) -> str:
         """Call Response API."""
         response = self._client.responses.create(
             model=self._model,
             instructions=instructions,
             input=prompt,
+            previous_response_id=previous_response_id,
         )
         return cast("str", response.output_text)
 
