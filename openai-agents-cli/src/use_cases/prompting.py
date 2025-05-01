@@ -43,6 +43,8 @@ class PromptingPatternAgent:
             self.reflection_prompting()
         elif pattern == "meta":
             self.meta_prompting()
+        elif pattern == "prompt-chaining":
+            self.prompt_chaining()
         else:
             msg = f"Unknown pattern: {pattern}"
             raise ValueError(msg)
@@ -111,6 +113,7 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
+    # TODO: refactoring
     def chain_of_thought(self) -> None:
         """5. Chain Of Thought Prompting. + Self-Consistency."""
         logger.info("Chain Of Thought Prompting")
@@ -140,7 +143,7 @@ class PromptingPatternAgent:
         """6. Tree of Thoughts Prompting."""
         logger.info("Tree of Thoughts Prompting")
         instructions = "You are a helpful business consultant."
-        # 1. execute main topic
+        # 1. 複数の提案を生成
         question = """
         新しいエコフレンドリーなカフェを立ち上げるためのアイデアをいくつか提案してください。
         """
@@ -148,7 +151,7 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-        # 2. execute idea creation
+        # 2. 取得した提案を掘り下げる
         question = """
         頂いたアイデアのうちの１つを掘り下げてみましょう。3つの異なるアプローチとアイデアを挙げてください。
         """
@@ -156,7 +159,7 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-        # 3. execute idea evaluation
+        # 3. アイデアの評価を行う
         question = """
         それぞれのアイデアについて、実現可能性・効果・独自性の観点から評価してください。
         """
@@ -164,7 +167,7 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-        # 4. execute research deeply
+        # 4. 更なるアイデアのブラッシュアップ
         question = """
         最も有望なアイデアについて、具体的な実施計画や必要なリソース、リスクとその対策を詳しく説明してください。
         """
@@ -172,7 +175,7 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-        # 5. execute decision making
+        # 5. 最終決定
         question = """
         すべての評価を踏まえ、最も適切と思われるアイデアを1つ選び、その理由を述べてください。
         """
@@ -212,7 +215,7 @@ class PromptingPatternAgent:
         """8. Reflection."""
         logger.info("Reflection Prompting")
         instructions = "あなたはソフトウェアアーキテクトです。"
-        # 1. execute question 1 for knowledge
+        # 1. `3`番目で自己検証を行なっているのがポイント
         question = """
         PythonでWebアプリケーションを開発することを考えています。以下の手順で回答してください。
         1. 要件に基づき3つの候補フレームワークを提案
@@ -228,7 +231,7 @@ class PromptingPatternAgent:
         """9. Meta Prompting."""
         logger.info("Meta Prompting")
         instructions = "あなたは生成AIのプロンプトエンジニアです。"
-        # 1. execute question 1 for knowledge
+        # 1. 効果的なプロンプトを生成する
         question = """
         以下の要素を含む最適なプロンプトを生成してください。
         1. 目的: キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい
@@ -241,8 +244,30 @@ class PromptingPatternAgent:
         print(response)
 
     def prompt_chaining(self) -> None:
-        """9. Prompt Chaining."""
+        """10. Prompt Chaining."""
         logger.info("Prompt Chaining")
+        instructions = "You are an experienced software engineer."
+        # 1. 課題定義
+        question = """
+        1日1億リクエストを処理するECサイトのデータベースボトルネック解決策を3案提示してください。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+        # 2. 詳細評価
+        question = """
+        1番効果的と思われる案を選び、想定されるコスト増加とパフォーマンス向上効果を定量化してください。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
+        # 3. 実装計画
+        question = """
+        追加で、具体的な設計パターンを比較してください。
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
 
     def _query(self, instructions: str, prompt: str) -> str:
         if self._api_mode == APIMode.RESPONSE_API:

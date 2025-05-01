@@ -70,7 +70,7 @@ def prompt_pattern(
         "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
     ),
     chat: bool = False,
-    pattern: str = typer.Option("zero-shot", "--pattern", "-p", help="Prompting pattern: zero-shot, few-shot"),
+    pattern: str = typer.Option("zero-shot", "--pattern", "-p", help="Prompting pattern: zero-shot, few-shot, etc."),
 ) -> None:
     """Prompt pattern agent."""
     logger.info("prompt_pattern_agent()")
