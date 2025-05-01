@@ -3,12 +3,12 @@
 from loguru import logger
 
 from env.env import EnvSettings
+from infrastructure.openai_api.client import APIMode, OpenAIClient
+from infrastructure.openai_api.dymmy import OpenAIDummyClient
+from infrastructure.openai_api.interface import OpenAIClientInterface
 from infrastructure.repository.embedding import PgVectorEmbeddingRepository
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
-from openai_custom.client import APIMode, OpenAIClient
-from openai_custom.dymmy import OpenAIDummyClient
-from openai_custom.interface import OpenAIClientInterface
 from use_cases.debug import DebugAgent
 from use_cases.prompting import PromptingPatternAgent
 from use_cases.query_agent import QueryAgent

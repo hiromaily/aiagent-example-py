@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from entities.embedding import Embedding
+from entities.embedding.types import Embedding
 
 
 def load_embedding(file_name: str) -> list[Embedding]:

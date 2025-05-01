@@ -49,11 +49,16 @@ The architecture follows Clean Architecture principles with a clear separation b
    ```sh
    git clone https://github.com/hiromaily/aiagent-example-py
    cd openai-agents-cli
+   uv pip install -e .
    ```
 
 ## How to run
 
 See Makefile
+
+```sh
+uv run -m src.cli.main query-tech-guide --question "What is an advantage of using Python?"
+```
 
 ## TODO
 

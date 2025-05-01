@@ -2,9 +2,9 @@
 
 from loguru import logger
 
+from infrastructure.openai_api.client import APIMode
+from infrastructure.openai_api.interface import OpenAIClientInterface
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
-from openai_custom.client import APIMode
-from openai_custom.interface import OpenAIClientInterface
 
 
 class QueryAgent:

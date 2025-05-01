@@ -2,9 +2,9 @@
 
 from loguru import logger
 
+from infrastructure.openai_api.client import APIMode
+from infrastructure.openai_api.interface import OpenAIClientInterface
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
-from openai_custom.client import APIMode
-from openai_custom.interface import OpenAIClientInterface
 
 
 class PromptingPatternAgent:
@@ -218,7 +218,7 @@ class PromptingPatternAgent:
         1. 要件に基づき3つの候補フレームワークを提案
         2. 各候補について「パフォーマンス」「学習曲線」「コミュニティ規模」の観点で評価
         3. 自らの評価を批判的に検証し、潜在的な見落としを指摘
-        4. 最終推奨案を選択し、その理由を説明（反対意見への反論を含むこと）
+        4. 最終推奨案を選択し、その理由を説明 (反対意見への反論を含むこと)
         """
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
@@ -230,15 +230,19 @@ class PromptingPatternAgent:
         instructions = "あなたは生成AIのプロンプトエンジニアです。"
         # 1. execute question 1 for knowledge
         question = """
-        以下の要素を含む最適なプロンプトを生成してください：
-        1. 目的：キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい
-        2. 対象読者：ソフトウェアエンジニアとしての既に十分な経験がある人
-        3. 出力形式：時系列でのキャリアパスを示すリスト
+        以下の要素を含む最適なプロンプトを生成してください。
+        1. 目的: キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい
+        2. 対象読者: ソフトウェアエンジニアとしての既に十分な経験がある人
+        3. 出力形式: 時系列でのキャリアパスを示すリスト
         4. 生成後、そのプロンプトの改善点を自己診断してください
         """
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
         print(response)
+
+    def prompt_chaining(self) -> None:
+        """9. Prompt Chaining."""
+        logger.info("Prompt Chaining")
 
     def _query(self, instructions: str, prompt: str) -> str:
         if self._api_mode == APIMode.RESPONSE_API:

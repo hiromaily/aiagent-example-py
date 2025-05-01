@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from entities.embedding import Embedding
+from entities.embedding.types import Embedding
 
 
 class EmbeddingRepositoryInterface(ABC):

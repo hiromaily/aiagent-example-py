@@ -2,7 +2,7 @@
 
 from loguru import logger
 
-from embedding.embedding import load_embedding
+from entities.embedding.utils import load_embedding
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
 
 

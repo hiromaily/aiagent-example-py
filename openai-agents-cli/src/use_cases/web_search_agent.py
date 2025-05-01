@@ -1,6 +1,6 @@
 """Web Search Agent Use Case."""
 
-from openai_custom.interface import OpenAIClientInterface
+from infrastructure.openai_api.interface import OpenAIClientInterface
 
 
 class WebSearchAgent:

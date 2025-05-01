@@ -1,4 +1,4 @@
-"""OpenAI module class."""
+"""OpenAI API module class."""
 
 from enum import Enum
 from typing import cast

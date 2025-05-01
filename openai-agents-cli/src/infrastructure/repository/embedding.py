@@ -6,7 +6,7 @@ import numpy as np
 from loguru import logger
 from pgvector.psycopg2 import register_vector
 
-from entities.embedding import Embedding
+from entities.embedding.types import Embedding
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
 
