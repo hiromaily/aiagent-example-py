@@ -1,5 +1,7 @@
 """Prompting Pattern Use Case."""
 
+from string import Template
+
 from loguru import logger
 
 from infrastructure.openai_api.client import APIMode
@@ -35,6 +37,8 @@ class PromptingPatternAgent:
             self.emotion_prompting()
         elif pattern == "cot":
             self.chain_of_thought()
+        elif pattern == "cot2":
+            self.chain_of_thought2()
         elif pattern == "tot":
             self.tree_of_thoughts()
         elif pattern == "generated":
@@ -113,7 +117,6 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
-    # TODO: refactoring
     def chain_of_thought(self) -> None:
         """5. Chain Of Thought Prompting. + Self-Consistency."""
         logger.info("Chain Of Thought Prompting")
@@ -136,6 +139,26 @@ class PromptingPatternAgent:
 
         # 3. Self-Consistency
         logger.info("ask again for self-consistency")
+        response = self._query(instructions, question)
+        print(response)
+
+    def chain_of_thought2(self) -> None:
+        """5-2. Chain Of Thought Prompting."""
+        logger.info("Chain Of Thought Prompting 2")
+        instructions = "You are an experienced software engineer."
+        # 1. execute normal question
+        question = """
+        以下のエラーメッセージの原因を特定し、解決策を提案してください。
+        ```
+        エラー: `TypeError: unsupported operand type(s) for +: 'int' and 'str'`
+        ```
+        手順:
+        1. エラーの種類と発生箇所を特定
+        2. 変数のデータ型を確認
+        3. 型変換の必要性を判断
+        4. 修正コード例を提示」
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
         print(response)
 
@@ -232,13 +255,24 @@ class PromptingPatternAgent:
         logger.info("Meta Prompting")
         instructions = "あなたは生成AIのプロンプトエンジニアです。"
         # 1. 効果的なプロンプトを生成する
-        question = """
+        # Define the template
+        template = Template("""
         以下の要素を含む最適なプロンプトを生成してください。
-        1. 目的: キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい
-        2. 対象読者: ソフトウェアエンジニアとしての既に十分な経験がある人
-        3. 出力形式: 時系列でのキャリアパスを示すリスト
+        1. 目的: $objective
+        2. 対象読者: $audience
+        3. 出力形式: $output_format
         4. 生成後、そのプロンプトの改善点を自己診断してください
-        """
+        """)
+
+        # Set dynamic parameters
+        params = {
+            "objective": "キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい",
+            "audience": "ソフトウェアエンジニアとしての既に十分な経験がある人",
+            "output_format": "時系列でのキャリアパスを示すリスト",
+        }
+
+        # Generate the question dynamically
+        question = template.substitute(params)
         logger.info(f"query question: instructions: {instructions}, question: {question}")
         response = self._query(instructions, question)
         print(response)
