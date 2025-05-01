@@ -41,6 +41,8 @@ class PromptingPatternAgent:
             self.generated_knowledge()
         elif pattern == "reflection":
             self.reflection_prompting()
+        elif pattern == "meta":
+            self.meta_prompting()
         else:
             msg = f"Unknown pattern: {pattern}"
             raise ValueError(msg)
@@ -207,7 +209,7 @@ class PromptingPatternAgent:
         print(response)
 
     def reflection_prompting(self) -> None:
-        """7. Reflection."""
+        """8. Reflection."""
         logger.info("Reflection Prompting")
         instructions = "あなたはソフトウェアアーキテクトです。"
         # 1. execute question 1 for knowledge
@@ -222,6 +224,21 @@ class PromptingPatternAgent:
         response = self._query(instructions, question)
         print(response)
 
+    def meta_prompting(self) -> None:
+        """9. Meta Prompting."""
+        logger.info("Meta Prompting")
+        instructions = "あなたは生成AIのプロンプトエンジニアです。"
+        # 1. execute question 1 for knowledge
+        question = """
+        以下の要素を含む最適なプロンプトを生成してください：
+        1. 目的：キャリアチェンジを考えており、AIエンジニアとしてのキャリアパスを知りたい
+        2. 対象読者：ソフトウェアエンジニアとしての既に十分な経験がある人
+        3. 出力形式：時系列でのキャリアパスを示すリスト
+        4. 生成後、そのプロンプトの改善点を自己診断してください
+        """
+        logger.info(f"query question: instructions: {instructions}, question: {question}")
+        response = self._query(instructions, question)
+        print(response)
 
     def _query(self, instructions: str, prompt: str) -> str:
         if self._api_mode == APIMode.RESPONSE_API:
