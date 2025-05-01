@@ -37,6 +37,8 @@ class PromptingPatternAgent:
             self.chain_of_thought()
         elif pattern == "tot":
             self.tree_of_thoughts()
+        elif pattern == "generated":
+            self.generated_knowledge()
         else:
             msg = f"Unknown pattern: {pattern}"
             raise ValueError(msg)

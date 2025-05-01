@@ -43,32 +43,43 @@ class OpenAIClient(OpenAIClientInterface):
             self._client = OpenAI(api_key=api_key)
         else:
             self._client = OpenAI(api_key=api_key, base_url=base_url)
+        self._message_histories: list[dict[str, str]] = []  # message history
+        self._previous_response_id: str | None = None  # message history
 
-    # WIP: implement previous_response_id
-    def call_response(self, instructions: str, prompt: str, previous_response_id: str | None = None) -> str:
+    def clear(self) -> None:
+        """Clear message history."""
+        self._message_histories = []
+        self._previous_response_id = None
+
+    def call_response(self, instructions: str, prompt: str) -> str:
         """Call Response API."""
         response = self._client.responses.create(
             model=self._model,
             instructions=instructions,
             input=prompt,
-            previous_response_id=previous_response_id,
+            previous_response_id=self._previous_response_id,
         )
+        # save response id
+        self._previous_response_id = response.id
         return cast("str", response.output_text)
 
     def call_chat_completion(self, instructions: str, prompt: str) -> str:
         """Call Chat Completion API."""
-        # developer or system
-        system_role = "system" if self._is_local_llm else "developer"
+        if len(self._message_histories) > 0:
+            # add message history to the prompt
+            self._message_histories.append({"role": "user", "content": prompt})
+        else:
+            # create new message
+            system_role = "system" if self._is_local_llm else "developer"
+            self._message_histories.append({"role": system_role, "content": instructions})
+            self._message_histories.append({"role": "user", "content": prompt})
+
         completion = self._client.chat.completions.create(
             model=self._model,
-            messages=[
-                {"role": system_role, "content": instructions},
-                {
-                    "role": "user",
-                    "content": prompt,
-                },
-            ],
+            messages=self._message_histories,
         )
+        # save message history
+        self._message_histories.append({"role": "assistant", "content": completion.choices[0].message.content})
         # return completion.choices[0].message.content
         return cast("str", completion.choices[0].message.content)
 
