@@ -23,7 +23,7 @@ def query_tech_guide(
     chat: bool = False,
 ) -> None:
     """Custom technology agent."""
-    logger.debug("custom_tech_agent()")
+    logger.info("custom_tech_agent()")
 
     if question == "":
         msg = "parameter `--question` must be provided"
@@ -48,7 +48,7 @@ def query_common(
     chat: bool = False,
 ) -> None:
     """Query common question."""
-    logger.debug("query()")
+    logger.info("common query()")
 
     if question == "":
         msg = "parameter `--question` must be provided"
@@ -63,11 +63,35 @@ def query_common(
 
 
 @app.command()  # type: ignore[misc]
+def prompt_pattern(
+    tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
+    model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
+    embedding_model: str = typer.Option(
+        "text-embedding-ada-002", "--embedding-model", "-e", help="LLM embedding model name"
+    ),
+    chat: bool = False,
+    pattern: str = typer.Option("zero-shot", "--pattern", "-p", help="Prompting pattern: zero-shot, few-shot"),
+) -> None:
+    """Prompt pattern agent."""
+    logger.info("prompt_pattern_agent()")
+
+    # Initialization
+    registry = DependencyRegistry(tool, model, embedding_model)
+    agent = registry.get_prompt_agent(chat)
+
+    # Execute
+    agent.call(pattern)
+
+
+@app.command()  # type: ignore[misc]
 def news_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
 ) -> None:
-    """News agent by web search."""
+    """News agent by web search.
+
+    This agent works with only OpenAI API.
+    """
     logger.debug("news_agent()")
 
     registry = DependencyRegistry(tool, model)

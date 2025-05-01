@@ -10,6 +10,7 @@ from openai_custom.client import APIMode, OpenAIClient
 from openai_custom.dymmy import OpenAIDummyClient
 from openai_custom.interface import OpenAIClientInterface
 from use_cases.debug import DebugAgent
+from use_cases.prompting import PromptingPatternAgent
 from use_cases.query_agent import QueryAgent
 from use_cases.search_db_agent import SearchVectorDBAgent
 from use_cases.web_search_agent import WebSearchAgent
@@ -22,7 +23,8 @@ class DependencyRegistry:
         """Initialize the DependencyRegistry with the environment."""
         self._settings = EnvSettings()
         self._tool = tool
-        self._openai_client = self._build_openai_client(model, embedding_model)
+        self._model = model
+        self._embedding_model = embedding_model
 
     # --------------------------------------------------------------------------
     # OpenAI Client
@@ -74,7 +76,25 @@ class DependencyRegistry:
         else:
             msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)
+        return openai_client
 
+    def _build_openai_specific_client(self, model: str, embedding_model: str | None) -> OpenAIClientInterface:
+        """Build the OpenAI client.
+
+        Openai client is Dummy client when tools is not OpenAI.
+        """
+        openai_client: OpenAIClientInterface
+        if self._tool == "openai":
+            # use OpenAI API
+            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{model}, embedding_model:{embedding_model}")
+            openai_client = OpenAIClient(
+                model=model,
+                api_key=self._settings.OPENAI_API_KEY,
+                is_local_llm=False,
+            )
+        else:
+            logger.debug("use Dummy API")
+            openai_client = OpenAIDummyClient()
         return openai_client
 
     # --------------------------------------------------------------------------
@@ -101,12 +121,20 @@ class DependencyRegistry:
     # --------------------------------------------------------------------------
     # Use cases
     # --------------------------------------------------------------------------
+    def _build_prompt_agent_usecase(self, chat: bool) -> PromptingPatternAgent:
+        self._openai_client = self._build_openai_client(self._model, self._embedding_model)
+        embedding_repository = self._build_embedding_repository()
+        api_mode = APIMode.CHAT_COMPLETION_API if chat else APIMode.RESPONSE_API
+        return PromptingPatternAgent(self._openai_client, embedding_repository, self._tool, api_mode)
+
     def _build_query_agent_usecase(self, chat: bool) -> QueryAgent:
+        self._openai_client = self._build_openai_client(self._model, self._embedding_model)
         embedding_repository = self._build_embedding_repository()
         api_mode = APIMode.CHAT_COMPLETION_API if chat else APIMode.RESPONSE_API
         return QueryAgent(self._openai_client, embedding_repository, self._tool, api_mode)
 
     def _build_web_search_agent_usecase(self) -> WebSearchAgent:
+        self._openai_client = self._build_openai_specific_client(self._model, self._embedding_model)
         return WebSearchAgent(self._openai_client)
 
     def _build_debug_agent_usecase(self) -> DebugAgent:
@@ -120,6 +148,10 @@ class DependencyRegistry:
     # --------------------------------------------------------------------------
     # Getter for use cases
     # --------------------------------------------------------------------------
+
+    def get_prompt_agent(self, chat: bool) -> PromptingPatternAgent:
+        """Get the PromptingPattern Agent."""
+        return self._build_prompt_agent_usecase(chat)
 
     def get_query_agent(self, chat: bool) -> QueryAgent:
         """Get the Query Agent."""

@@ -56,9 +56,9 @@ class QueryAgent:
         print(response)
 
         # call embeddings
-        if self._tool != "openai":
-            logger.info("not implemented yet")
-            return
+        # if self._tool != "openai":
+        #     logger.info("not implemented yet")
+        #     return
 
         # call embeddings API
         logger.debug("call agent.embedding()")

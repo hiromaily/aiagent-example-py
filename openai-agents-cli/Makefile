@@ -71,7 +71,17 @@ run-example:
 # Ollama
 .PHONY: run-with-ollama
 run-with-ollama:
+	# llama3.2
 	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "Give me the recipe for chicken curry"
+	uv run -m src.cli.main news-agent --tool ollama --model llama3.2
+	# qwen3:8b
+	uv run -m src.cli.main query-tech-guide --tool ollama --model qwen3:8b --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"
+	# Prompting pattern
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern zero-shot
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern few-shot
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern roll
+
 
 # Note: run `lms load` first
 .PHONY: run-with-lmstudio
@@ -113,3 +123,4 @@ load-lms:
 ###############################################################################
 
 # ollama pull qwen3:30b-a3b
+# ollama pull qwen3:8b
