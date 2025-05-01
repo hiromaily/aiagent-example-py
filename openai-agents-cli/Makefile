@@ -81,6 +81,9 @@ run-with-ollama:
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern zero-shot
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern few-shot
 	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern roll
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern emotion
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern cot
+	uv run -m src.cli.main prompt-pattern --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --pattern tot
 
 
 # Note: run `lms load` first
