@@ -40,6 +40,9 @@ class CustomerDetails(BaseModel):
 
 def get_shipping_info(ctx: RunContext[CustomerDetails]) -> str:
     """Get Shipping Info."""
+    if ctx.deps.orders is None:
+        msg = "ctx.deps.orders is None"
+        raise ValueError(msg)
     return shipping_info_db[ctx.deps.orders[0].order_id]
 
 
@@ -61,7 +64,7 @@ def agent_with_tools_use_case(model: OpenAIModel) -> None:
 
     @agent1.system_prompt
     async def add_customer_name(ctx: RunContext[CustomerDetails]) -> str:
-        return f"Customer details: {to_markdown(ctx.deps)}"
+        return f"Customer details: {to_markdown(ctx.deps)}"  # type: ignore[arg-type]
 
     customer = CustomerDetails(
         customer_id="1",

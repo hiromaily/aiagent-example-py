@@ -25,6 +25,11 @@ re-install:
 	uv venv .venv
 	uv pip install -e .
 
+.PHONY: update-deps
+update-deps:
+	uv sync --upgrade
+	uv lock
+
 ###############################################################################
 # Development
 ###############################################################################
@@ -44,12 +49,18 @@ deactivate:
 lint:
 	uvx ruff format src
 	uvx ruff check --fix src
-	# uvx isort src
-	# uvx black src
-	# uvx flake8 src
+	# Type Checking
+	#uvx mypy src
+	uv run mypy src
 
 .PHONY: lint2
 lint2:
+	# Formatting
+	uvx isort src
+	uvx black src
+	# Type Checking
+	uvx mypy src
+	# Linting
 	uv run task flake8
 
 ###############################################################################
@@ -58,16 +69,11 @@ lint2:
 
 .PHONY: run
 run:
-	PYTHONPATH=src uv run -m src.cli.main simple-agent
-	PYTHONPATH=src uv run -m src.cli.main agent-structured-response
-	PYTHONPATH=src uv run -m src.cli.main agent-structured-dependencies
-	PYTHONPATH=src uv run -m src.cli.main agent-with-tools
-	PYTHONPATH=src uv run -m src.cli.main agent-with-self-correction
-	# PYTHONPATH=src python -m src.cli.main simple-agent
-	# PYTHONPATH=src python -m src.cli.main agent-structured-response
-	# PYTHONPATH=src python -m src.cli.main agent-structured-dependencies
-	# PYTHONPATH=src python -m src.cli.main agent-with-tools
-	# PYTHONPATH=src python -m src.cli.main agent-with-self-correction
+	uv run -m src.cli.main simple-agent
+	uv run -m src.cli.main agent-structured-response
+	uv run -m src.cli.main agent-structured-dependencies
+	uv run -m src.cli.main agent-with-tools
+	uv run -m src.cli.main agent-with-self-correction
 
 ###############################################################################
 # Utilities
@@ -78,3 +84,21 @@ run:
 clean-cache:
 	find . -type d -name '.venv' -prune -o -type d -name '__pycache__' -exec rm -r {} + -print
 	rm -rf ./src/pydantic-cli.egg-info
+
+
+###############################################################################
+# Local LLM API Server
+# - use LM Studio
+###############################################################################
+# After running LM Studio
+.PHONY: load-lms
+load-lms:
+	lms load llama-3.2-3b-instruct --identifier "llama3.2"
+	lms load text-embedding-nomic-embed-text-v1.5-embedding --identifier "text-embedding"
+	
+###############################################################################
+# Ollama
+###############################################################################
+
+# ollama pull qwen3:30b-a3b
+# ollama pull qwen3:8b

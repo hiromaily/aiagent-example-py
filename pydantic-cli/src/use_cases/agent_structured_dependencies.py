@@ -49,7 +49,7 @@ def agent_structured_dependencies_use_case(model: OpenAIModel) -> None:
 
     @agent1.system_prompt
     async def add_customer_name(ctx: RunContext[CustomerDetails]) -> str:
-        return f"Customer details: {to_markdown(ctx.deps)}"
+        return f"Customer details: {to_markdown(ctx.deps)}"  # type: ignore[arg-type]
 
     customer = CustomerDetails(
         customer_id="1",

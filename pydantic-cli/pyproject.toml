@@ -5,20 +5,20 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pydantic>=2.10.6",
-    "pydantic-ai>=0.0.39",
-    "python-dotenv>=1.0.1",
-    "typer>=0.15.2",
+    "pydantic>=2.11.4",
+    "pydantic-ai>=0.1.8",
+    "python-dotenv>=1.1.0",
+    "typer>=0.15.3",
 ]
 
 [dependency-groups]
 dev = [
     "black>=25.1.0",
-    "flake8>=7.1.2",
+    "flake8>=7.2.0",
     "isort>=6.0.1",
     "mypy>=1.15.0",
     "pytest>=8.3.5",
-    "ruff>=0.10.0",
+    "ruff>=0.11.8",
     "taskipy>=1.14.1",
 ]
 
@@ -33,7 +33,16 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["COM812", "D104", "ERA001", "ISC001", "T201"]
+ignore = [
+    "C901",
+    "COM812",
+    "D104",
+    "ERA001",
+    "FBT001",
+    "FBT002",
+    "ISC001",
+    "T201",
+]
 unfixable = ["F401", "F841"]
 pydocstyle.convention = "google"
 per-file-ignores = { "tests/**/*.py" = ["D", "S101", "N802", "ARG"] }

@@ -25,6 +25,11 @@ re-install:
 	uv venv .venv
 	uv pip install -e .
 
+.PHONY: update-deps
+update-deps:
+	uv sync --upgrade
+	uv lock
+
 ###############################################################################
 # Development
 ###############################################################################
@@ -45,6 +50,7 @@ lint:
 	uvx ruff check --fix src
 	# Type Checking
 	uvx mypy src
+	# uv run mypy src
 
 .PHONY: lint2
 lint2:
