@@ -23,7 +23,7 @@ class DependencyRegistry:
 
     def __init__(self, tool: str, model: str, embedding_model: str | None = None) -> None:
         """Initialize the DependencyRegistry with the environment."""
-        self._settings = EnvSettings()
+        self._settings = EnvSettings()  # type: ignore[call-arg]
         self._tool = tool
         self._model = model
         self._embedding_model = embedding_model
@@ -72,9 +72,6 @@ class DependencyRegistry:
                 base_url="http://localhost:11434/v1",
                 is_local_llm=True,
             )
-        elif self._settings.APP_ENV == "test":
-            logger.debug("use Dummy API")
-            openai_client = OpenAIDummyClient()
         else:
             msg = f"Unknown LLM toolkit: {self._tool}"
             raise ValueError(msg)

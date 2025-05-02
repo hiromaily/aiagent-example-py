@@ -12,7 +12,7 @@ from registry.registry import DependencyRegistry
 app = typer.Typer()
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def query_tech_guide(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -37,7 +37,7 @@ def query_tech_guide(
     agent.query_tech_guide(question)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def query_common(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -62,7 +62,7 @@ def query_common(
     agent.query_common(question)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def prompt_pattern(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -83,7 +83,7 @@ def prompt_pattern(
     agent.call(pattern)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def news_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -102,7 +102,7 @@ def news_agent(
     print(response)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def embedding(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -115,7 +115,7 @@ def embedding(
     debug_agent.embedding("storage/embedding01.json")
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def search_similarity(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -135,7 +135,7 @@ def search_similarity(
     search_vector_db.search_similarity(content_id)
 
 
-@app.callback()  # type: ignore[misc]
+@app.callback()
 def main(env: str = ".env") -> None:
     """First endpoint after app()."""
     logger.debug("main()")

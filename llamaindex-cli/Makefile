@@ -49,8 +49,8 @@ lint:
 	uvx ruff format src
 	uvx ruff check --fix src
 	# Type Checking
-	uvx mypy src
-	# uv run mypy src
+	# uvx mypy src
+	uv run mypy src
 
 .PHONY: lint2
 lint2:
@@ -58,7 +58,8 @@ lint2:
 	uvx isort src
 	uvx black src
 	# Type Checking
-	uvx mypy src
+	# uvx mypy src
+	uv run mypy src
 	# Linting
 	uv run task flake8
 

@@ -1,12 +1,10 @@
 """Embedding VectorDB repository class."""
 
-from typing import cast
-
 import numpy as np
 from loguru import logger
 from pgvector.psycopg2 import register_vector
 
-from entities.embedding.types import Embedding
+from entities.embedding.types import Embedding, EmbeddingItem
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
 
@@ -55,7 +53,7 @@ class PgVectorEmbeddingRepository(EmbeddingRepositoryInterface):
 
         cur.close()
 
-    def get_item_by_id(self, item_id: int) -> tuple[int, str, np.ndarray] | None:
+    def get_item_by_id(self, item_id: int) -> EmbeddingItem | None:
         """Get a record by id from `item_contents` table."""
         logger.debug("DocumentsRepository.get_item_by_id()")
 
@@ -67,10 +65,13 @@ class PgVectorEmbeddingRepository(EmbeddingRepositoryInterface):
         cur.close()
         if item is None:
             return None
-        # return item
-        return cast("tuple[int, str, np.ndarray]", item)
 
-    def similarity_search(self, embedding: np.ndarray, top_k: int = 5) -> list[tuple[str]] | None:
+        # return item
+        # return cast("tuple[str, np.typing.NDArray[np.float64]]", item)
+        content, embedding = item
+        return EmbeddingItem(question=content, embedding=embedding)
+
+    def similarity_search(self, embedding: np.typing.NDArray[np.float64], top_k: int = 5) -> list[str] | None:
         """Execute similarity search."""
         cur = self._pg_vector_client.get_cursor()
         query = f"SELECT content FROM {self._item_contents_table} ORDER BY embedding <=> %s LIMIT %s"  # noqa: S608
@@ -80,8 +81,9 @@ class PgVectorEmbeddingRepository(EmbeddingRepositoryInterface):
         cur.close()
         if items is None:
             return None
-        # return item
-        return cast("list[tuple[str]]", items)
+        # convert list[tuple[str]] to list[str]
+        # return cast("list[tuple[str]]", items)
+        return [str(item[0]) for item in items]
 
     def close(self) -> None:
         """Close connection."""

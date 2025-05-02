@@ -2,7 +2,8 @@
 
 from abc import ABC, abstractmethod
 
-from openai.types.embedding import Embedding
+# from openai.types.embedding import Embedding
+from entities.embedding.types import Embedding
 
 
 class OpenAIClientInterface(ABC):

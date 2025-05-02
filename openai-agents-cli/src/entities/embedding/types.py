@@ -1,4 +1,13 @@
-"""Embedding entity class."""
+"""Embedding entity class.
+
+This type manipulates the `from openai.types.embedding import Embedding`.
+OpenAI's embedding models returns this type.
+"""
+
+from dataclasses import dataclass
+
+import numpy as np
+from openai.types.embedding import Embedding as OpenAIEmbedding
 
 EmbeddingType = list[float] | int | str
 
@@ -25,6 +34,26 @@ class Embedding:
             object_type=dict_obj.get("object", "embedding"),  # type: ignore[arg-type]
         )
 
+    @classmethod
+    def from_openai_embedding(cls, embeddings: list[OpenAIEmbedding]) -> list["Embedding"]:
+        """Convert OpenAI Embedding to custom Embedding."""
+        return [
+            cls(
+                embedding=embedding.embedding,
+                index=embedding.index,
+                object_type=embedding.object,
+            )
+            for embedding in embeddings
+        ]
+
     def __repr__(self) -> str:
         """Representation of the Embedding object."""
         return f"Embedding(index={self.index}, embedding={self.embedding}, object='{self.object}')"
+
+
+@dataclass
+class EmbeddingItem:
+    """Embedding item class for response of VectorDB `pgvector`."""
+
+    question: str
+    embedding: np.typing.NDArray[np.float64]

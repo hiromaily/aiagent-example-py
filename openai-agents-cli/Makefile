@@ -49,8 +49,8 @@ lint:
 	uvx ruff format src
 	uvx ruff check --fix src
 	# Type Checking
-	uvx mypy src
-	# uv run mypy src
+	# uvx mypy src
+	uv run mypy src
 
 .PHONY: lint2
 lint2:
@@ -58,7 +58,8 @@ lint2:
 	uvx isort src
 	uvx black src
 	# Type Checking
-	uvx mypy src
+	# uvx mypy src
+	uv run mypy src
 	# Linting
 	uv run task flake8
 
@@ -80,6 +81,7 @@ run-with-ollama:
 	# llama3.2
 	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"
 	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "Give me the recipe for chicken curry"
+	uv run -m src.cli.main search-similarity --tool ollama --model llama3.2 --id 1
 	# Serarch web by Tavily
 	uv run -m src.cli.main news-agent --tool ollama --model llama3.2
 	# qwen3:8b
@@ -105,12 +107,18 @@ run-with-lmstudio:
 # WIP
 .PHONY: run-vector
 run-vector:
+	# OpenAI
 	# uv run -m src.cli.main query-common --question "What is an advantage of using Python?"
 	# uv run -m src.cli.main query-common --question "What types of curry are there?"
 	# uv run -m src.cli.main query-common --question "Give me the recipe for chicken curry"
 	# uv run -m src.cli.main query-common --question "What is the largest river in Japan?"
 	# uv run -m src.cli.main query-common --question "How far is it between Tokyo and Osaka?"
-	
+	# Ollama	
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is an advantage of using Python?"
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What types of curry are there?"
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "Give me the recipe for chicken curry"
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is the largest river in Japan?"
+	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "How far is it between Tokyo and Osaka?"
 
 ###############################################################################
 # Utilities

@@ -1,11 +1,12 @@
 """OpenAI API module class."""
 
 from enum import Enum
-from typing import cast
 
 from openai import OpenAI
-from openai.types.embedding import Embedding
 
+from entities.embedding.types import Embedding
+
+# from openai.types.embedding import Embedding as OpenAIEmbedding
 from infrastructure.web_browser.interface import WebClientInterface
 
 from .interface import OpenAIClientInterface
@@ -63,7 +64,7 @@ class OpenAIClient(OpenAIClientInterface, WebClientInterface):
         )
         # save response id
         self._previous_response_id = response.id
-        return cast("str", response.output_text)
+        return response.output_text
 
     def call_chat_completion(self, instructions: str, prompt: str) -> str:
         """Call Chat Completion API."""
@@ -78,18 +79,18 @@ class OpenAIClient(OpenAIClientInterface, WebClientInterface):
 
         completion = self._client.chat.completions.create(
             model=self._model,
-            messages=self._message_histories,
+            messages=self._message_histories,  # type: ignore[arg-type]
         )
         # save message history
-        self._message_histories.append({"role": "assistant", "content": completion.choices[0].message.content})
+        self._message_histories.append({"role": "assistant", "content": completion.choices[0].message.content or ""})
         # return completion.choices[0].message.content
-        return cast("str", completion.choices[0].message.content)
+        return completion.choices[0].message.content if completion.choices[0].message.content else ""
 
     def call_embeddings(self, prompt: str | list[str]) -> list[Embedding]:
         """Call Embeddings API."""
         response = self._client.embeddings.create(model=self._embedding_model, input=prompt, encoding_format="float")
-        # return response.data
-        return cast("list[Embedding]", response.data)
+        # convert OnenAI Embedding to inner Embedding
+        return Embedding.from_openai_embedding(response.data)
 
     def call_web_search(self, prompt: str) -> str:
         """Call Web Search API."""
@@ -117,4 +118,4 @@ class OpenAIClient(OpenAIClientInterface, WebClientInterface):
         # return completion.choices[0].message.content
         # return cast("str", completion.choices[0].message.content)
         response = self._client.responses.create(model="gpt-4.1", tools=[{"type": "web_search_preview"}], input=prompt)
-        return cast("str", response.output_text)
+        return response.output_text

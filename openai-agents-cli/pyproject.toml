@@ -46,8 +46,11 @@ ignore = [
     "ERA001",
     "FBT001",
     "FBT002",
+    "FIX002",
     "ISC001",
     "T201",
+    "TD002",
+    "TD003",
 ]
 unfixable = ["F401", "F841"]
 pydocstyle.convention = "google"

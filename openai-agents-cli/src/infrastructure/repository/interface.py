@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from entities.embedding.types import Embedding
+from entities.embedding.types import Embedding, EmbeddingItem
 
 
 class EmbeddingRepositoryInterface(ABC):
@@ -19,11 +19,11 @@ class EmbeddingRepositoryInterface(ABC):
         """Execute insert."""
 
     @abstractmethod
-    def get_item_by_id(self, item_id: int) -> tuple[int, str, np.ndarray] | None:
+    def get_item_by_id(self, item_id: int) -> EmbeddingItem | None:
         """Get content and embedding by id."""
 
     @abstractmethod
-    def similarity_search(self, embedding: Embedding, top_k: int) -> list[tuple[str]] | None:
+    def similarity_search(self, embedding: np.typing.NDArray[np.float64], top_k: int) -> list[str] | None:
         """Execute similarity search."""
 
     @abstractmethod
