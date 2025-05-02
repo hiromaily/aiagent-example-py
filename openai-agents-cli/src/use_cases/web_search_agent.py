@@ -1,6 +1,6 @@
 """Web Search Agent Use Case."""
 
-from infrastructure.openai_api.interface import OpenAIClientInterface
+from infrastructure.web_browser.interface import WebClientInterface
 
 
 class WebSearchAgent:
@@ -8,14 +8,14 @@ class WebSearchAgent:
 
     def __init__(
         self,
-        openai_client: OpenAIClientInterface,
+        web_client: WebClientInterface,
     ) -> None:
-        """Initialize the WebSearchAgent with an OpenAI client."""
-        self._openai_client = openai_client
+        """Initialize the WebSearchAgent with an Web client."""
+        self._web_client = web_client
 
     def query_news(self) -> str:
         """Query about news using Web Search."""
         # Initial prompt
         prompt = "What was a positive news story from today?"
 
-        return self._openai_client.call_web_search(prompt)
+        return self._web_client.call_web_search(prompt)

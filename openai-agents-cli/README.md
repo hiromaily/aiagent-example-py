@@ -27,6 +27,7 @@ The architecture follows Clean Architecture principles with a clear separation b
 - ✅ Local embedding models
 - ✅ Various prompting patterns for different use cases
 - ✅ Vector database integration with pgvector
+- ✅ Support Web Serach using Tavily / OpenAI Web Search API
 - ✅ Multiple agent types:
   - Query agents
   - News agents

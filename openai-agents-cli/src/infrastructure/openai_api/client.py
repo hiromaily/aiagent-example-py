@@ -6,6 +6,8 @@ from typing import cast
 from openai import OpenAI
 from openai.types.embedding import Embedding
 
+from infrastructure.web_browser.interface import WebClientInterface
+
 from .interface import OpenAIClientInterface
 
 
@@ -16,7 +18,7 @@ class APIMode(Enum):
     CHAT_COMPLETION_API = 2
 
 
-class OpenAIClient(OpenAIClientInterface):
+class OpenAIClient(OpenAIClientInterface, WebClientInterface):
     """OpenAI API Client class."""
 
     def __init__(

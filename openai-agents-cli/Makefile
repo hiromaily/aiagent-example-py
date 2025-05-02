@@ -74,6 +74,7 @@ run-with-ollama:
 	# llama3.2
 	uv run -m src.cli.main query-tech-guide --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"
 	uv run -m src.cli.main query-common --tool ollama --model llama3.2 --embedding-model nomic-embed-text --chat --question "Give me the recipe for chicken curry"
+	# Serarch web by Tavily
 	uv run -m src.cli.main news-agent --tool ollama --model llama3.2
 	# qwen3:8b
 	uv run -m src.cli.main query-tech-guide --tool ollama --model qwen3:8b --embedding-model nomic-embed-text --chat --question "What is an advantage of using Rust?"

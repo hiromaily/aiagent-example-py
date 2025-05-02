@@ -9,6 +9,8 @@ from infrastructure.openai_api.interface import OpenAIClientInterface
 from infrastructure.repository.embedding import PgVectorEmbeddingRepository
 from infrastructure.repository.interface import EmbeddingRepositoryInterface
 from infrastructure.vectordb.pgvector.client import PgVectorClient
+from infrastructure.web_browser.interface import WebClientInterface
+from infrastructure.web_browser.tavily_client import TavilyWebClient
 from use_cases.debug import DebugAgent
 from use_cases.prompting import PromptingPatternAgent
 from use_cases.query_agent import QueryAgent
@@ -78,7 +80,7 @@ class DependencyRegistry:
             raise ValueError(msg)
         return openai_client
 
-    def _build_openai_specific_client(self, model: str, embedding_model: str | None) -> OpenAIClientInterface:
+    def _build_openai_specific_client(self, embedding_model: str | None) -> OpenAIClientInterface:
         """Build the OpenAI client.
 
         Openai client is Dummy client when tools is not OpenAI.
@@ -86,9 +88,9 @@ class DependencyRegistry:
         openai_client: OpenAIClientInterface
         if self._tool == "openai":
             # use OpenAI API
-            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{model}, embedding_model:{embedding_model}")
+            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{self._model}, embedding_model:{embedding_model}")
             openai_client = OpenAIClient(
-                model=model,
+                model=self._model,
                 api_key=self._settings.OPENAI_API_KEY,
                 is_local_llm=False,
             )
@@ -96,6 +98,28 @@ class DependencyRegistry:
             logger.debug("use Dummy API")
             openai_client = OpenAIDummyClient()
         return openai_client
+
+    # --------------------------------------------------------------------------
+    # Web Client
+    # --------------------------------------------------------------------------
+
+    def _build_web_client(self) -> WebClientInterface:
+        """Build the Web client."""
+        web_client: WebClientInterface
+        if self._tool == "openai":
+            # use OpenAI API
+            logger.debug(f"use OpenAI API: tool: {self._tool}, model:{self._model}")
+            web_client = OpenAIClient(
+                model=self._model,
+                api_key=self._settings.OPENAI_API_KEY,
+                is_local_llm=False,
+            )
+        else:
+            logger.debug("use Tavily API")
+            web_client = TavilyWebClient(
+                api_key=self._settings.TAVILY_API_KEY,
+            )
+        return web_client
 
     # --------------------------------------------------------------------------
     # VectorDB
@@ -134,8 +158,9 @@ class DependencyRegistry:
         return QueryAgent(self._openai_client, embedding_repository, self._tool, api_mode)
 
     def _build_web_search_agent_usecase(self) -> WebSearchAgent:
-        self._openai_client = self._build_openai_specific_client(self._model, self._embedding_model)
-        return WebSearchAgent(self._openai_client)
+        # self._web_client = self._build_openai_specific_client(self._model, self._embedding_model)
+        self._web_client = self._build_web_client()
+        return WebSearchAgent(self._web_client)
 
     def _build_debug_agent_usecase(self) -> DebugAgent:
         embedding_repository = self._build_embedding_repository()
