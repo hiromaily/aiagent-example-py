@@ -93,25 +93,28 @@ class OpenAIClient(OpenAIClientInterface, WebClientInterface):
 
     def call_web_search(self, prompt: str) -> str:
         """Call Web Search API."""
-        completion = self._client.chat.completions.create(
-            model="gpt-4o-search-preview",
-            web_search_options={
-                "search_context_size": "low",
-                "user_location": {
-                    "type": "approximate",
-                    "approximate": {
-                        "country": "JP",
-                        "city": "Tokyo",
-                        "region": "Tokyo",
-                    },
-                },
-            },
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-        )
+        # Outdated API call
+        # completion = self._client.chat.completions.create(
+        #     model="gpt-4o-search-preview",
+        #     web_search_options={
+        #         "search_context_size": "low",
+        #         "user_location": {
+        #             "type": "approximate",
+        #             "approximate": {
+        #                 "country": "JP",
+        #                 "city": "Tokyo",
+        #                 "region": "Tokyo",
+        #             },
+        #         },
+        #     },
+        #     messages=[
+        #         {
+        #             "role": "user",
+        #             "content": prompt,
+        #         }
+        #     ],
+        # )
         # return completion.choices[0].message.content
-        return cast("str", completion.choices[0].message.content)
+        # return cast("str", completion.choices[0].message.content)
+        response = self._client.responses.create(model="gpt-4.1", tools=[{"type": "web_search_preview"}], input=prompt)
+        return cast("str", response.output_text)
