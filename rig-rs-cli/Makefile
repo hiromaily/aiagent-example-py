@@ -11,7 +11,7 @@ init:
 .PHONY: update
 update:
 	rustup update
-	cargo upgrade -i allow && cargo update
+	cargo update
 
 #------------------------------------------------------------------------------
 # Development
@@ -36,7 +36,9 @@ build:
 
 .PHONY: run
 run:
+	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- openai -m gpt-4.1-nano
 	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- openai -m gpt-4o-mini
+	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- ollama -m llama3.2
 
 .PHONY: clean
 clean:
@@ -61,8 +63,8 @@ release-build:
 
 .PHONY: install-bin
 install-bin:
-	sudo cp target/release/git_tui_rust /usr/local/bin/git-tui
+	sudo cp target/release/rig_rs_cli /usr/local/bin/rig_cli
 
 .PHONY: uninstall
 uninstall:
-	sodo rm -rf /usr/local/bin/git-tui
+	sodo rm -rf /usr/local/bin/rig_cli

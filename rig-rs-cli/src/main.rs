@@ -16,8 +16,16 @@ async fn main() {
 
     // Create OpenAI client and model
     // This requires the `OPENAI_API_KEY` environment variable to be set.
-    let openai_client = openai::Client::from_env();
-
+    println!("Tool: {}", args_data.tool);
+    let openai_client = if args_data.tool == "openai" {
+        openai::Client::from_env()
+    } else if args_data.tool == "ollama" {
+        openai::Client::from_url("ollama", "http://localhost:11434/v1")
+    } else if args_data.tool == "lmstudio" {
+        openai::Client::from_url("lm-studio", "http://localhost:1234/v1")
+    } else {
+        panic!("Unsupported tool: {}", args_data.tool);
+    };
     let agent = openai_client.agent(&args_data.model).build();
 
     // Prompt the model and print its response
