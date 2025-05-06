@@ -34,7 +34,7 @@ def _build_financial_tool_workflow(llm: LLM, tools: list[BaseTool] | None) -> Fu
         name="FinancialAgent",
         description="Useful for performing financial operations.",
         llm=llm,
-        tools=tools,
+        tools=tools,  # type: ignore[arg-type]
         system_prompt="You are a helpful assistant.",
     )
 
@@ -59,8 +59,7 @@ def build_research_workflow(llm: LLM, tools: list[BaseTool]) -> FunctionAgent:
             "Once notes are recorded and you are satisfied, you should hand off control to the WriteAgent to write a report on the topic."
         ),
         llm=llm,
-        tools=tools,
-        # tools=[search_web, record_notes],
+        tools=tools,  # type: ignore[arg-type]
         can_handoff_to=["WriteAgent"],
     )
 
@@ -76,8 +75,7 @@ def build_write_workflow(llm: LLM, tools: list[BaseTool]) -> FunctionAgent:
             "Once the report is written, you should get feedback at least once from the ReviewAgent."
         ),
         llm=llm,
-        tools=tools,
-        # tools=[write_report],
+        tools=tools,  # type: ignore[arg-type]
         can_handoff_to=["ReviewAgent", "ResearchAgent"],
     )
 
@@ -92,8 +90,7 @@ def build_review_workflow(llm: LLM, tools: list[BaseTool]) -> FunctionAgent:
             "Your feedback should either approve the current report or request changes for the WriteAgent to implement."
         ),
         llm=llm,
-        tools=tools,
-        # tools=[review_report],
+        tools=tools,  # type: ignore[arg-type]
         can_handoff_to=["WriteAgent"],
     )
 

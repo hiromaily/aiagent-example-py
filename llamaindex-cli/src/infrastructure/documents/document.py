@@ -1,7 +1,6 @@
 """Create text storage."""
 
 from enum import Enum
-from typing import cast
 
 from llama_index.core import Document, SimpleDirectoryReader
 
@@ -38,7 +37,7 @@ class DocumentList:
                 Document(text="LlamaIndex supports various data connectors and index types."),
             ]
         if self.mode == StorageMode.DIR:
-            return cast("list[Document]", SimpleDirectoryReader("storage/news").load_data())
+            return SimpleDirectoryReader("storage/news").load_data()
 
         msg = f"'{self.mode}' is not a valid StorageMode"
         raise ValueError(msg)

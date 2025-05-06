@@ -19,7 +19,7 @@ class QueryImageAgent:
             ChatMessage(
                 role="user",
                 blocks=[
-                    ImageBlock(path=image_path),
+                    ImageBlock(path=image_path),  # type: ignore[arg-type]
                     TextBlock(text="Describe the image in a few sentences."),
                 ],
             )

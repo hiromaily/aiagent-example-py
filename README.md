@@ -13,13 +13,15 @@ Various examples of AI Agents.
 
 ## Planning
 
-- [CrewAI](https://docs.crewai.com/introduction)
+- [Agent Development Kit](https://google.github.io/adk-docs/):
+   Agent Development Kit (ADK) is a flexible and modular framework for developing and deploying AI agents. 
+- [CrewAI](https://docs.crewai.com/introduction):
    CrewAI is a lean, lightning-fast Python framework built entirely from scratch—completely independent of LangChain or other agent frameworks.
-- [DSPy](https://dspy.ai/)
+- [DSPy](https://dspy.ai/):
    DSPy is the framework for programming—rather than prompting—language models. It allows you to iterate fast on building modular AI systems and offers algorithms for optimizing their prompts and weights, whether you're building simple classifiers, sophisticated RAG pipelines, or Agent loops.
-- [Mastra](https://github.com/mastra-ai/mastra)
+- [Mastra](https://github.com/mastra-ai/mastra):
   - Planning
-- [LangChain](https://www.langchain.com/)
+- [LangChain](https://www.langchain.com/):
   - [Pending] For a while, keep watching on stability of progress because of [Article: Why Developers are Quitting LangChain](https://analyticsindiamag.com/ai-features/why-developers-are-quitting-langchain/)
 
 ## Tools/Services used and LLM used for operation check

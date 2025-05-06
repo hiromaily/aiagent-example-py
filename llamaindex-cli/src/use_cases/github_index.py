@@ -2,6 +2,7 @@
 
 from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_storage
 from llama_index.core.base.embeddings.base import BaseEmbedding
+from llama_index.core.data_structs.data_structs import IndexDict
 from llama_index.core.indices.base import BaseIndex
 from llama_index.core.llms import LLM
 from llama_index.core.vector_stores import SimpleVectorStore
@@ -56,7 +57,7 @@ class GithubIndex:
             index.storage_context.persist()
         logger.debug("index saved")
 
-    def _load_saved_index(self) -> BaseIndex:
+    def _load_saved_index(self) -> BaseIndex[IndexDict]:
         """Load saved index."""
         # https://docs.llamaindex.ai/en/stable/module_guides/storing/save_load/
         if isinstance(self._vector_store, SimpleVectorStore):

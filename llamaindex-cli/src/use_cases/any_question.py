@@ -10,7 +10,7 @@ class AnyQuestionAgent:
     def __init__(self, agent: FunctionAgent) -> None:
         """Initialize the AnyQuestionAgent with a LLM."""
         self._agent_work_flow = agent
-        self._ctx = Context(self._agent_work_flow)
+        self._ctx = Context(self._agent_work_flow)  # type: ignore[arg-type]
 
     async def ask(self, question: str) -> None:
         """Ask the question by agent()."""

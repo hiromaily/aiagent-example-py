@@ -48,7 +48,7 @@ class DependencyRegistry:
 
     def __init__(self, tool: str, model: str) -> None:
         """Initialize the DependencyRegistry with the environment."""
-        self._settings = EnvSettings()
+        self._settings = EnvSettings()  # type: ignore[call-arg]
         self._tool = tool
         self._llm = self._build_llm(model, self._settings.OPENAI_API_KEY)
 
@@ -58,6 +58,7 @@ class DependencyRegistry:
 
     def _build_llm(self, model: str, api_key: str, temperature: float = 0.5) -> LLM:
         """Build the LLM based on the environment."""
+        llm: LLM
         if self._tool == "openai":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {model}, toolkit: {self._tool}")
@@ -78,6 +79,7 @@ class DependencyRegistry:
         return llm
 
     def _build_embedding_model(self, embedding_model: str) -> BaseEmbedding:
+        embed_model: BaseEmbedding
         if self._tool == "openai":
             # use OpenAI API
             logger.debug(f"use OpenAI API: {embedding_model}, toolkit: {self._tool}")
@@ -100,6 +102,7 @@ class DependencyRegistry:
     # --------------------------------------------------------------------------
 
     def _build_vector_store(self, db_name: str) -> BasePydanticVectorStore:
+        vector_store: BasePydanticVectorStore
         if db_name == "qdrant":
             client = QdrantClient(host="localhost", port=6333)
             # aclient = AsyncQdrantClient(location=":memory:")
@@ -126,7 +129,7 @@ class DependencyRegistry:
     # Document
     # --------------------------------------------------------------------------
 
-    def _build_document(self, storage_mode: str) -> Document:
+    def _build_document(self, storage_mode: str) -> list[Document]:
         """Build the document."""
         logger.debug(f"storage_mode: {storage_mode}")
         mode = StorageMode.from_str(storage_mode)
@@ -136,11 +139,11 @@ class DependencyRegistry:
     # Query
     # --------------------------------------------------------------------------
 
-    def _build_query(self, embedding_model: str) -> BaseQueryEngine:
+    def _build_query(self, embedding_model: str, documents: list[Document]) -> BaseQueryEngine:
         """Build the LlamaIndex query."""
         # Create an index from the documents
         embed_model = self._build_embedding_model(embedding_model)
-        index = VectorStoreIndex.from_documents(self._document, embed_model=embed_model)
+        index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
         # Create a query engine
         return index.as_query_engine(self._llm)
 
@@ -159,7 +162,7 @@ class DependencyRegistry:
     def _build_any_question_usecase(self) -> AnyQuestionAgent:
         """Build the any question usecase."""
         agent = build_standard_workflow(self._llm)
-        return AnyQuestionAgent(agent)
+        return AnyQuestionAgent(agent)  # type: ignore[arg-type]
 
     def _build_query_image_usecase(self) -> QueryImageAgent:
         """Build the query image usecase."""
@@ -173,17 +176,17 @@ class DependencyRegistry:
 
         return ToolAgent(
             self._llm,
-            mathematical_tool_workflow,
-            yahoo_financial_tool_workflow,
-            tavily_tools_workflow,
+            mathematical_tool_workflow,  # type: ignore[arg-type]
+            yahoo_financial_tool_workflow,  # type: ignore[arg-type]
+            tavily_tools_workflow,  # type: ignore[arg-type]
         )
 
     def _build_multi_agent_usecase(self) -> MultiAgent:
         """Build the multi agent usecase."""
         search_web = get_search_web(self._settings.TAVILY_API_KEY)
-        research_workflow = build_research_workflow(self._llm, [search_web, record_notes])
-        write_workflow = build_write_workflow(self._llm, [write_report])
-        review_workflow = build_review_workflow(self._llm, [review_report])
+        research_workflow = build_research_workflow(self._llm, [search_web, record_notes])  # type: ignore[list-item]
+        write_workflow = build_write_workflow(self._llm, [write_report])  # type: ignore[list-item]
+        review_workflow = build_review_workflow(self._llm, [review_report])  # type: ignore[list-item]
         multi_workflow = build_multi_workflow([research_workflow, write_workflow, review_workflow])
 
         return MultiAgent(multi_workflow)
@@ -204,8 +207,8 @@ class DependencyRegistry:
 
     def get_query_docs_usecase(self, storage_mode: str, embedding_model: str) -> DocsAgent:
         """Get the docs usecase."""
-        self._document = self._build_document(storage_mode)
-        self._query_engine = self._build_query(embedding_model)
+        documents = self._build_document(storage_mode)
+        self._query_engine = self._build_query(embedding_model, documents)
         self._docs_usecase = self._build_docs_usecase()
 
         return self._docs_usecase

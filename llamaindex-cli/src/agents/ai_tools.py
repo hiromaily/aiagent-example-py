@@ -1,7 +1,5 @@
 """AI tools for performing basic arithmetic operations."""
 
-from typing import cast
-
 from llama_index.core.tools import BaseTool, FunctionTool
 from llama_index.core.workflow import Context
 from llama_index.tools.tavily_research.base import TavilyToolSpec
@@ -21,8 +19,8 @@ def multiply(a: float, b: float) -> float:
 def build_financial_tools() -> list[BaseTool] | None:
     """Build the financial tools."""
     finance_tools = YahooFinanceToolSpec().to_tool_list()
-    finance_tools.extend([multiply, add])
-    return cast("list[FunctionTool]", finance_tools)
+    finance_tools.extend([FunctionTool(multiply), FunctionTool(add)])
+    return finance_tools  # type: ignore[return-value]
 
 
 # Ref: https://docs.tavily.com/documentation/integrations/llamaindex
@@ -32,13 +30,13 @@ def build_tavily_tools(api_key: str) -> list[BaseTool]:
     #     msg = "API key is required for Tavily tools."
     #     raise ValueError(msg)
 
-    return cast("list[FunctionTool]", TavilyToolSpec(api_key=api_key).to_tool_list())
+    return TavilyToolSpec(api_key=api_key).to_tool_list()  # type: ignore[return-value]
 
 
 def get_search_web(api_key: str) -> BaseTool:
     """Get search web from the Tavily tools."""
     # return build_tavily_tools(api_key)[0]
-    return cast("FunctionTool", build_tavily_tools(api_key)[0])
+    return build_tavily_tools(api_key)[0]
 
 
 async def record_notes(ctx: Context, notes: str, notes_title: str) -> str:

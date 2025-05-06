@@ -1,11 +1,17 @@
 """main function for the CLI app."""
 
 import asyncio
+from typing import TYPE_CHECKING
 
 import typer
 
 # from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+
+if TYPE_CHECKING:
+    from llama_index.core.base.embeddings.base import BaseEmbedding
+    from llama_index.core.llms.llm import LLM
+
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.lmstudio import LMStudio
@@ -25,7 +31,7 @@ app = typer.Typer()
 # LMSTUDIO_MODEL=llama3
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def docs_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -52,7 +58,7 @@ def docs_agent(
         docs_agent.check_up_llamaindex_docs()
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def tech_question_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -80,7 +86,7 @@ def tech_question_agent(
         tech_question_agent.ask(question)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def query_image_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -101,7 +107,7 @@ def query_image_agent(
     query_image_agent.ask(image_path)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def calc_tool_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -123,7 +129,7 @@ async def _async_calc_tool_agent(calc_tool_agent: ToolAgent, question: str) -> N
     await calc_tool_agent.ask_calc(question)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def finance_tool_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -153,7 +159,7 @@ async def _async_finance_tool_agent(tool_agent: ToolAgent, company: str, tavily:
         await tool_agent.ask_finance(company)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def conversation_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -179,7 +185,7 @@ async def _async_conversation_agent(any_question_agent: AnyQuestionAgent) -> Non
         await any_question_agent.ask(user_input)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def multi_agent(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -200,7 +206,7 @@ async def _async_multi_agent(multi_agent: MultiAgent) -> None:
     await multi_agent.report_about_web()
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def git_docs_indexer(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -220,7 +226,7 @@ def git_docs_indexer(
     github_index.store_index()
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def git_docs_search(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
     model: str = typer.Option("gpt-4o", "--model", "-m", help="LLM model name"),
@@ -241,7 +247,7 @@ def git_docs_search(
     github_index.search_index(question)
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def local_llm(
     tool: str = typer.Option("openai", "--tool", "-t", help="LLM tool name: openai, ollama, lmstudio"),
 ) -> None:
@@ -249,6 +255,8 @@ def local_llm(
     # Load documents from a directory
     documents = SimpleDirectoryReader("storage/news").load_data()
     logger.debug(f"tool: {tool}")
+    llm: LLM
+    embed_model: BaseEmbedding
     if tool == "lmstudio":
         llm = LMStudio(
             model_name="llama3",
@@ -287,7 +295,7 @@ def local_llm(
     print(response)
 
 
-@app.callback()  # type: ignore[misc]
+@app.callback()
 def main(env: str = ".env") -> None:
     """First endpoint after app()."""
     logger.debug("main()")
