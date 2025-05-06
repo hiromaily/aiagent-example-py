@@ -1,26 +1,35 @@
+use clap::Parser;
 use dotenv::dotenv;
-use rig_example::args;
+use rig_example::args::{App, SubCommand};
 use rig_example::openais::openai::{get_agent, OpenAI, OpenAIImpl};
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
-    let args_data = args::get_args();
-    // debug
-    //args::print_parsed_args();
-    println!("Question: {}", args_data.question);
-    println!("Tool: {}", args_data.tool);
-    println!("Model: {}", args_data.model);
-    println!("Embedding Model: {}", args_data.embedding_model);
+    let cli = App::parse();
+
+    println!("Question: {}", cli.question);
+    println!("Tool: {}", cli.tool);
+    println!("Model: {}", cli.model);
+    println!("Embedding Model: {}", cli.embedding_model);
 
     // Create OpenAI client and model
-    let agent = get_agent(&args_data.tool, &args_data.model).expect("Failed to get agent");
+    let agent = get_agent(&cli.tool, &cli.model).expect("Failed to get agent");
     let openai_client: Box<dyn OpenAI> = Box::new(OpenAIImpl::new(agent));
-    let response = openai_client
-        .call_prompt(&args_data.question)
-        .await
-        .expect("Failed to prompt");
 
-    println!("Agent: {response}");
+    match &cli.command {
+        SubCommand::Basic => {
+            println!("TODO: run basic command");
+            // Call
+            let response = openai_client
+                .call_prompt(&cli.question)
+                .await
+                .expect("Failed to prompt");
+            println!("Agent: {response}");
+        }
+        SubCommand::Prompt { opt } => {
+            println!("TODO: run prompt command:: {}", opt);
+        }
+    }
 }

@@ -1,11 +1,8 @@
-use clap::Parser;
-use std::env;
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
-/// Rust version of `echo`
-pub struct Args {
-    /// question
+pub struct App {
     #[arg(required(true))]
     pub question: String,
 
@@ -20,24 +17,34 @@ pub struct Args {
     /// embedding model
     #[arg(short('e'), default_value = "text-embedding-ada-002")]
     pub embedding_model: String,
+
+    #[command(subcommand)]
+    pub command: SubCommand,
 }
 
-#[allow(dead_code)]
-pub fn print_parsed_args() {
-    // command line arguments
-    // by clap
-    let args = Args::parse();
-    println!(
-        "tool:{}, model:{}, embedding_model:{}",
-        args.tool, args.model, args.embedding_model,
-    );
-
-    // by std::env
-    let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
+#[derive(Debug, Subcommand)]
+pub enum SubCommand {
+    Basic,
+    Prompt {
+        #[clap(long, short = 'o')]
+        opt: bool,
+    },
 }
 
-#[allow(dead_code)]
-pub fn get_args() -> Args {
-    Args::parse()
-}
+// pub fn get_args() {
+//     let cli = App::parse();
+
+//     println!("Question: {}", cli.question);
+//     println!("Tool: {}", cli.tool);
+//     println!("Model: {}", cli.model);
+//     println!("Embedding Model: {}", cli.embedding_model);
+
+//     match &cli.command {
+//         SubCommand::Basic => {
+//             println!("TODO: run basic command");
+//         }
+//         SubCommand::Prompt { opt } => {
+//             println!("TODO: run prompt command:: {}", opt);
+//         }
+//     }
+// }

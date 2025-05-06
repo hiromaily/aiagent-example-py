@@ -42,6 +42,12 @@ impl DummyOpenAIImpl {
     }
 }
 
+impl Default for DummyOpenAIImpl {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[async_trait]
 impl OpenAI for DummyOpenAIImpl {
     async fn call_prompt(&self, question: &str) -> Result<String, Box<dyn std::error::Error>> {
