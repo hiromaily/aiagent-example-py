@@ -5,8 +5,12 @@ use std::env;
 #[command(author, version, about)]
 /// Rust version of `echo`
 pub struct Args {
-    /// tool
+    /// question
     #[arg(required(true))]
+    pub question: String,
+
+    /// tool
+    #[arg(short('t'), default_value = "openai")]
     pub tool: String,
 
     /// model path
