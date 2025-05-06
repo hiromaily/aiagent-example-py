@@ -1,2 +1,2 @@
 pub mod args;
-pub mod openai;
+pub mod openais;
