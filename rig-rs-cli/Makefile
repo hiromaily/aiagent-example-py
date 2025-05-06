@@ -6,6 +6,14 @@ init:
 	cargo init 
 
 #------------------------------------------------------------------------------
+# Maintenance
+#------------------------------------------------------------------------------
+.PHONY: update
+update:
+	rustup update
+	cargo upgrade -i allow && cargo update
+
+#------------------------------------------------------------------------------
 # Development
 #------------------------------------------------------------------------------
 
@@ -28,7 +36,7 @@ build:
 
 .PHONY: run
 run:
-	RUST_LOG=debug RUST_BACKTRACE=1 cargo run
+	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- openai -m gpt-4o-mini
 
 .PHONY: clean
 clean:
