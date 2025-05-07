@@ -1,6 +1,6 @@
 # aiagent-example-py
 
-Various examples of AI Agents.
+Various examples of AI Frameworks.
 
 - [LlamaIndex](https://www.llamaindex.ai/)
    LlamaIndex (GPT Index) is a data framework for your LLM application. Building with LlamaIndex typically involves working with LlamaIndex core and a chosen set of integrations (or plugins)

@@ -3,7 +3,7 @@ use rig::completion::Prompt;
 use rig::{agent, providers::openai};
 
 #[async_trait]
-pub trait OpenAI {
+pub trait OpenAI: Send + Sync {
     async fn call_prompt(&self, question: &str) -> Result<String, Box<dyn std::error::Error>>;
 }
 
