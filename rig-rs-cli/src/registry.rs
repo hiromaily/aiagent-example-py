@@ -1,5 +1,6 @@
 use crate::openais::openai::{get_agent, OpenAI, OpenAIImpl};
 use crate::usecases::basic::{BasicUsecase, BasicUsecaseImpl};
+use crate::usecases::prompt::{PromptUsecase, PromptUsecaseImpl};
 
 pub struct Registry {
     tool: String,
@@ -28,5 +29,12 @@ impl Registry {
         // build basic usecase
         let openai_client = self.build_agent();
         Box::new(BasicUsecaseImpl::new(openai_client))
+    }
+
+    // Get prompt usecase
+    pub fn get_prompt_usecase(&self) -> Box<dyn PromptUsecase> {
+        // build basic usecase
+        let openai_client = self.build_agent();
+        Box::new(PromptUsecaseImpl::new(openai_client))
     }
 }

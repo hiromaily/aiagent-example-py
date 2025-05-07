@@ -27,25 +27,7 @@ pub enum SubCommand {
         question: String,
     },
     Prompt {
-        #[clap(long, short = 'o')]
-        opt: bool,
+        #[clap(long, short = 'm')]
+        mode: String,
     },
 }
-
-// pub fn get_args() {
-//     let cli = App::parse();
-
-//     println!("Question: {}", cli.question);
-//     println!("Tool: {}", cli.tool);
-//     println!("Model: {}", cli.model);
-//     println!("Embedding Model: {}", cli.embedding_model);
-
-//     match &cli.command {
-//         SubCommand::Basic => {
-//             println!("TODO: run basic command");
-//         }
-//         SubCommand::Prompt { opt } => {
-//             println!("TODO: run prompt command:: {}", opt);
-//         }
-//     }
-// }
