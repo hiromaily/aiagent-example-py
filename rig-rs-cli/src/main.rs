@@ -9,14 +9,13 @@ async fn main() {
 
     let cli = App::parse();
 
-    println!("Question: {}", cli.question);
     println!("Tool: {}", cli.tool);
     println!("Model: {}", cli.model);
     println!("Embedding Model: {}", cli.embedding_model);
 
     match &cli.command {
-        SubCommand::Basic => {
-            println!("run basic command");
+        SubCommand::Basic { question } => {
+            println!("run basic command: {}", question);
             let basic_usecase = Registry::new(
                 cli.tool.clone(),
                 cli.model.clone(),
@@ -26,7 +25,7 @@ async fn main() {
 
             // Call
             basic_usecase
-                .call_prompt(&cli.question)
+                .call_prompt(question)
                 .await
                 .expect("Failed to call prompt");
         }

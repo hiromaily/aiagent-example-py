@@ -3,9 +3,6 @@ use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
 pub struct App {
-    #[arg(required(true))]
-    pub question: String,
-
     /// tool
     #[arg(short('t'), default_value = "openai")]
     pub tool: String,
@@ -24,7 +21,11 @@ pub struct App {
 
 #[derive(Debug, Subcommand)]
 pub enum SubCommand {
-    Basic,
+    Basic {
+        #[clap(long, short = 'q')]
+        #[arg(required(true))]
+        question: String,
+    },
     Prompt {
         #[clap(long, short = 'o')]
         opt: bool,

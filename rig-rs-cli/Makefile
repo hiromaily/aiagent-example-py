@@ -39,7 +39,7 @@ run:
 	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- "Who are you" -m gpt-4.1-nano
 	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- "Who are you" -m gpt-4o-mini
 	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- "Who are you" -t ollama -m llama3.2
-	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- "Who are you" -t ollama -m llama3.2 basic
+	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- -t ollama -m llama3.2 basic --question "Who are you"
 	RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- "Who are you" -t ollama -m llama3.2 prompt
 
 .PHONY: clean
